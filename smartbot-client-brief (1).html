@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Website Project Brief — SmartBot Builds</title>
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #080c08;
+  --green: #00c853;
+  --green-light: rgba(0,200,83,0.1);
+  --green-border: rgba(0,200,83,0.25);
+  --white: #f5faf5;
+  --grey: #141a14;
+  --grey-mid: #1e271e;
+  --grey-light: #2a352a;
+  --text: #e8f5e8;
+  --text-dim: #7a9e7a;
+  --orange: #ff9100;
+  --blue: #00aaff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--black); color: var(--text); font-family: 'Cabinet Grotesk', sans-serif; min-height: 100vh; }
+body::before { content: ''; position: fixed; top: -300px; right: -300px; width: 600px; height: 600px; background: radial-gradient(circle, rgba(0,200,83,0.06) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+
+/* HEADER */
+header { background: rgba(8,12,8,0.97); backdrop-filter: blur(20px); border-bottom: 1px solid var(--green-border); padding: 18px 40px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.logo { font-family: 'Clash Display', sans-serif; font-size: 18px; font-weight: 700; color: var(--white); display: flex; align-items: center; gap: 8px; }
+.logo span { color: var(--green); }
+.logo-dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.header-tag { font-size: 12px; color: var(--text-dim); background: var(--grey-mid); border: 1px solid var(--grey-light); padding: 6px 14px; border-radius: 100px; }
+
+/* HERO */
+.hero { padding: 60px 40px 40px; text-align: center; position: relative; z-index: 1; }
+.hero-tag { display: inline-flex; align-items: center; gap: 8px; background: var(--green-light); border: 1px solid var(--green-border); color: var(--green); font-size: 11px; font-weight: 700; padding: 6px 16px; border-radius: 100px; margin-bottom: 20px; letter-spacing: 1px; text-transform: uppercase; }
+.hero h1 { font-family: 'Clash Display', sans-serif; font-size: clamp(26px, 5vw, 48px); font-weight: 700; line-height: 1.1; margin-bottom: 14px; letter-spacing: -1px; }
+.hero h1 span { color: var(--green); }
+.hero p { font-size: 15px; color: var(--text-dim); max-width: 520px; margin: 0 auto; line-height: 1.7; }
+
+/* PROGRESS */
+.progress-wrap { max-width: 680px; margin: 32px auto 0; }
+.progress-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-dim); margin-bottom: 8px; font-family: 'Clash Display', sans-serif; }
+.progress-bar { height: 4px; background: var(--grey-light); border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--green), #00e676); border-radius: 2px; width: 0%; transition: width 0.5s ease; }
+
+/* CONTAINER */
+.form-wrap { max-width: 720px; margin: 0 auto; padding: 0 40px 100px; position: relative; z-index: 1; }
+
+/* STEP DOTS */
+.step-dots { display: flex; justify-content: center; gap: 8px; margin: 32px 0 28px; }
+.step-dot { width: 8px; height: 8px; border-radius: 100px; background: var(--grey-light); transition: all 0.3s; }
+.step-dot.active { width: 24px; background: var(--green); }
+.step-dot.done { background: rgba(0,200,83,0.35); }
+
+/* SECTIONS */
+.form-section { display: none; animation: fadeUp 0.35s ease; }
+.form-section.active { display: block; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+
+.section-card { background: var(--grey); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 32px; margin-bottom: 16px; }
+.section-head { display: flex; align-items: center; gap: 14px; margin-bottom: 26px; padding-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; }
+.section-icon { width: 44px; height: 44px; background: var(--green-light); border: 1px solid var(--green-border); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.section-head h2 { font-family: 'Clash Display', sans-serif; font-size: 19px; font-weight: 700; margin-bottom: 2px; }
+.section-head p { font-size: 13px; color: var(--text-dim); }
+.step-badge { margin-left: auto; font-size: 11px; color: var(--text-dim); background: var(--grey-mid); border: 1px solid var(--grey-light); padding: 4px 10px; border-radius: 100px; white-space: nowrap; }
+
+/* FIELDS */
+.fields { display: flex; flex-direction: column; gap: 18px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.field { display: flex; flex-direction: column; gap: 7px; }
+.field label { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 5px; }
+.req { color: var(--green); font-size: 15px; line-height: 1; }
+.field input, .field textarea, .field select { background: var(--grey-mid); border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; padding: 13px 15px; color: var(--text); font-family: 'Cabinet Grotesk', sans-serif; font-size: 14px; outline: none; width: 100%; transition: all 0.2s; }
+.field input::placeholder, .field textarea::placeholder { color: var(--text-dim); opacity: 0.55; }
+.field input:focus, .field textarea:focus, .field select:focus { border-color: var(--green); background: rgba(0,200,83,0.04); box-shadow: 0 0 0 3px rgba(0,200,83,0.07); }
+.field select option { background: var(--grey-mid); }
+.field textarea { min-height: 90px; resize: vertical; line-height: 1.6; }
+.hint { font-size: 12px; color: var(--text-dim); margin-top: -3px; }
+
+/* PACKAGE CARDS */
+.package-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+.pkg-card { background: var(--grey-mid); border: 2px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 20px 16px; cursor: pointer; transition: all 0.25s; position: relative; user-select: none; }
+.pkg-card:hover { border-color: var(--green-border); background: rgba(0,200,83,0.04); }
+.pkg-card.selected { border-color: var(--green); background: rgba(0,200,83,0.07); }
+.pkg-card input { display: none; }
+.pkg-check { position: absolute; top: 12px; right: 12px; width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.15); border-radius: 50%; transition: all 0.2s; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+.pkg-card.selected .pkg-check { background: var(--green); border-color: var(--green); color: #000; font-weight: 900; }
+.pkg-emoji { font-size: 28px; margin-bottom: 10px; }
+.pkg-name { font-family: 'Clash Display', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+.pkg-price { font-family: 'Clash Display', sans-serif; font-size: 22px; font-weight: 700; color: var(--green); margin-bottom: 2px; }
+.pkg-normal { font-size: 11px; color: var(--text-dim); text-decoration: line-through; margin-bottom: 10px; }
+.pkg-days { display: inline-flex; align-items: center; gap: 4px; background: var(--green-light); color: var(--green); font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 100px; margin-bottom: 12px; }
+.pkg-features { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.pkg-features li { font-size: 11px; color: var(--text-dim); padding-left: 14px; position: relative; }
+.pkg-features li::before { content: '✓'; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+.pkg-popular { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: var(--green); color: #000; font-size: 9px; font-weight: 700; padding: 3px 12px; border-radius: 100px; white-space: nowrap; letter-spacing: 0.5px; }
+
+/* RADIO & CHECKBOX */
+.check-group { display: flex; flex-direction: column; gap: 8px; }
+.check-item { display: flex; align-items: center; gap: 10px; padding: 11px 14px; background: var(--grey-mid); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; cursor: pointer; transition: all 0.2s; user-select: none; }
+.check-item:hover { border-color: var(--green-border); background: var(--green-light); }
+.check-item input { width: 16px !important; height: 16px !important; accent-color: var(--green); flex-shrink: 0; padding: 0 !important; }
+.check-item span { font-size: 13px; }
+.check-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+/* STYLE PICKER */
+.style-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+.style-opt { background: var(--grey-mid); border: 2px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 14px 10px; text-align: center; cursor: pointer; transition: all 0.2s; user-select: none; }
+.style-opt:hover { border-color: var(--green-border); }
+.style-opt.selected { border-color: var(--green); background: var(--green-light); }
+.style-opt input { display: none; }
+.style-emoji { font-size: 24px; margin-bottom: 7px; }
+.style-name { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
+.style-desc { font-size: 10px; color: var(--text-dim); }
+
+/* PROPERTY LISTING */
+.listing-item { background: var(--grey-mid); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 18px; margin-bottom: 12px; position: relative; }
+.listing-num { font-family: 'Clash Display', sans-serif; font-size: 12px; color: var(--green); font-weight: 700; margin-bottom: 12px; }
+.remove-btn { position: absolute; top: 14px; right: 14px; background: rgba(255,61,87,0.1); border: 1px solid rgba(255,61,87,0.2); color: #ff3d57; font-size: 11px; padding: 4px 10px; border-radius: 6px; cursor: pointer; }
+.add-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 13px; background: transparent; border: 1px dashed rgba(0,200,83,0.3); border-radius: 10px; color: var(--green); font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: 'Cabinet Grotesk', sans-serif; }
+.add-btn:hover { background: var(--green-light); border-color: var(--green); }
+
+/* TESTIMONIAL */
+.testimonial-item { background: var(--grey-mid); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px; margin-bottom: 10px; position: relative; }
+
+/* DYNAMIC SECTION */
+.dynamic-section { display: none; }
+.dynamic-section.show { display: block; }
+
+/* NAV BUTTONS */
+.form-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; gap: 12px; }
+.btn-back { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-dim); padding: 13px 22px; border-radius: 100px; font-family: 'Cabinet Grotesk', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+.btn-back:hover { border-color: rgba(255,255,255,0.25); color: var(--text); }
+.btn-next { background: var(--green); border: none; color: #000; padding: 13px 30px; border-radius: 100px; font-family: 'Cabinet Grotesk', sans-serif; font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.btn-next:hover { background: #00e676; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,200,83,0.3); }
+.btn-submit { background: var(--green); border: none; color: #000; padding: 15px 34px; border-radius: 100px; font-family: 'Cabinet Grotesk', sans-serif; font-size: 15px; font-weight: 800; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 10px; margin-left: auto; box-shadow: 0 0 30px rgba(0,200,83,0.2); }
+.btn-submit:hover { background: #00e676; transform: translateY(-2px); }
+
+/* SUCCESS */
+.success { display: none; text-align: center; padding: 80px 30px; max-width: 520px; margin: 0 auto; }
+.success.active { display: block; }
+.success-icon { font-size: 65px; margin-bottom: 22px; animation: bounceIn 0.5s ease; }
+@keyframes bounceIn { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.2)} 100%{transform:scale(1);opacity:1} }
+.success h2 { font-family: 'Clash Display', sans-serif; font-size: 30px; font-weight: 700; margin-bottom: 14px; letter-spacing: -0.5px; }
+.success p { font-size: 15px; color: var(--text-dim); line-height: 1.7; margin-bottom: 28px; }
+.success-btn { display: inline-flex; align-items: center; gap: 10px; background: #25d366; color: #fff; padding: 15px 30px; border-radius: 100px; font-size: 15px; font-weight: 800; text-decoration: none; }
+
+/* NOTE BOX */
+.info-note { background: rgba(0,200,83,0.06); border: 1px solid rgba(0,200,83,0.2); border-radius: 10px; padding: 12px 16px; font-size: 12px; color: var(--green); margin-bottom: 18px; line-height: 1.7; }
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  header{padding:14px 18px;}
+  .hero{padding:40px 18px 30px;}
+  .form-wrap{padding:0 18px 80px;}
+  .section-card{padding:22px 18px;}
+  .package-grid{grid-template-columns:1fr;}
+  .field-row{grid-template-columns:1fr;}
+  .check-grid{grid-template-columns:1fr;}
+  .style-grid{grid-template-columns:1fr 1fr;}
+  .step-badge{display:none;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><div class="logo-dot"></div>Smart<span>Bot</span> Builds</div>
+  <div class="header-tag">Website Project Brief</div>
+</header>
+
+<div class="hero">
+  <div class="hero-tag"><div class="logo-dot"></div>New Website Project</div>
+  <h1>Let's Build Your<br><span>Perfect Website</span></h1>
+  <p>Choose your package below and fill in your details. Takes 5–8 minutes. The more you share, the better your website.</p>
+  <div class="progress-wrap">
+    <div class="progress-labels">
+      <span id="prog-text">Step 1 of 5</span>
+      <span id="prog-pct">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+  </div>
+</div>
+
+<div class="step-dots" id="dots">
+  <div class="step-dot active"></div>
+  <div class="step-dot"></div>
+  <div class="step-dot"></div>
+  <div class="step-dot"></div>
+  <div class="step-dot"></div>
+</div>
+
+<div class="form-wrap">
+
+  <!-- ===== STEP 0: PACKAGE SELECTION ===== -->
+  <div class="form-section active" id="sec-0">
+    <div class="section-card">
+      <div class="section-head">
+        <div class="section-icon">📦</div>
+        <div><h2>Choose Your Package</h2><p>Select the website package that fits your business</p></div>
+        <div class="step-badge">Step 1 of 5</div>
+      </div>
+
+      <div class="info-note">💡 All packages include a FREE .com.ng domain name and FREE hosting forever. You only pay if you need updates after delivery.</div>
+
+      <div class="package-grid">
+
+        <!-- STARTER -->
+        <div class="pkg-card" id="pkg-starter" onclick="selectPackage('starter', this)">
+          <input type="radio" name="package" value="starter">
+          <div class="pkg-check"></div>
+          <div class="pkg-emoji">🥉</div>
+          <div class="pkg-name">Starter Website</div>
+          <div class="pkg-price">₦35,000</div>
+          <div class="pkg-normal">Normal: ₦75,000</div>
+          <div class="pkg-days">⏱ Ready in 7 days</div>
+          <ul class="pkg-features">
+            <li>1-page professional design</li>
+            <li>Free .com.ng domain</li>
+            <li>Free hosting forever</li>
+            <li>WhatsApp contact button</li>
+            <li>Services & pricing section</li>
+            <li>Mobile friendly</li>
+            <li>7 days free edits</li>
+          </ul>
+        </div>
+
+        <!-- BUSINESS -->
+        <div class="pkg-card" id="pkg-business" onclick="selectPackage('business', this)">
+          <div class="pkg-popular">MOST POPULAR</div>
+          <input type="radio" name="package" value="business">
+          <div class="pkg-check"></div>
+          <div class="pkg-emoji">🥈</div>
+          <div class="pkg-name">Business Website</div>
+          <div class="pkg-price">₦60,000</div>
+          <div class="pkg-normal">Normal: ₦120,000</div>
+          <div class="pkg-days">⏱ Ready in 10 days</div>
+          <ul class="pkg-features">
+            <li>Everything in Starter</li>
+            <li>Up to 5 pages</li>
+            <li>Photo gallery</li>
+            <li>Up to 10 listings</li>
+            <li>Testimonials section</li>
+            <li>Contact form</li>
+            <li>FAQ section</li>
+          </ul>
+        </div>
+
+        <!-- PREMIUM -->
+        <div class="pkg-card" id="pkg-premium" onclick="selectPackage('premium', this)">
+          <input type="radio" name="package" value="premium">
+          <div class="pkg-check"></div>
+          <div class="pkg-emoji">🥇</div>
+          <div class="pkg-name">Premium Website</div>
+          <div class="pkg-price">₦100,000</div>
+          <div class="pkg-normal">Normal: ₦200,000</div>
+          <div class="pkg-days">⏱ Ready in 14 days</div>
+          <ul class="pkg-features">
+            <li>Everything in Business</li>
+            <li>Unlimited pages</li>
+            <li>Unlimited listings</li>
+            <li>Booking/appointment form</li>
+            <li>Blog section</li>
+            <li>SEO optimised</li>
+            <li>Priority support</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+    <div class="form-nav">
+      <button class="btn-next" onclick="nextSec(0)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ===== STEP 1: PERSONAL INFO ===== -->
+  <div class="form-section" id="sec-1">
+    <div class="section-card">
+      <div class="section-head">
+        <div class="section-icon">👤</div>
+        <div><h2>About You</h2><p>Your contact and business details</p></div>
+        <div class="step-badge">Step 2 of 5</div>
+      </div>
+      <div class="fields">
+        <div class="field-row">
+          <div class="field"><label>Full Name <span class="req">*</span></label><input type="text" id="fullName" placeholder="e.g. Chioma Okafor"></div>
+          <div class="field"><label>Business Name <span class="req">*</span></label><input type="text" id="bizName" placeholder="e.g. Okafor Realty"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>WhatsApp Number <span class="req">*</span></label><input type="tel" id="whatsapp" placeholder="e.g. 08012345678"></div>
+          <div class="field"><label>Email Address</label><input type="email" id="email" placeholder="e.g. chioma@gmail.com"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Business Location <span class="req">*</span></label><input type="text" id="location" placeholder="e.g. Victoria Island, Lagos"></div>
+          <div class="field"><label>Areas You Serve <span class="req">*</span></label><input type="text" id="areas" placeholder="e.g. Lekki, VI, Ikoyi, Abuja"></div>
+        </div>
+        <div class="field"><label>Do you have an existing website?</label>
+          <div class="check-group">
+            <label class="check-item"><input type="radio" name="hasWeb" value="no"> <span>No — this is my first website</span></label>
+            <label class="check-item"><input type="radio" name="hasWeb" value="yes"> <span>Yes — I want to redesign or replace it</span></label>
+          </div>
+        </div>
+        <div class="field" id="existingWebField" style="display:none;">
+          <label>Current website URL</label>
+          <input type="url" id="existingWeb" placeholder="https://yourwebsite.com">
+          <p class="hint">What do you want changed or improved?</p>
+          <textarea id="webComments" placeholder="e.g. Looks outdated, doesn't work on mobile..." style="margin-top:8px;"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="form-nav">
+      <button class="btn-back" onclick="prevSec(1)">← Back</button>
+      <button class="btn-next" onclick="nextSec(1)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ===== STEP 2: BUSINESS INFO ===== -->
+  <div class="form-section" id="sec-2">
+    <div class="section-card">
+      <div class="section-head">
+        <div class="section-icon">🏢</div>
+        <div><h2>Your Business</h2><p>Tell us what you do and who you serve</p></div>
+        <div class="step-badge">Step 3 of 5</div>
+      </div>
+      <div class="fields">
+        <div class="field"><label>Type of business <span class="req">*</span></label>
+          <select id="bizType">
+            <option value="">Select...</option>
+            <option>Real Estate — Agent/Broker</option>
+            <option>Real Estate — Property Management</option>
+            <option>Real Estate — Developer</option>
+            <option>Fashion / Boutique</option>
+            <option>Food / Restaurant / Catering</option>
+            <option>Beauty / Salon / Spa</option>
+            <option>Technology / IT Services</option>
+            <option>Consulting / Professional Services</option>
+            <option>Education / Training</option>
+            <option>Healthcare / Medical</option>
+            <option>Events / Photography</option>
+            <option>E-commerce / Online Store</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field"><label>Describe your business in 2–3 sentences <span class="req">*</span></label><textarea id="bizDesc" placeholder="e.g. We are a Lagos-based real estate agency helping clients buy, sell and rent residential and commercial properties across Lekki, VI and Ikoyi. We have over 8 years of experience and specialize in luxury properties..."></textarea></div>
+        <div class="field"><label>Your main services or products <span class="req">*</span></label><textarea id="services" placeholder="List each service or product on a new line with prices if possible.&#10;e.g.&#10;Property sales — residential and commercial&#10;Property rentals — short and long term&#10;Property management — 5% of annual rent&#10;Land sales — various locations"></textarea><p class="hint">Be as detailed as possible — this goes directly into your website</p></div>
+        <div class="field"><label>Who are your ideal customers?</label><textarea id="audience" placeholder="e.g. Middle and upper-class Nigerians aged 28–55, working professionals looking to buy their first home or invest in property in Lagos..."></textarea></div>
+        <div class="field"><label>Working hours</label><input type="text" id="hours" placeholder="e.g. Monday–Saturday, 9am–7pm"></div>
+        <div class="field"><label>Payment methods you accept</label><input type="text" id="payment" placeholder="e.g. Bank transfer, Opay, Palmpay, cash"></div>
+      </div>
+    </div>
+    <div class="form-nav">
+      <button class="btn-back" onclick="prevSec(2)">← Back</button>
+      <button class="btn-next" onclick="nextSec(2)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ===== STEP 3: DESIGN + DYNAMIC PACKAGE SECTIONS ===== -->
+  <div class="form-section" id="sec-3">
+
+    <!-- DESIGN PREFERENCES — ALL PACKAGES -->
+    <div class="section-card">
+      <div class="section-head">
+        <div class="section-icon">🎨</div>
+        <div><h2>Look & Feel</h2><p>How you want your website to look</p></div>
+        <div class="step-badge">Step 4 of 5</div>
+      </div>
+      <div class="fields">
+        <div class="field"><label>Choose a website style <span class="req">*</span></label>
+          <div class="style-grid">
+            <div class="style-opt" onclick="pickStyle(this,'modern-dark')"><input type="radio" name="style" value="modern-dark"><div class="style-emoji">🌑</div><div class="style-name">Modern Dark</div><div class="style-desc">Dark, bold, premium</div></div>
+            <div class="style-opt" onclick="pickStyle(this,'clean-white')"><input type="radio" name="style" value="clean-white"><div class="style-emoji">☁️</div><div class="style-name">Clean & White</div><div class="style-desc">Bright, minimal, professional</div></div>
+            <div class="style-opt" onclick="pickStyle(this,'bold-colorful')"><input type="radio" name="style" value="bold-colorful"><div class="style-emoji">🎨</div><div class="style-name">Bold & Vibrant</div><div class="style-desc">Strong colors, energetic</div></div>
+            <div class="style-opt" onclick="pickStyle(this,'elegant-luxury')"><input type="radio" name="style" value="elegant-luxury"><div class="style-emoji">💎</div><div class="style-name">Elegant Luxury</div><div class="style-desc">Gold accents, high-end</div></div>
+            <div class="style-opt" onclick="pickStyle(this,'warm-friendly')"><input type="radio" name="style" value="warm-friendly"><div class="style-emoji">🌿</div><div class="style-name">Warm & Friendly</div><div class="style-desc">Earthy, approachable</div></div>
+            <div class="style-opt" onclick="pickStyle(this,'corporate')"><input type="radio" name="style" value="corporate"><div class="style-emoji">🏛️</div><div class="style-name">Corporate</div><div class="style-desc">Formal, trustworthy</div></div>
+          </div>
+        </div>
+        <div class="field"><label>Preferred colour(s)</label><input type="text" id="colors" placeholder="e.g. Navy blue and gold, or Dark green and white, or Open to suggestions"></div>
+        <div class="field"><label>Websites you admire (any industry)</label><textarea id="inspiration" placeholder="Share 1–3 links or describe what you like:&#10;e.g. https://airbnb.com&#10;Or: 'Clean with lots of photos and clear pricing'"></textarea></div>
+        <div class="field"><label>Do you have a logo?</label>
+          <div class="check-group">
+            <label class="check-item"><input type="radio" name="logo" value="yes"> <span>Yes — I will send it to you</span></label>
+            <label class="check-item"><input type="radio" name="logo" value="no-design"> <span>No — I need one designed</span></label>
+            <label class="check-item"><input type="radio" name="logo" value="no-text"> <span>No — just use my business name as text</span></label>
+          </div>
+        </div>
+        <div class="field"><label>Social media accounts to link</label>
+          <input type="text" id="instagram" placeholder="Instagram — e.g. @okafor_realty">
+          <input type="text" id="facebook" placeholder="Facebook page name or URL" style="margin-top:8px;">
+          <input type="text" id="tiktok" placeholder="TikTok handle (if any)" style="margin-top:8px;">
+        </div>
+      </div>
+    </div>
+
+    <!-- DYNAMIC: LISTINGS — Business & Premium only -->
+    <div class="dynamic-section" id="listings-section">
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-icon">🏠</div>
+          <div><h2>Property / Product Listings</h2><p>Add each listing you want on your website</p></div>
+        </div>
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:16px;line-height:1.7;">Add up to <strong id="listing-limit" style="color:var(--green);">10</strong> listings. For each one provide as much detail as possible — type, location, price, features and photos.</p>
+        <div id="listings-container"></div>
+        <button class="add-btn" onclick="addListing()">+ Add Another Listing</button>
+      </div>
+    </div>
+
+    <!-- DYNAMIC: TESTIMONIALS — Business & Premium only -->
+    <div class="dynamic-section" id="testimonials-section">
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-icon">⭐</div>
+          <div><h2>Client Testimonials</h2><p>What your happy clients say about you</p></div>
+        </div>
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:16px;line-height:1.7;">Add testimonials from your clients. Even 2–3 good ones build strong trust with new visitors.</p>
+        <div id="testimonials-container"></div>
+        <button class="add-btn" onclick="addTestimonial()">+ Add Another Testimonial</button>
+      </div>
+    </div>
+
+    <!-- DYNAMIC: BLOG — Premium only -->
+    <div class="dynamic-section" id="blog-section">
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-icon">📝</div>
+          <div><h2>Blog Section</h2><p>Premium package includes a blog</p></div>
+        </div>
+        <div class="fields">
+          <div class="field"><label>Do you want a blog on your website?</label>
+            <div class="check-group">
+              <label class="check-item"><input type="radio" name="wantBlog" value="yes"> <span>Yes — I will write articles/posts</span></label>
+              <label class="check-item"><input type="radio" name="wantBlog" value="no"> <span>No — skip the blog for now</span></label>
+            </div>
+          </div>
+          <div class="field"><label>What topics would your blog cover?</label><textarea id="blogTopics" placeholder="e.g. Property investment tips, Lagos real estate market updates, Home buying guide for first timers..."></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DYNAMIC: BOOKING — Premium only -->
+    <div class="dynamic-section" id="booking-section">
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-icon">📅</div>
+          <div><h2>Booking / Appointment Form</h2><p>Premium package includes a booking system</p></div>
+        </div>
+        <div class="fields">
+          <div class="field"><label>What should clients book or request?</label><textarea id="bookingDesc" placeholder="e.g. Property viewing appointments, consultation calls, site visits..."></textarea></div>
+          <div class="field"><label>What information do you need when someone books?</label><textarea id="bookingFields" placeholder="e.g. Name, phone, preferred date and time, property they are interested in, budget range..."></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-nav">
+      <button class="btn-back" onclick="prevSec(3)">← Back</button>
+      <button class="btn-next" onclick="nextSec(3)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ===== STEP 4: FINAL DETAILS ===== -->
+  <div class="form-section" id="sec-4">
+    <div class="section-card">
+      <div class="section-head">
+        <div class="section-icon">🚀</div>
+        <div><h2>Final Details</h2><p>Almost done — just a few more things</p></div>
+        <div class="step-badge">Step 5 of 5</div>
+      </div>
+      <div class="fields">
+        <div class="field"><label>Do you have a domain name? <span class="req">*</span></label>
+          <div class="check-group">
+            <label class="check-item"><input type="radio" name="domain" value="yes" onchange="toggleDomain(true)"> <span>Yes — I already own one</span></label>
+            <label class="check-item"><input type="radio" name="domain" value="no"> <span>No — include a free .com.ng domain in my package</span></label>
+            <label class="check-item"><input type="radio" name="domain" value="suggest"> <span>No — suggest a good domain name for me</span></label>
+          </div>
+        </div>
+        <div class="field" id="domainField" style="display:none;">
+          <label>Your domain name</label>
+          <input type="text" id="domainName" placeholder="e.g. okafor-realty.com.ng">
+        </div>
+        <div class="field"><label>When do you need it ready? <span class="req">*</span></label>
+          <div class="check-group">
+            <label class="check-item"><input type="radio" name="timeline" value="asap"> <span>As soon as possible</span></label>
+            <label class="check-item"><input type="radio" name="timeline" value="2weeks"> <span>Within 2 weeks</span></label>
+            <label class="check-item"><input type="radio" name="timeline" value="1month"> <span>Within 1 month</span></label>
+            <label class="check-item"><input type="radio" name="timeline" value="flexible"> <span>Flexible — no rush</span></label>
+          </div>
+        </div>
+        <div class="field"><label>Your selected package</label>
+          <input type="text" id="selectedPkgDisplay" readonly style="color:var(--green);font-weight:700;cursor:default;">
+        </div>
+        <div class="field">
+          <label>Do you have photos for your website?</label>
+          <p class="hint" style="margin-bottom:8px;">Photos make your website look 10x more professional. The more you send, the better your site will look.</p>
+          <div class="check-group">
+            <label class="check-item"><input type="radio" name="hasPhotos" value="yes" onchange="togglePhotos(true)"> <span>Yes — I'll send them on WhatsApp after submitting</span></label>
+            <label class="check-item"><input type="radio" name="hasPhotos" value="some" onchange="togglePhotos(true)"> <span>I have some — I'll send what I have</span></label>
+            <label class="check-item"><input type="radio" name="hasPhotos" value="no" onchange="togglePhotos(false)"> <span>No — please use professional stock photos</span></label>
+          </div>
+        </div>
+        <div class="field" id="photosDetailField" style="display:none;">
+          <label>What photos will you send?</label>
+          <textarea id="photosDetail" style="min-height:80px;" placeholder="Tell us what photos you have so we can plan your site layout.&#10;e.g.&#10;— Photos of my shop/office&#10;— Product photos (about 20 items)&#10;— My profile/team photo&#10;— Completed project photos&#10;— Before and after photos"></textarea>
+          <p class="hint" style="margin-top:6px;color:var(--green);">📱 Send photos to WhatsApp <strong>08154857377</strong> — label them e.g. "Hero photo", "Products", "Team"</p>
+        </div>
+        <div class="field"><label>Anything else we should know?</label><textarea id="extra" placeholder="Any special requirements, ideas, or things that are important to you about this website. The more detail the better."></textarea></div>
+        <div class="field"><label>How did you hear about SmartBot Builds?</label>
+          <select id="referral">
+            <option value="">Select...</option>
+            <option>Referral from a friend</option>
+            <option>Facebook</option>
+            <option>Instagram</option>
+            <option>WhatsApp</option>
+            <option>Flyer / Physical advert</option>
+            <option>Google search</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="form-nav">
+      <button class="btn-back" onclick="prevSec(4)">← Back</button>
+      <button class="btn-submit" onclick="submitForm()">Submit Brief 🚀</button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success" id="success">
+    <div class="success-icon">🎉</div>
+    <h2>Brief Received!</h2>
+    <p>Thank you! Segun will reach out within 24 hours to discuss next steps.</p>
+    <div style="background:rgba(0,200,83,0.08);border:1px solid rgba(0,200,83,0.25);border-radius:14px;padding:18px 20px;margin-bottom:24px;text-align:left;">
+      <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:10px;">📸 Next Step — Send Your Photos</div>
+      <div style="font-size:13px;color:var(--text-dim);line-height:1.8;">
+        Send your business photos, product photos, profile photo and any other images to WhatsApp <strong style="color:var(--green);">08154857377</strong><br><br>
+        Label each photo so we know where it goes — e.g. <em>"Hero photo"</em>, <em>"Our products"</em>, <em>"Team photo"</em><br><br>
+        <strong style="color:var(--text);">No photos?</strong> No problem — we'll use professional stock photos that match your business.
+      </div>
+    </div>
+    <a href="https://wa.me/2348154857377?text=Hi Segun! I just submitted my website brief. Here are my photos 👇" target="_blank" class="success-btn">💬 Send Photos on WhatsApp</a>
+    <p style="margin-top:18px;font-size:13px;color:var(--text-dim);">Or call/WhatsApp: <strong style="color:var(--green);">08154857377</strong></p>
+  </div>
+
+</div>
+
+<script>
+let currentStep = 0;
+let selectedPackage = '';
+let listingCount = 0;
+let testimonialCount = 0;
+
+// PACKAGE SELECTION
+function selectPackage(pkg, el) {
+  document.querySelectorAll('.pkg-card').forEach(c => {
+    c.classList.remove('selected');
+    c.querySelector('.pkg-check').textContent = '';
+  });
+  el.classList.add('selected');
+  el.querySelector('.pkg-check').textContent = '✓';
+  selectedPackage = pkg;
+
+  // Show/hide dynamic sections
+  const isBusiness = pkg === 'business' || pkg === 'premium';
+  const isPremium = pkg === 'premium';
+
+  document.getElementById('listings-section').className = 'dynamic-section' + (isBusiness ? ' show' : '');
+  document.getElementById('testimonials-section').className = 'dynamic-section' + (isBusiness ? ' show' : '');
+  document.getElementById('blog-section').className = 'dynamic-section' + (isPremium ? ' show' : '');
+  document.getElementById('booking-section').className = 'dynamic-section' + (isPremium ? ' show' : '');
+
+  // Set listing limit text
+  document.getElementById('listing-limit').textContent = isPremium ? 'Unlimited' : '10';
+
+  // Add default listing and testimonial if business/premium and none added yet
+  if (isBusiness && listingCount === 0) addListing();
+  if (isBusiness && testimonialCount === 0) addTestimonial();
+
+  // Update package display
+  const names = { starter: 'Starter Website — ₦35,000', business: 'Business Website — ₦60,000', premium: 'Premium Website — ₦100,000' };
+  document.getElementById('selectedPkgDisplay').value = names[pkg] || '';
+}
+
+// ADD LISTING
+function addListing() {
+  listingCount++;
+  const container = document.getElementById('listings-container');
+  const div = document.createElement('div');
+  div.className = 'listing-item';
+  div.id = 'listing-' + listingCount;
+  div.innerHTML = `
+    <div class="listing-num">Listing #${listingCount}</div>
+    ${listingCount > 1 ? `<button class="remove-btn" onclick="removeListing(${listingCount})">Remove</button>` : ''}
+    <div class="fields">
+      <div class="field-row">
+        <div class="field"><label>Property / Product Type</label><input type="text" id="l${listingCount}-type" placeholder="e.g. 3-bedroom flat, Land, Duplex"></div>
+        <div class="field"><label>Location / Area</label><input type="text" id="l${listingCount}-location" placeholder="e.g. Lekki Phase 1, Lagos"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Price</label><input type="text" id="l${listingCount}-price" placeholder="e.g. ₦5.5m/year or ₦120m outright"></div>
+        <div class="field"><label>For Sale or For Rent?</label>
+          <select id="l${listingCount}-salerent">
+            <option value="">Select...</option>
+            <option>For Sale</option>
+            <option>For Rent</option>
+            <option>For Sale or Rent</option>
+            <option>Short-let</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Key Features</label><textarea id="l${listingCount}-features" style="min-height:70px;" placeholder="e.g. 3 bedrooms, 2 bathrooms, fitted kitchen, boys quarters, 24-hour security, swimming pool..."></textarea></div>
+      <div class="field"><label>Photos</label><p class="hint" style="font-size:12px;color:var(--text-dim);">📸 Send photos for this listing directly to WhatsApp: <strong style="color:var(--green);">08154857377</strong> — mention "Listing #${listingCount} photos"</p></div>
+    </div>`;
+  container.appendChild(div);
+}
+
+function removeListing(num) {
+  const el = document.getElementById('listing-' + num);
+  if (el) el.remove();
+}
+
+// ADD TESTIMONIAL
+function addTestimonial() {
+  testimonialCount++;
+  const container = document.getElementById('testimonials-container');
+  const div = document.createElement('div');
+  div.className = 'testimonial-item';
+  div.id = 'testimonial-' + testimonialCount;
+  div.innerHTML = `
+    ${testimonialCount > 1 ? `<button class="remove-btn" onclick="removeTestimonial(${testimonialCount})">Remove</button>` : ''}
+    <div class="fields">
+      <div class="field-row">
+        <div class="field"><label>Client Name</label><input type="text" id="t${testimonialCount}-name" placeholder="e.g. Mrs. Bello or just 'Lagos client'"></div>
+        <div class="field"><label>Their Profession / Business</label><input type="text" id="t${testimonialCount}-role" placeholder="e.g. Business owner, Teacher (optional)"></div>
+      </div>
+      <div class="field"><label>What They Said <span class="req">*</span></label><textarea id="t${testimonialCount}-text" style="min-height:80px;" placeholder="e.g. Segun found me the perfect property in Lekki within 2 weeks. Very professional and trustworthy. I highly recommend him!"></textarea></div>
+    </div>`;
+  container.appendChild(div);
+}
+
+function removeTestimonial(num) {
+  const el = document.getElementById('testimonial-' + num);
+  if (el) el.remove();
+}
+
+// STYLE PICKER
+function pickStyle(el, val) {
+  document.querySelectorAll('.style-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  el.querySelector('input').checked = true;
+}
+
+// EXISTING WEBSITE TOGGLE
+document.querySelectorAll('input[name="hasWeb"]').forEach(r => {
+  r.addEventListener('change', function() {
+    document.getElementById('existingWebField').style.display = this.value === 'yes' ? 'block' : 'none';
+  });
+});
+
+// DOMAIN TOGGLE
+function toggleDomain(show) {
+  document.getElementById('domainField').style.display = show ? 'block' : 'none';
+}
+document.querySelectorAll('input[name="domain"]').forEach(r => {
+  r.addEventListener('change', function() {
+    toggleDomain(this.value === 'yes');
+  });
+});
+
+// PROGRESS UPDATE
+function updateProgress(step) {
+  const pct = Math.round((step / 5) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-text').textContent = 'Step ' + (step + 1) + ' of 5';
+  document.querySelectorAll('.step-dot').forEach((d, i) => {
+    d.className = 'step-dot' + (i === step ? ' active' : i < step ? ' done' : '');
+  });
+}
+
+// NAVIGATION
+function nextSec(cur) {
+  if (cur === 0 && !selectedPackage) { alert('Please select a package to continue.'); return; }
+  if (cur === 1) {
+    if (!document.getElementById('fullName').value.trim()) { alert('Please enter your full name.'); return; }
+    if (!document.getElementById('bizName').value.trim()) { alert('Please enter your business name.'); return; }
+    if (!document.getElementById('whatsapp').value.trim()) { alert('Please enter your WhatsApp number.'); return; }
+    if (!document.getElementById('location').value.trim()) { alert('Please enter your business location.'); return; }
+  }
+  if (cur === 2) {
+    if (!document.getElementById('bizType').value) { alert('Please select your business type.'); return; }
+    if (!document.getElementById('bizDesc').value.trim()) { alert('Please describe your business.'); return; }
+    if (!document.getElementById('services').value.trim()) { alert('Please list your services or products.'); return; }
+  }
+  document.getElementById('sec-' + cur).classList.remove('active');
+  currentStep = cur + 1;
+  document.getElementById('sec-' + currentStep).classList.add('active');
+  updateProgress(currentStep);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function prevSec(cur) {
+  document.getElementById('sec-' + cur).classList.remove('active');
+  currentStep = cur - 1;
+  document.getElementById('sec-' + currentStep).classList.add('active');
+  updateProgress(currentStep);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// COLLECT LISTINGS
+function collectListings() {
+  const items = document.querySelectorAll('.listing-item');
+  let result = '';
+  items.forEach((item, i) => {
+    const num = item.id.replace('listing-', '');
+    const type = document.getElementById('l' + num + '-type')?.value || '';
+    const loc = document.getElementById('l' + num + '-location')?.value || '';
+    const price = document.getElementById('l' + num + '-price')?.value || '';
+    const sr = document.getElementById('l' + num + '-salerent')?.value || '';
+    const features = document.getElementById('l' + num + '-features')?.value || '';
+    if (type || loc || price) {
+      result += `\nListing ${i + 1}: ${type} | ${loc} | ${price} | ${sr}\nFeatures: ${features}\n`;
+    }
+  });
+  return result || 'None provided';
+}
+
+// COLLECT TESTIMONIALS
+function collectTestimonials() {
+  const items = document.querySelectorAll('.testimonial-item');
+  let result = '';
+  items.forEach((item, i) => {
+    const num = item.id.replace('testimonial-', '');
+    const name = document.getElementById('t' + num + '-name')?.value || '';
+    const role = document.getElementById('t' + num + '-role')?.value || '';
+    const text = document.getElementById('t' + num + '-text')?.value || '';
+    if (text) result += `\n${i + 1}. "${text}" — ${name}${role ? ', ' + role : ''}\n`;
+  });
+  return result || 'None provided';
+}
+
+// SUBMIT
+function submitForm() {
+  const pkgNames = { starter: 'Starter Website — ₦35,000', business: 'Business Website — ₦60,000', premium: 'Premium Website — ₦100,000' };
+  const style = document.querySelector('input[name="style"]:checked')?.value || 'Not selected';
+  const logo = document.querySelector('input[name="logo"]:checked')?.value || 'Not answered';
+  const domain = document.querySelector('input[name="domain"]:checked')?.value || 'Not answered';
+  const timeline = document.querySelector('input[name="timeline"]:checked')?.value || 'Not specified';
+  const hasWeb = document.querySelector('input[name="hasWeb"]:checked')?.value || 'Not answered';
+
+  const msg =
+`🌐 *NEW WEBSITE PROJECT BRIEF*
+━━━━━━━━━━━━━━━━━━
+
+📦 *PACKAGE SELECTED*
+${pkgNames[selectedPackage] || selectedPackage}
+
+👤 *CLIENT DETAILS*
+Name: ${document.getElementById('fullName').value}
+Business: ${document.getElementById('bizName').value}
+WhatsApp: ${document.getElementById('whatsapp').value}
+Email: ${document.getElementById('email').value}
+Location: ${document.getElementById('location').value}
+Areas Served: ${document.getElementById('areas').value}
+Existing Website: ${hasWeb}${hasWeb === 'yes' ? '\nURL: ' + document.getElementById('existingWeb').value + '\nComments: ' + document.getElementById('webComments').value : ''}
+
+🏢 *BUSINESS INFO*
+Type: ${document.getElementById('bizType').value}
+Description: ${document.getElementById('bizDesc').value}
+Services/Products: ${document.getElementById('services').value}
+Target Audience: ${document.getElementById('audience').value}
+Working Hours: ${document.getElementById('hours').value}
+Payment Methods: ${document.getElementById('payment').value}
+
+🎨 *DESIGN PREFERENCES*
+Style: ${style}
+Colours: ${document.getElementById('colors').value}
+Inspiration: ${document.getElementById('inspiration').value}
+Logo: ${logo}
+Instagram: ${document.getElementById('instagram').value}
+Facebook: ${document.getElementById('facebook').value}
+TikTok: ${document.getElementById('tiktok').value}
+
+🏠 *PROPERTY/PRODUCT LISTINGS*
+${collectListings()}
+
+⭐ *TESTIMONIALS*
+${collectTestimonials()}
+
+🚀 *FINAL DETAILS*
+Domain: ${domain}${domain === 'yes' ? ' — ' + document.getElementById('domainName').value : ''}
+Timeline: ${timeline}
+Additional Info: ${document.getElementById('extra').value}
+Referral: ${document.getElementById('referral').value}
+
+📸 *PHOTOS*
+Has Photos: ${document.querySelector('input[name="hasPhotos"]:checked')?.value || 'Not answered'}
+Photo Details: ${document.getElementById('photosDetail')?.value || 'N/A'}
+
+Submitted: ${new Date().toLocaleString('en-NG')}`;
+
+  const waUrl = `https://wa.me/2348154857377?text=${encodeURIComponent(msg)}`;
+
+  document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('dots').style.display = 'none';
+  document.getElementById('success').classList.add('active');
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('prog-pct').textContent = '100%';
+  document.getElementById('prog-text').textContent = 'Submitted ✓';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(() => window.open(waUrl, '_blank'), 1500);
+}
+
+function togglePhotos(show) {
+  document.getElementById('photosDetailField').style.display = show ? 'block' : 'none';
+}
+
+updateProgress(0);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Referral Form Generator — SmartBot Builds</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050a12; --surface: #0c1520; --surface2: #111d2e;
+  --border: #1a3050; --blue: #00aaff; --green: #00e676;
+  --orange: #ff9100; --text: #e0eeff; --text-dim: #7a9ab8;
+  --mono: 'Space Mono', monospace; --sans: 'Syne', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.15; pointer-events: none; }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 48px 40px; max-width: 560px; width: 100%; position: relative; z-index: 1; }
+
+.logo { font-family: var(--mono); font-size: 11px; letter-spacing: 3px; color: var(--blue); background: rgba(0,170,255,0.08); border: 1px solid rgba(0,170,255,0.2); padding: 6px 14px; border-radius: 2px; display: inline-block; margin-bottom: 24px; text-transform: uppercase; }
+
+h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
+h1 span { color: var(--green); }
+.subtitle { font-family: var(--mono); font-size: 12px; color: var(--text-dim); line-height: 1.7; margin-bottom: 36px; }
+
+.field { margin-bottom: 20px; }
+.field label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+.field input, .field select { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; color: var(--text); font-family: var(--sans); font-size: 15px; outline: none; transition: all 0.2s; }
+.field input:focus, .field select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,170,255,0.08); }
+.field input::placeholder { color: var(--text-dim); opacity: 0.6; }
+.field select option { background: var(--surface2); }
+
+.commission-display { background: rgba(0,230,118,0.06); border: 1px solid rgba(0,230,118,0.2); border-radius: 10px; padding: 14px 16px; margin-bottom: 24px; font-family: var(--mono); font-size: 12px; color: #86efac; line-height: 1.8; display: none; }
+.commission-display.show { display: block; }
+
+.btn-generate { width: 100%; background: var(--green); border: none; color: #000; padding: 16px; border-radius: 12px; font-family: var(--sans); font-size: 16px; font-weight: 800; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.btn-generate:hover { background: #00ff88; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,230,118,0.3); }
+.btn-generate:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.result { display: none; margin-top: 24px; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+.result.show { display: block; }
+.result h3 { font-size: 15px; font-weight: 700; margin-bottom: 12px; color: var(--green); }
+.result-links { display: flex; flex-direction: column; gap: 10px; }
+.result-link { display: flex; align-items: center; justify-content: space-between; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; gap: 10px; flex-wrap: wrap; }
+.result-link span { font-family: var(--mono); font-size: 12px; color: var(--text-dim); flex: 1; word-break: break-all; }
+.copy-small { background: rgba(0,170,255,0.1); border: 1px solid rgba(0,170,255,0.3); color: var(--blue); font-family: var(--mono); font-size: 10px; padding: 5px 12px; border-radius: 6px; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+.copy-small:hover { background: rgba(0,170,255,0.2); }
+.copy-small.copied { color: var(--green); border-color: var(--green); }
+
+.download-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: rgba(0,170,255,0.1); border: 1px solid rgba(0,170,255,0.3); color: var(--blue); padding: 13px; border-radius: 10px; font-family: var(--sans); font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 12px; }
+.download-btn:hover { background: rgba(0,170,255,0.2); }
+
+.wa-msg { background: #020810; border: 1px solid var(--border); border-left: 3px solid var(--green); border-radius: 8px; padding: 14px; margin-top: 14px; position: relative; }
+.wa-msg-label { font-family: var(--mono); font-size: 10px; color: var(--text-dim); margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; }
+.wa-msg pre { font-family: var(--mono); font-size: 11px; color: var(--text-dim); white-space: pre-wrap; line-height: 1.7; }
+.copy-wa { position: absolute; top: 10px; right: 10px; background: rgba(0,170,255,0.1); border: 1px solid rgba(0,170,255,0.3); color: var(--blue); font-family: var(--mono); font-size: 10px; padding: 4px 10px; border-radius: 4px; cursor: pointer; }
+
+.referrers-list { margin-top: 32px; border-top: 1px solid var(--border); padding-top: 24px; }
+.referrers-list h3 { font-size: 14px; font-weight: 700; margin-bottom: 14px; color: var(--text-dim); font-family: var(--mono); letter-spacing: 1px; text-transform: uppercase; }
+.referrer-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; gap: 10px; flex-wrap: wrap; }
+.referrer-name { font-size: 14px; font-weight: 700; }
+.referrer-meta { font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
+.referrer-link { font-family: var(--mono); font-size: 11px; color: var(--blue); word-break: break-all; }
+.delete-btn { background: rgba(255,61,87,0.1); border: 1px solid rgba(255,61,87,0.2); color: #ff3d57; font-family: var(--mono); font-size: 10px; padding: 4px 10px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
+
+@media(max-width:500px){ .card{padding:32px 20px;} }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo">SmartBot Builds</div>
+  <h1>Referral Form <span>Generator</span></h1>
+  <p class="subtitle">Type a referrer's name → generate their dedicated brief form instantly. Download and deploy to Netlify.</p>
+
+  <div class="field">
+    <label>Referrer's First Name</label>
+    <input type="text" id="refName" placeholder="e.g. Imoh, Tunde, Chioma..." oninput="updatePreview()">
+  </div>
+
+  <div class="field">
+    <label>Commission Rate</label>
+    <select id="commission" onchange="updateCommission()">
+      <option value="10">10% — Basic referral only</option>
+      <option value="15" selected>15% — Standard partner</option>
+      <option value="20">20% — Active partner (refers + closes)</option>
+      <option value="25">25% — Senior partner</option>
+    </select>
+  </div>
+
+  <div class="commission-display" id="commDisplay"></div>
+
+  <button class="btn-generate" id="genBtn" onclick="generateForm()" disabled>
+    ⚡ Generate Referral Form
+  </button>
+
+  <div class="result" id="result">
+    <h3>✅ Form Generated for <span id="resultName"></span></h3>
+    <div class="result-links">
+      <div class="result-link">
+        <span id="netlifyLink"></span>
+        <button class="copy-small" onclick="copyText(this, 'netlifyLinkText')">Copy Link</button>
+      </div>
+    </div>
+    <button class="download-btn" onclick="downloadForm()">⬇ Download Form (index.html)</button>
+    <div class="wa-msg">
+      <div class="wa-msg-label">WhatsApp Message to Send Referrer</div>
+      <button class="copy-wa" onclick="copyWA(this)">Copy</button>
+      <pre id="waMessage"></pre>
+    </div>
+  </div>
+
+  <div class="referrers-list" id="referrersList">
+    <h3>Your Referrers</h3>
+    <div id="referrersContainer">
+      <p style="font-family:var(--mono);font-size:12px;color:var(--text-dim);">No referrers yet. Generate your first one above.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// The full client brief form template
+const BRIEF_TEMPLATE = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Website Project Brief — Referred by {{NAME}} | SmartBot Builds</title>
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--black:#080c08;--green:#00c853;--green-light:rgba(0,200,83,0.1);--green-border:rgba(0,200,83,0.25);--white:#f5faf5;--grey:#141a14;--grey-mid:#1e271e;--grey-light:#2a352a;--text:#e8f5e8;--text-dim:#7a9e7a;--orange:#ff9100;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--text);font-family:'Cabinet Grotesk',sans-serif;min-height:100vh;}
+header{background:rgba(8,12,8,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--green-border);padding:18px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{font-family:'Clash Display',sans-serif;font-size:18px;font-weight:700;color:var(--white);display:flex;align-items:center;gap:8px;}
+.logo span{color:var(--green);}
+.logo-dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.header-tag{font-size:12px;color:var(--text-dim);background:var(--grey-mid);border:1px solid var(--grey-light);padding:6px 14px;border-radius:100px;}
+.hero{padding:60px 40px 40px;text-align:center;position:relative;z-index:1;}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:var(--green-light);border:1px solid var(--green-border);color:var(--green);font-size:11px;font-weight:700;padding:6px 16px;border-radius:100px;margin-bottom:20px;letter-spacing:1px;text-transform:uppercase;}
+.hero h1{font-family:'Clash Display',sans-serif;font-size:clamp(26px,5vw,48px);font-weight:700;line-height:1.1;margin-bottom:14px;letter-spacing:-1px;}
+.hero h1 span{color:var(--green);}
+.hero p{font-size:15px;color:var(--text-dim);max-width:520px;margin:0 auto;line-height:1.7;}
+.progress-wrap{max-width:680px;margin:32px auto 0;}
+.progress-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--text-dim);margin-bottom:8px;}
+.progress-bar{height:4px;background:var(--grey-light);border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--green),#00e676);border-radius:2px;width:0%;transition:width 0.5s ease;}
+.form-wrap{max-width:720px;margin:0 auto;padding:0 40px 100px;position:relative;z-index:1;}
+.referral-banner{background:rgba(0,200,83,0.06);border:1px solid rgba(0,200,83,0.2);border-radius:14px;padding:16px 20px;margin-bottom:24px;display:flex;align-items:center;gap:14px;}
+.step-dots{display:flex;justify-content:center;gap:8px;margin:32px 0 28px;}
+.step-dot{width:8px;height:8px;border-radius:100px;background:var(--grey-light);transition:all 0.3s;}
+.step-dot.active{width:24px;background:var(--green);}
+.step-dot.done{background:rgba(0,200,83,0.35);}
+.form-section{display:none;animation:fadeUp 0.35s ease;}
+.form-section.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.section-card{background:var(--grey);border:1px solid rgba(255,255,255,0.05);border-radius:20px;padding:32px;margin-bottom:16px;}
+.section-head{display:flex;align-items:center;gap:14px;margin-bottom:26px;padding-bottom:18px;border-bottom:1px solid rgba(255,255,255,0.05);flex-wrap:wrap;}
+.section-icon{width:44px;height:44px;background:var(--green-light);border:1px solid var(--green-border);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.section-head h2{font-family:'Clash Display',sans-serif;font-size:19px;font-weight:700;margin-bottom:2px;}
+.section-head p{font-size:13px;color:var(--text-dim);}
+.step-badge{margin-left:auto;font-size:11px;color:var(--text-dim);background:var(--grey-mid);border:1px solid var(--grey-light);padding:4px 10px;border-radius:100px;white-space:nowrap;}
+.fields{display:flex;flex-direction:column;gap:18px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.field{display:flex;flex-direction:column;gap:7px;}
+.field label{font-size:13px;font-weight:700;display:flex;align-items:center;gap:5px;}
+.req{color:var(--green);font-size:15px;line-height:1;}
+.field input,.field textarea,.field select{background:var(--grey-mid);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:13px 15px;color:var(--text);font-family:'Cabinet Grotesk',sans-serif;font-size:14px;outline:none;width:100%;transition:all 0.2s;}
+.field input::placeholder,.field textarea::placeholder{color:var(--text-dim);opacity:0.55;}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--green);background:rgba(0,200,83,0.04);box-shadow:0 0 0 3px rgba(0,200,83,0.07);}
+.field select option{background:var(--grey-mid);}
+.field textarea{min-height:90px;resize:vertical;line-height:1.6;}
+.hint{font-size:12px;color:var(--text-dim);margin-top:-3px;}
+.package-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.pkg-card{background:var(--grey-mid);border:2px solid rgba(255,255,255,0.06);border-radius:14px;padding:20px 16px;cursor:pointer;transition:all 0.25s;position:relative;user-select:none;}
+.pkg-card:hover{border-color:var(--green-border);}
+.pkg-card.selected{border-color:var(--green);background:rgba(0,200,83,0.07);}
+.pkg-card input{display:none;}
+.pkg-check{position:absolute;top:12px;right:12px;width:20px;height:20px;border:2px solid rgba(255,255,255,0.15);border-radius:50%;transition:all 0.2s;display:flex;align-items:center;justify-content:center;font-size:11px;}
+.pkg-card.selected .pkg-check{background:var(--green);border-color:var(--green);color:#000;font-weight:900;}
+.pkg-emoji{font-size:28px;margin-bottom:10px;}
+.pkg-name{font-family:'Clash Display',sans-serif;font-size:14px;font-weight:700;margin-bottom:6px;}
+.pkg-price{font-family:'Clash Display',sans-serif;font-size:22px;font-weight:700;color:var(--green);margin-bottom:2px;}
+.pkg-normal{font-size:11px;color:var(--text-dim);text-decoration:line-through;margin-bottom:10px;}
+.pkg-days{display:inline-flex;align-items:center;gap:4px;background:var(--green-light);color:var(--green);font-size:10px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:12px;}
+.pkg-features{list-style:none;display:flex;flex-direction:column;gap:5px;}
+.pkg-features li{font-size:11px;color:var(--text-dim);padding-left:14px;position:relative;}
+.pkg-features li::before{content:'✓';position:absolute;left:0;color:var(--green);font-weight:700;}
+.pkg-popular{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--green);color:#000;font-size:9px;font-weight:700;padding:3px 12px;border-radius:100px;white-space:nowrap;}
+.check-group{display:flex;flex-direction:column;gap:8px;}
+.check-item{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--grey-mid);border:1px solid rgba(255,255,255,0.05);border-radius:10px;cursor:pointer;transition:all 0.2s;user-select:none;}
+.check-item:hover{border-color:var(--green-border);background:var(--green-light);}
+.check-item input{width:16px!important;height:16px!important;accent-color:var(--green);flex-shrink:0;padding:0!important;}
+.check-item span{font-size:13px;}
+.check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.style-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.style-opt{background:var(--grey-mid);border:2px solid rgba(255,255,255,0.05);border-radius:12px;padding:14px 10px;text-align:center;cursor:pointer;transition:all 0.2s;user-select:none;}
+.style-opt:hover{border-color:var(--green-border);}
+.style-opt.selected{border-color:var(--green);background:var(--green-light);}
+.style-opt input{display:none;}
+.style-emoji{font-size:24px;margin-bottom:7px;}
+.style-name{font-size:12px;font-weight:700;margin-bottom:3px;}
+.style-desc{font-size:10px;color:var(--text-dim);}
+.listing-item{background:var(--grey-mid);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:18px;margin-bottom:12px;position:relative;}
+.listing-num{font-family:'Clash Display',sans-serif;font-size:12px;color:var(--green);font-weight:700;margin-bottom:12px;}
+.remove-btn{position:absolute;top:14px;right:14px;background:rgba(255,61,87,0.1);border:1px solid rgba(255,61,87,0.2);color:#ff3d57;font-size:11px;padding:4px 10px;border-radius:6px;cursor:pointer;}
+.add-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;background:transparent;border:1px dashed rgba(0,200,83,0.3);border-radius:10px;color:var(--green);font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:'Cabinet Grotesk',sans-serif;}
+.add-btn:hover{background:var(--green-light);border-color:var(--green);}
+.testimonial-item{background:var(--grey-mid);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:16px;margin-bottom:10px;position:relative;}
+.dynamic-section{display:none;}
+.dynamic-section.show{display:block;}
+.form-nav{display:flex;justify-content:space-between;align-items:center;margin-top:24px;gap:12px;}
+.btn-back{background:transparent;border:1px solid rgba(255,255,255,0.1);color:var(--text-dim);padding:13px 22px;border-radius:100px;font-family:'Cabinet Grotesk',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.btn-back:hover{border-color:rgba(255,255,255,0.25);color:var(--text);}
+.btn-next{background:var(--green);border:none;color:#000;padding:13px 30px;border-radius:100px;font-family:'Cabinet Grotesk',sans-serif;font-size:14px;font-weight:800;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:8px;margin-left:auto;}
+.btn-next:hover{background:#00e676;transform:translateY(-2px);}
+.btn-submit{background:var(--green);border:none;color:#000;padding:15px 34px;border-radius:100px;font-family:'Cabinet Grotesk',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:10px;margin-left:auto;}
+.btn-submit:hover{background:#00e676;transform:translateY(-2px);}
+.success{display:none;text-align:center;padding:80px 30px;max-width:520px;margin:0 auto;}
+.success.active{display:block;}
+.success-icon{font-size:65px;margin-bottom:22px;}
+.success h2{font-family:'Clash Display',sans-serif;font-size:30px;font-weight:700;margin-bottom:14px;}
+.success p{font-size:15px;color:var(--text-dim);line-height:1.7;margin-bottom:28px;}
+.success-btn{display:inline-flex;align-items:center;gap:10px;background:#25d366;color:#fff;padding:15px 30px;border-radius:100px;font-size:15px;font-weight:800;text-decoration:none;}
+.info-note{background:rgba(0,200,83,0.06);border:1px solid rgba(0,200,83,0.2);border-radius:10px;padding:12px 16px;font-size:12px;color:var(--green);margin-bottom:18px;line-height:1.7;}
+@media(max-width:600px){header{padding:14px 18px;}.hero{padding:40px 18px 30px;}.form-wrap{padding:0 18px 80px;}.section-card{padding:22px 18px;}.package-grid{grid-template-columns:1fr;}.field-row{grid-template-columns:1fr;}.check-grid{grid-template-columns:1fr;}.style-grid{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><div class="logo-dot"></div>Smart<span>Bot</span> Builds</div>
+  <div class="header-tag">Referred by {{NAME}} ✦ SmartBot Builds</div>
+</header>
+<div class="hero">
+  <div class="hero-tag"><div class="logo-dot"></div>Referred by {{NAME}} — SmartBot Builds Partner</div>
+  <h1>Let's Build Your<br><span>Perfect Website</span></h1>
+  <p>You've been referred by <strong style="color:#00c853;">{{NAME}}</strong> — our trusted SmartBot Builds partner. Fill in your details and Segun will reach out within 24 hours.</p>
+  <div class="progress-wrap">
+    <div class="progress-labels"><span id="prog-text">Step 1 of 5</span><span id="prog-pct">0%</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+  </div>
+</div>
+<div class="step-dots" id="dots">
+  <div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div>
+</div>
+<div class="form-wrap">
+  <div class="referral-banner">
+    <div style="width:44px;height:44px;background:rgba(0,200,83,0.15);border:1px solid rgba(0,200,83,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🤝</div>
+    <div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:3px;">Referred by <span style="color:#00c853;">{{NAME}}</span> — SmartBot Builds Partner</div>
+      <div style="font-size:12px;color:#7a9e7a;line-height:1.6;">Segun Jegede will personally handle your project. Expect a response within 24 hours.</div>
+    </div>
+  </div>
+
+  <div class="form-section active" id="sec-0">
+    <div class="section-card">
+      <div class="section-head"><div class="section-icon">📦</div><div><h2>Choose Your Package</h2><p>Select the website package that fits your business</p></div><div class="step-badge">Step 1 of 5</div></div>
+      <div class="info-note">💡 All packages include a FREE .com.ng domain name and FREE hosting forever. No monthly fees ever.</div>
+      <div class="package-grid">
+        <div class="pkg-card" id="pkg-starter" onclick="selectPackage('starter',this)">
+          <input type="radio" name="package" value="starter"><div class="pkg-check"></div>
+          <div class="pkg-emoji">🥉</div><div class="pkg-name">Starter Website</div>
+          <div class="pkg-price">₦35,000</div><div class="pkg-normal">Normal: ₦75,000</div>
+          <div class="pkg-days">⏱ Ready in 7 days</div>
+          <ul class="pkg-features"><li>1-page professional design</li><li>Free .com.ng domain</li><li>Free hosting forever</li><li>WhatsApp button</li><li>Services & pricing section</li><li>Mobile friendly</li><li>7 days free edits</li></ul>
+        </div>
+        <div class="pkg-card" id="pkg-business" onclick="selectPackage('business',this)">
+          <div class="pkg-popular">MOST POPULAR</div><input type="radio" name="package" value="business"><div class="pkg-check"></div>
+          <div class="pkg-emoji">🥈</div><div class="pkg-name">Business Website</div>
+          <div class="pkg-price">₦60,000</div><div class="pkg-normal">Normal: ₦120,000</div>
+          <div class="pkg-days">⏱ Ready in 10 days</div>
+          <ul class="pkg-features"><li>Everything in Starter</li><li>Up to 5 pages</li><li>Photo gallery</li><li>Up to 10 listings</li><li>Testimonials section</li><li>Contact form</li><li>FAQ section</li></ul>
+        </div>
+        <div class="pkg-card" id="pkg-premium" onclick="selectPackage('premium',this)">
+          <input type="radio" name="package" value="premium"><div class="pkg-check"></div>
+          <div class="pkg-emoji">🥇</div><div class="pkg-name">Premium Website</div>
+          <div class="pkg-price">₦100,000</div><div class="pkg-normal">Normal: ₦200,000</div>
+          <div class="pkg-days">⏱ Ready in 14 days</div>
+          <ul class="pkg-features"><li>Everything in Business</li><li>Unlimited pages</li><li>Unlimited listings</li><li>Booking form</li><li>Blog section</li><li>SEO optimised</li><li>Priority support</li></ul>
+        </div>
+      </div>
+    </div>
+    <div class="form-nav"><button class="btn-next" onclick="nextSec(0)">Continue →</button></div>
+  </div>
+
+  <div class="form-section" id="sec-1">
+    <div class="section-card">
+      <div class="section-head"><div class="section-icon">👤</div><div><h2>About You</h2><p>Your contact and business details</p></div><div class="step-badge">Step 2 of 5</div></div>
+      <div class="fields">
+        <div class="field-row">
+          <div class="field"><label>Full Name <span class="req">*</span></label><input type="text" id="fullName" placeholder="e.g. Chioma Okafor"></div>
+          <div class="field"><label>Business Name <span class="req">*</span></label><input type="text" id="bizName" placeholder="e.g. Okafor Realty"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>WhatsApp Number <span class="req">*</span></label><input type="tel" id="whatsapp" placeholder="e.g. 08012345678"></div>
+          <div class="field"><label>Email Address</label><input type="email" id="email" placeholder="e.g. chioma@gmail.com"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Business Location <span class="req">*</span></label><input type="text" id="location" placeholder="e.g. Victoria Island, Lagos"></div>
+          <div class="field"><label>Areas You Serve <span class="req">*</span></label><input type="text" id="areas" placeholder="e.g. Lekki, VI, Ikoyi, Abuja"></div>
+        </div>
+      </div>
+    </div>
+    <div class="form-nav"><button class="btn-back" onclick="prevSec(1)">← Back</button><button class="btn-next" onclick="nextSec(1)">Continue →</button></div>
+  </div>
+
+  <div class="form-section" id="sec-2">
+    <div class="section-card">
+      <div class="section-head"><div class="section-icon">🏢</div><div><h2>Your Business</h2><p>Tell us what you do</p></div><div class="step-badge">Step 3 of 5</div></div>
+      <div class="fields">
+        <div class="field"><label>Type of business <span class="req">*</span></label>
+          <select id="bizType"><option value="">Select...</option><option>Real Estate — Agent/Broker</option><option>Real Estate — Property Management</option><option>Fashion / Boutique</option><option>Food / Restaurant / Catering</option><option>Beauty / Salon / Spa</option><option>Technology / IT Services</option><option>Consulting / Professional Services</option><option>Education / Training</option><option>Healthcare / Medical</option><option>Events / Photography</option><option>E-commerce / Online Store</option><option>Other</option></select>
+        </div>
+        <div class="field"><label>Describe your business <span class="req">*</span></label><textarea id="bizDesc" placeholder="2–3 sentences about what you do, where you are and what makes you different..."></textarea></div>
+        <div class="field"><label>Your main services or products <span class="req">*</span></label><textarea id="services" placeholder="List each service or product with prices if possible..."></textarea></div>
+        <div class="field"><label>Working hours</label><input type="text" id="hours" placeholder="e.g. Monday–Saturday, 9am–7pm"></div>
+        <div class="field"><label>Payment methods accepted</label><input type="text" id="payment" placeholder="e.g. Bank transfer, Opay, Palmpay, cash"></div>
+      </div>
+    </div>
+    <div class="form-nav"><button class="btn-back" onclick="prevSec(2)">← Back</button><button class="btn-next" onclick="nextSec(2)">Continue →</button></div>
+  </div>
+
+  <div class="form-section" id="sec-3">
+    <div class="section-card">
+      <div class="section-head"><div class="section-icon">🎨</div><div><h2>Look & Feel</h2><p>How you want your website to look</p></div><div class="step-badge">Step 4 of 5</div></div>
+      <div class="fields">
+        <div class="field"><label>Choose a website style <span class="req">*</span></label>
+          <div class="style-grid">
+            <div class="style-opt" onclick="pickStyle(this,'modern-dark')"><input type="radio" name="style" value="modern-dark"><div class="style-emoji">🌑</div><div class="style-name">Modern Dark</div><div class="style-desc">Dark, bold, premium</div></div>
+            <div class="style-opt" onclick="pickStyle(this,'clean-white')"><input type="radio" name="style" value="clean-white"><div class="style-emoji">☁️</div><div class="style-name">Clean & White</div><div class="style-desc">Bright, minimal</div></div>
+            <div class="style-opt" onclick="pickStyle(this,'bold-colorful')"><input type="radio" name="style" value="bold-colorful"><div class="style-emoji">🎨</div><div class="style-name">Bold & Vibrant</div><div class="style-desc">Strong colors</div></div>
+            <div class="style-opt" onclick="pickStyle(this,'elegant-luxury')"><input type="radio" name="style" value="elegant-luxury"><div class="style-emoji">💎</div><div class="style-name">Elegant Luxury</div><div class="style-desc">Gold, high-end</div></div>
+            <div class="style-opt" onclick="pickStyle(this,'warm-friendly')"><input type="radio" name="style" value="warm-friendly"><div class="style-emoji">🌿</div><div class="style-name">Warm & Friendly</div><div class="style-desc">Earthy tones</div></div>
+            <div class="style-opt" onclick="pickStyle(this,'corporate')"><input type="radio" name="style" value="corporate"><div class="style-emoji">🏛️</div><div class="style-name">Corporate</div><div class="style-desc">Formal, trustworthy</div></div>
+          </div>
+        </div>
+        <div class="field"><label>Preferred colours</label><input type="text" id="colors" placeholder="e.g. Navy blue and gold, or open to suggestions"></div>
+        <div class="field"><label>Websites you admire</label><textarea id="inspiration" placeholder="Share links or describe what you like..."></textarea></div>
+        <div class="field"><label>Do you have a logo?</label>
+          <div class="check-group">
+            <label class="check-item"><input type="radio" name="logo" value="yes"><span>Yes — I will send it</span></label>
+            <label class="check-item"><input type="radio" name="logo" value="no-design"><span>No — I need one designed</span></label>
+            <label class="check-item"><input type="radio" name="logo" value="no-text"><span>No — just use my business name as text</span></label>
+          </div>
+        </div>
+        <div class="field"><label>Social media</label>
+          <input type="text" id="instagram" placeholder="Instagram handle">
+          <input type="text" id="facebook" placeholder="Facebook page" style="margin-top:8px;">
+        </div>
+      </div>
+    </div>
+    <div class="dynamic-section" id="listings-section">
+      <div class="section-card">
+        <div class="section-head"><div class="section-icon">🏠</div><div><h2>Property / Product Listings</h2><p>Add each listing for your website</p></div></div>
+        <div id="listings-container"></div>
+        <button class="add-btn" onclick="addListing()">+ Add Another Listing</button>
+      </div>
+    </div>
+    <div class="dynamic-section" id="testimonials-section">
+      <div class="section-card">
+        <div class="section-head"><div class="section-icon">⭐</div><div><h2>Client Testimonials</h2><p>What your happy clients say</p></div></div>
+        <div id="testimonials-container"></div>
+        <button class="add-btn" onclick="addTestimonial()">+ Add Another Testimonial</button>
+      </div>
+    </div>
+    <div class="form-nav"><button class="btn-back" onclick="prevSec(3)">← Back</button><button class="btn-next" onclick="nextSec(3)">Continue →</button></div>
+  </div>
+
+  <div class="form-section" id="sec-4">
+    <div class="section-card">
+      <div class="section-head"><div class="section-icon">🚀</div><div><h2>Final Details</h2><p>Almost done!</p></div><div class="step-badge">Step 5 of 5</div></div>
+      <div class="fields">
+        <div class="field"><label>Do you have a domain name?</label>
+          <div class="check-group">
+            <label class="check-item"><input type="radio" name="domain" value="yes" onchange="document.getElementById('domainField').style.display='block'"><span>Yes — I already own one</span></label>
+            <label class="check-item"><input type="radio" name="domain" value="no" onchange="document.getElementById('domainField').style.display='none'"><span>No — include a free .com.ng domain</span></label>
+            <label class="check-item"><input type="radio" name="domain" value="suggest" onchange="document.getElementById('domainField').style.display='none'"><span>No — suggest one for me</span></label>
+          </div>
+        </div>
+        <div class="field" id="domainField" style="display:none;"><label>Your domain name</label><input type="text" id="domainName" placeholder="e.g. mybusiness.com.ng"></div>
+        <div class="field"><label>When do you need it ready?</label>
+          <div class="check-group">
+            <label class="check-item"><input type="radio" name="timeline" value="asap"><span>As soon as possible</span></label>
+            <label class="check-item"><input type="radio" name="timeline" value="2weeks"><span>Within 2 weeks</span></label>
+            <label class="check-item"><input type="radio" name="timeline" value="flexible"><span>Flexible — no rush</span></label>
+          </div>
+        </div>
+        <div class="field"><label>Your selected package</label><input type="text" id="selectedPkgDisplay" readonly style="color:#00c853;font-weight:700;cursor:default;"></div>
+        <div class="field"><label>Anything else we should know?</label><textarea id="extra" placeholder="Any special requirements or ideas..."></textarea></div>
+      </div>
+    </div>
+    <div class="form-nav"><button class="btn-back" onclick="prevSec(4)">← Back</button><button class="btn-submit" onclick="submitForm()">Submit Brief 🚀</button></div>
+  </div>
+
+  <div class="success" id="success">
+    <div class="success-icon">🎉</div>
+    <h2>Brief Received!</h2>
+    <p>Thank you! Segun has been notified and will reach out within 24 hours. {{NAME}} will also be in touch shortly.</p>
+    <a href="https://wa.me/2348154857377?text=Hi Segun! I just submitted my website brief through {{NAME}}." target="_blank" class="success-btn">💬 WhatsApp Segun Now</a>
+    <p style="margin-top:18px;font-size:13px;color:#7a9e7a;">Or call/WhatsApp: <strong style="color:#00c853;">08154857377</strong></p>
+  </div>
+</div>
+
+<script>
+let currentStep=0,selectedPackage='',listingCount=0,testimonialCount=0;
+function selectPackage(pkg,el){document.querySelectorAll('.pkg-card').forEach(c=>{c.classList.remove('selected');c.querySelector('.pkg-check').textContent='';});el.classList.add('selected');el.querySelector('.pkg-check').textContent='✓';selectedPackage=pkg;const isBus=pkg==='business'||pkg==='premium';document.getElementById('listings-section').className='dynamic-section'+(isBus?' show':'');document.getElementById('testimonials-section').className='dynamic-section'+(isBus?' show':'');if(isBus&&listingCount===0)addListing();if(isBus&&testimonialCount===0)addTestimonial();const names={starter:'Starter Website — ₦35,000',business:'Business Website — ₦60,000',premium:'Premium Website — ₦100,000'};document.getElementById('selectedPkgDisplay').value=names[pkg]||'';}
+function pickStyle(el,val){document.querySelectorAll('.style-opt').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');el.querySelector('input').checked=true;}
+function addListing(){listingCount++;const c=document.getElementById('listings-container');const d=document.createElement('div');d.className='listing-item';d.id='listing-'+listingCount;d.innerHTML='<div class="listing-num">Listing #'+listingCount+'</div>'+(listingCount>1?'<button class="remove-btn" onclick="document.getElementById(\\'listing-'+listingCount+'\\').remove()">Remove</button>':'')+'<div class="fields"><div class="field-row"><div class="field"><label>Type</label><input type="text" id="l'+listingCount+'-type" placeholder="e.g. 3-bed flat, Land"></div><div class="field"><label>Location</label><input type="text" id="l'+listingCount+'-location" placeholder="e.g. Lekki Phase 1"></div></div><div class="field-row"><div class="field"><label>Price</label><input type="text" id="l'+listingCount+'-price" placeholder="e.g. ₦5.5m/year"></div><div class="field"><label>Sale or Rent?</label><select id="l'+listingCount+'-sr"><option>For Sale</option><option>For Rent</option><option>Short-let</option></select></div></div><div class="field"><label>Features</label><textarea id="l'+listingCount+'-feat" style="min-height:70px;" placeholder="Bedrooms, bathrooms, amenities..."></textarea></div></div>';c.appendChild(d);}
+function addTestimonial(){testimonialCount++;const c=document.getElementById('testimonials-container');const d=document.createElement('div');d.className='testimonial-item';d.id='testimonial-'+testimonialCount;d.innerHTML=(testimonialCount>1?'<button class="remove-btn" onclick="document.getElementById(\\'testimonial-'+testimonialCount+'\\').remove()">Remove</button>':'')+'<div class="fields"><div class="field-row"><div class="field"><label>Client Name</label><input type="text" id="t'+testimonialCount+'-name" placeholder="e.g. Mrs. Bello"></div><div class="field"><label>Their Profession</label><input type="text" id="t'+testimonialCount+'-role" placeholder="e.g. Business owner"></div></div><div class="field"><label>What They Said</label><textarea id="t'+testimonialCount+'-text" style="min-height:80px;" placeholder="Their exact words or summary..."></textarea></div></div>';c.appendChild(d);}
+function updateProgress(s){const p=Math.round((s/5)*100);document.getElementById('prog-fill').style.width=p+'%';document.getElementById('prog-pct').textContent=p+'%';document.getElementById('prog-text').textContent='Step '+(s+1)+' of 5';document.querySelectorAll('.step-dot').forEach((d,i)=>{d.className='step-dot'+(i===s?' active':i<s?' done':'');});}
+function nextSec(c){if(c===0&&!selectedPackage){alert('Please select a package to continue.');return;}if(c===1){if(!document.getElementById('fullName').value.trim()){alert('Please enter your full name.');return;}if(!document.getElementById('bizName').value.trim()){alert('Please enter your business name.');return;}if(!document.getElementById('whatsapp').value.trim()){alert('Please enter your WhatsApp number.');return;}if(!document.getElementById('location').value.trim()){alert('Please enter your location.');return;}}if(c===2){if(!document.getElementById('bizType').value){alert('Please select your business type.');return;}if(!document.getElementById('bizDesc').value.trim()){alert('Please describe your business.');return;}if(!document.getElementById('services').value.trim()){alert('Please list your services.');return;}}document.getElementById('sec-'+c).classList.remove('active');currentStep=c+1;document.getElementById('sec-'+currentStep).classList.add('active');updateProgress(currentStep);window.scrollTo({top:0,behavior:'smooth'});}
+function prevSec(c){document.getElementById('sec-'+c).classList.remove('active');currentStep=c-1;document.getElementById('sec-'+currentStep).classList.add('active');updateProgress(currentStep);window.scrollTo({top:0,behavior:'smooth'});}
+function collectListings(){const items=document.querySelectorAll('.listing-item');let r='';items.forEach((item,i)=>{const n=item.id.replace('listing-','');const t=document.getElementById('l'+n+'-type')?.value||'';const l=document.getElementById('l'+n+'-location')?.value||'';const p=document.getElementById('l'+n+'-price')?.value||'';const s=document.getElementById('l'+n+'-sr')?.value||'';const f=document.getElementById('l'+n+'-feat')?.value||'';if(t||l||p)r+='\\nListing '+(i+1)+': '+t+' | '+l+' | '+p+' | '+s+'\\nFeatures: '+f+'\\n';});return r||'None';}
+function collectTestimonials(){const items=document.querySelectorAll('.testimonial-item');let r='';items.forEach((item,i)=>{const n=item.id.replace('testimonial-','');const name=document.getElementById('t'+n+'-name')?.value||'';const role=document.getElementById('t'+n+'-role')?.value||'';const text=document.getElementById('t'+n+'-text')?.value||'';if(text)r+='\\n'+(i+1)+'. "'+text+'" — '+name+(role?', '+role:'')+'\\n';});return r||'None';}
+function submitForm(){const pkgNames={starter:'Starter Website — ₦35,000',business:'Business Website — ₦60,000',premium:'Premium Website — ₦100,000'};const style=document.querySelector('input[name="style"]:checked')?.value||'Not selected';const logo=document.querySelector('input[name="logo"]:checked')?.value||'Not answered';const domain=document.querySelector('input[name="domain"]:checked')?.value||'Not answered';const timeline=document.querySelector('input[name="timeline"]:checked')?.value||'Not specified';const msg='🌐 *NEW WEBSITE PROJECT BRIEF*\\n🤝 *Referred by: {{NAME}}*\\n━━━━━━━━━━━━━━━━━━\\n\\n📦 *PACKAGE*\\n'+pkgNames[selectedPackage]+'\\n\\n👤 *CLIENT*\\nName: '+document.getElementById('fullName').value+'\\nBusiness: '+document.getElementById('bizName').value+'\\nWhatsApp: '+document.getElementById('whatsapp').value+'\\nEmail: '+document.getElementById('email').value+'\\nLocation: '+document.getElementById('location').value+'\\nAreas: '+document.getElementById('areas').value+'\\n\\n🏢 *BUSINESS*\\nType: '+document.getElementById('bizType').value+'\\nDescription: '+document.getElementById('bizDesc').value+'\\nServices: '+document.getElementById('services').value+'\\nHours: '+document.getElementById('hours').value+'\\nPayment: '+document.getElementById('payment').value+'\\n\\n🎨 *DESIGN*\\nStyle: '+style+'\\nColours: '+document.getElementById('colors').value+'\\nInspiration: '+document.getElementById('inspiration').value+'\\nLogo: '+logo+'\\nInstagram: '+document.getElementById('instagram').value+'\\nFacebook: '+document.getElementById('facebook').value+'\\n\\n🏠 *LISTINGS*\\n'+collectListings()+'\\n\\n⭐ *TESTIMONIALS*\\n'+collectTestimonials()+'\\n\\n🚀 *FINAL*\\nDomain: '+domain+(domain==='yes'?' — '+(document.getElementById('domainName')?.value||''):'')+'\\nTimeline: '+timeline+'\\nExtra: '+document.getElementById('extra').value+'\\nSubmitted: '+new Date().toLocaleString('en-NG');const waUrl='https://wa.me/2348154857377?text='+encodeURIComponent(msg);document.querySelectorAll('.form-section').forEach(s=>s.classList.remove('active'));document.getElementById('dots').style.display='none';document.getElementById('success').classList.add('active');document.getElementById('prog-fill').style.width='100%';document.getElementById('prog-pct').textContent='100%';document.getElementById('prog-text').textContent='Submitted ✓';window.scrollTo({top:0,behavior:'smooth'});setTimeout(()=>window.open(waUrl,'_blank'),1500);}
+updateProgress(0);
+</scr` + `ipt>
+</body>
+</html>`;
+
+let referrers = JSON.parse(localStorage.getItem('smartbot_referrers') || '[]');
+
+function updatePreview() {
+  const name = document.getElementById('refName').value.trim();
+  document.getElementById('genBtn').disabled = !name;
+  if (name) updateCommission();
+}
+
+function updateCommission() {
+  const name = document.getElementById('refName').value.trim();
+  const rate = parseInt(document.getElementById('commission').value);
+  if (!name) return;
+  const display = document.getElementById('commDisplay');
+  display.className = 'commission-display show';
+  display.innerHTML =
+    `<strong style="color:var(--green);">${name}'s Commission (${rate}%)</strong><br>` +
+    `Starter ₦35,000 → <strong style="color:var(--green);">₦${Math.round(35000*rate/100).toLocaleString()}</strong> per client<br>` +
+    `Business ₦60,000 → <strong style="color:var(--green);">₦${Math.round(60000*rate/100).toLocaleString()}</strong> per client<br>` +
+    `Premium ₦100,000 → <strong style="color:var(--green);">₦${Math.round(100000*rate/100).toLocaleString()}</strong> per client`;
+}
+
+function generateForm() {
+  const name = document.getElementById('refName').value.trim();
+  const rate = document.getElementById('commission').value;
+  if (!name) { alert('Please enter the referrer\'s name.'); return; }
+
+  const slug = name.toLowerCase().replace(/\s+/g, '-');
+
+  // Save to list
+  const exists = referrers.find(r => r.slug === slug);
+  if (!exists) {
+    referrers.push({ name, slug, rate, date: new Date().toLocaleDateString('en-NG') });
+    localStorage.setItem('smartbot_referrers', JSON.stringify(referrers));
+  }
+
+  const netlifyUrl = `https://smartbot-brief-${slug}.netlify.app`;
+  document.getElementById('netlifyLink').textContent = netlifyUrl;
+  document.getElementById('netlifyLinkText').textContent = netlifyUrl;
+  document.getElementById('resultName').textContent = name;
+
+  const waMsg = `Hi ${name}! 😊\n\nHere's your dedicated referral link — share this with anyone you want to refer to SmartBot Builds:\n\n👉 ${netlifyUrl}\n\nWhen a client fills this form — I immediately know they came from you.\n\nYour commission is *${rate}% of every project* that pays in full:\n→ Starter (₦35k) — you earn ₦${Math.round(35000*rate/100).toLocaleString()}\n→ Business (₦60k) — you earn ₦${Math.round(60000*rate/100).toLocaleString()}\n→ Premium (₦100k) — you earn ₦${Math.round(100000*rate/100).toLocaleString()}\n\nCommission paid after client pays their full balance.\n\nLet's get those clients! 🚀\n*Segun — SmartBot Builds*`;
+
+  document.getElementById('waMessage').textContent = waMsg;
+  document.getElementById('result').className = 'result show';
+  renderReferrers();
+  window.scrollTo({ top: document.getElementById('result').offsetTop - 20, behavior: 'smooth' });
+}
+
+let currentName = '';
+function downloadForm() {
+  const name = document.getElementById('refName').value.trim();
+  if (!name) return;
+  currentName = name;
+  const html = BRIEF_TEMPLATE.replace(/\{\{NAME\}\}/g, name);
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'index.html';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function copyText(btn, id) {
+  const text = document.getElementById(id)?.textContent || document.getElementById(id)?.innerText || '';
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function copyWA(btn) {
+  const text = document.getElementById('waMessage').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    setTimeout(() => { btn.textContent = orig; }, 2000);
+  });
+}
+
+function renderReferrers() {
+  const container = document.getElementById('referrersContainer');
+  if (referrers.length === 0) {
+    container.innerHTML = '<p style="font-family:var(--mono);font-size:12px;color:var(--text-dim);">No referrers yet.</p>';
+    return;
+  }
+  container.innerHTML = referrers.map(r => `
+    <div class="referrer-item">
+      <div>
+        <div class="referrer-name">${r.name}</div>
+        <div class="referrer-meta">${r.rate}% commission · Added ${r.date}</div>
+        <div class="referrer-link">smartbot-brief-${r.slug}.netlify.app</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="copy-small" onclick="navigator.clipboard.writeText('https://smartbot-brief-${r.slug}.netlify.app').then(()=>{this.textContent='Copied ✓';setTimeout(()=>this.textContent='Copy Link',2000)})">Copy Link</button>
+        <button class="delete-btn" onclick="deleteReferrer('${r.slug}')">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+function deleteReferrer(slug) {
+  if (confirm('Remove this referrer?')) {
+    referrers = referrers.filter(r => r.slug !== slug);
+    localStorage.setItem('smartbot_referrers', JSON.stringify(referrers));
+    renderReferrers();
+  }
+}
+
+renderReferrers();
+</script>
+
+</body>
+</html>
