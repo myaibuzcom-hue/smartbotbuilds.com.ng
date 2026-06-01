@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Genius Bot Project Brief — SmartBot Builds</title>
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--black:#080c08;--green:#00c853;--green-light:rgba(0,200,83,0.1);--green-border:rgba(0,200,83,0.25);--white:#f5faf5;--grey:#141a14;--grey-mid:#1e271e;--grey-light:#2a352a;--text:#e8f5e8;--text-dim:#7a9e7a;}
+*{box-sizing:border-box;margin:0;padding:0;}html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--text);font-family:'Cabinet Grotesk',sans-serif;min-height:100vh;}
+header{background:rgba(8,12,8,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--green-border);padding:18px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{font-family:'Clash Display',sans-serif;font-size:18px;font-weight:700;color:var(--white);display:flex;align-items:center;gap:8px;}
+.logo span{color:var(--green);}
+.logo-dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.header-tag{font-size:12px;color:var(--text-dim);background:var(--grey-mid);border:1px solid var(--grey-light);padding:6px 14px;border-radius:100px;}
+.hero{padding:60px 40px 40px;text-align:center;position:relative;z-index:1;}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:var(--green-light);border:1px solid var(--green-border);color:var(--green);font-size:11px;font-weight:700;padding:6px 16px;border-radius:100px;margin-bottom:20px;letter-spacing:1px;text-transform:uppercase;}
+.hero h1{font-family:'Clash Display',sans-serif;font-size:clamp(26px,5vw,48px);font-weight:700;line-height:1.1;margin-bottom:14px;letter-spacing:-1px;}
+.hero h1 span{color:var(--green);}
+.hero p{font-size:15px;color:var(--text-dim);max-width:520px;margin:0 auto;line-height:1.7;}
+.progress-wrap{max-width:680px;margin:32px auto 0;}
+.progress-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--text-dim);margin-bottom:8px;}
+.progress-bar{height:4px;background:var(--grey-light);border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--green),#00e676);border-radius:2px;width:0%;transition:width 0.5s ease;}
+.form-wrap{max-width:720px;margin:0 auto;padding:0 40px 100px;position:relative;z-index:1;}
+.step-dots{display:flex;justify-content:center;gap:8px;margin:32px 0 28px;}
+.step-dot{width:8px;height:8px;border-radius:100px;background:var(--grey-light);transition:all 0.3s;}
+.step-dot.active{width:24px;background:var(--green);}
+.step-dot.done{background:rgba(0,200,83,0.35);}
+.form-section{display:none;animation:fadeUp 0.35s ease;}
+.form-section.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.section-card{background:var(--grey);border:1px solid rgba(255,255,255,0.05);border-radius:20px;padding:32px;margin-bottom:16px;}
+.section-head{display:flex;align-items:center;gap:14px;margin-bottom:26px;padding-bottom:18px;border-bottom:1px solid rgba(255,255,255,0.05);flex-wrap:wrap;}
+.section-icon{width:44px;height:44px;background:var(--green-light);border:1px solid var(--green-border);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.section-head h2{font-family:'Clash Display',sans-serif;font-size:19px;font-weight:700;margin-bottom:2px;}
+.section-head p{font-size:13px;color:var(--text-dim);}
+.step-badge{margin-left:auto;font-size:11px;color:var(--text-dim);background:var(--grey-mid);border:1px solid var(--grey-light);padding:4px 10px;border-radius:100px;white-space:nowrap;}
+.fields{display:flex;flex-direction:column;gap:18px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.field{display:flex;flex-direction:column;gap:7px;}
+.field label{font-size:13px;font-weight:700;display:flex;align-items:center;gap:5px;}
+.req{color:var(--green);font-size:15px;line-height:1;}
+.field input,.field textarea,.field select{background:var(--grey-mid);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:13px 15px;color:var(--text);font-family:'Cabinet Grotesk',sans-serif;font-size:14px;outline:none;width:100%;transition:all 0.2s;}
+.field input::placeholder,.field textarea::placeholder{color:var(--text-dim);opacity:0.55;}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--green);background:rgba(0,200,83,0.04);box-shadow:0 0 0 3px rgba(0,200,83,0.07);}
+.field select option{background:var(--grey-mid);}
+.field textarea{min-height:100px;resize:vertical;line-height:1.6;}
+.hint{font-size:12px;color:var(--text-dim);margin-top:-3px;}
+.check-group{display:flex;flex-direction:column;gap:8px;}
+.check-item{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--grey-mid);border:1px solid rgba(255,255,255,0.05);border-radius:10px;cursor:pointer;transition:all 0.2s;user-select:none;}
+.check-item:hover{border-color:var(--green-border);background:var(--green-light);}
+.check-item input{width:16px!important;height:16px!important;accent-color:var(--green);flex-shrink:0;padding:0!important;}
+.check-item span{font-size:13px;}
+.check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.pkg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.pkg-card{background:var(--grey-mid);border:2px solid rgba(255,255,255,0.06);border-radius:14px;padding:20px 16px;cursor:pointer;transition:all 0.25s;position:relative;user-select:none;}
+.pkg-card:hover{border-color:var(--green-border);}
+.pkg-card.selected{border-color:var(--green);background:rgba(0,200,83,0.07);}
+.pkg-card input{display:none;}
+.pkg-check{position:absolute;top:12px;right:12px;width:20px;height:20px;border:2px solid rgba(255,255,255,0.15);border-radius:50%;transition:all 0.2s;display:flex;align-items:center;justify-content:center;font-size:11px;}
+.pkg-card.selected .pkg-check{background:var(--green);border-color:var(--green);color:#000;font-weight:900;}
+.pkg-emoji{font-size:28px;margin-bottom:10px;}
+.pkg-name{font-family:'Clash Display',sans-serif;font-size:14px;font-weight:700;margin-bottom:6px;}
+.pkg-price{font-family:'Clash Display',sans-serif;font-size:22px;font-weight:700;color:var(--green);margin-bottom:2px;}
+.pkg-days{display:inline-flex;align-items:center;gap:4px;background:var(--green-light);color:var(--green);font-size:10px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:12px;}
+.pkg-features{list-style:none;display:flex;flex-direction:column;gap:5px;}
+.pkg-features li{font-size:11px;color:var(--text-dim);padding-left:14px;position:relative;}
+.pkg-features li::before{content:'✓';position:absolute;left:0;color:var(--green);font-weight:700;}
+.pkg-popular{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--green);color:#000;font-size:9px;font-weight:700;padding:3px 12px;border-radius:100px;white-space:nowrap;}
+.info-note{background:rgba(0,200,83,0.06);border:1px solid rgba(0,200,83,0.2);border-radius:10px;padding:12px 16px;font-size:12px;color:var(--green);margin-bottom:18px;line-height:1.7;}
+.form-nav{display:flex;justify-content:space-between;align-items:center;margin-top:24px;gap:12px;}
+.btn-back{background:transparent;border:1px solid rgba(255,255,255,0.1);color:var(--text-dim);padding:13px 22px;border-radius:100px;font-family:'Cabinet Grotesk',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.btn-back:hover{border-color:rgba(255,255,255,0.25);color:var(--text);}
+.btn-next{background:var(--green);border:none;color:#000;padding:13px 30px;border-radius:100px;font-family:'Cabinet Grotesk',sans-serif;font-size:14px;font-weight:800;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:8px;margin-left:auto;}
+.btn-next:hover{background:#00e676;transform:translateY(-2px);}
+.btn-submit{background:var(--green);border:none;color:#000;padding:15px 34px;border-radius:100px;font-family:'Cabinet Grotesk',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:10px;margin-left:auto;}
+.btn-submit:hover{background:#00e676;transform:translateY(-2px);}
+.success{display:none;text-align:center;padding:80px 30px;max-width:520px;margin:0 auto;}
+.success.active{display:block;}
+.success-icon{font-size:65px;margin-bottom:22px;}
+.success h2{font-family:'Clash Display',sans-serif;font-size:30px;font-weight:700;margin-bottom:14px;letter-spacing:-0.5px;}
+.success p{font-size:15px;color:var(--text-dim);line-height:1.7;margin-bottom:28px;}
+.success-btn{display:inline-flex;align-items:center;gap:10px;background:#25d366;color:#fff;padding:15px 30px;border-radius:100px;font-size:15px;font-weight:800;text-decoration:none;}
+@media(max-width:600px){header{padding:14px 18px;}.hero{padding:40px 18px 30px;}.form-wrap{padding:0 18px 80px;}.section-card{padding:22px 18px;}.pkg-grid{grid-template-columns:1fr;}.field-row{grid-template-columns:1fr;}.check-grid{grid-template-columns:1fr;}.step-badge{display:none;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><div class="logo-dot"></div>Smart<span>Bot</span> Builds</div>
+  <div class="header-tag">Genius Bot Project Brief</div>
+</header>
+<div class="hero">
+  <div class="hero-tag"><div class="logo-dot"></div>AI WhatsApp Bot Setup</div>
+  <h1>Let's Build Your<br><span>Genius Bot</span></h1>
+  <p>Fill in the details below so we can build an AI WhatsApp bot perfectly trained for your business. Takes 5-8 minutes.</p>
+  <div class="progress-wrap">
+    <div class="progress-labels"><span id="prog-text">Step 1 of 4</span><span id="prog-pct">0%</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+  </div>
+</div>
+<div class="step-dots" id="dots">
+  <div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div>
+</div>
+<div class="form-wrap">
+  <!-- STEP 0: PACKAGE -->
+  <div class="form-section active" id="sec-0">
+    <div class="section-card">
+      <div class="section-head"><div class="section-icon">🤖</div><div><h2>Choose Your Package</h2><p>Select the Genius Bot package that fits your business</p></div><div class="step-badge">Step 1 of 4</div></div>
+      <div class="info-note">💡 All packages include a custom AI bot trained specifically on your business. No monthly fees ever.</div>
+      <div class="pkg-grid">
+        <div class="pkg-card" id="pkg-starter" onclick="selectPkg('starter',this)">
+          <input type="radio" name="package" value="starter"><div class="pkg-check"></div>
+          <div class="pkg-emoji">🥉</div><div class="pkg-name">Starter Bot</div>
+          <div class="pkg-price">₦50,000</div><div class="pkg-days">⏱ 7 days</div>
+          <ul class="pkg-features"><li>AI replies to any message</li><li>FAQ handling</li><li>Basic order taking</li><li>Trained on your products</li><li>7 days free edits</li></ul>
+        </div>
+        <div class="pkg-card" id="pkg-business" onclick="selectPkg('business',this)">
+          <div class="pkg-popular">MOST POPULAR</div>
+          <input type="radio" name="package" value="business"><div class="pkg-check"></div>
+          <div class="pkg-emoji">🥈</div><div class="pkg-name">Business Bot</div>
+          <div class="pkg-price">₦100,000</div><div class="pkg-days">⏱ 10 days</div>
+          <ul class="pkg-features"><li>Everything in Starter</li><li>Lead follow-up</li><li>Multi-language support</li><li>Brand voice training</li><li>Priority delivery</li></ul>
+        </div>
+        <div class="pkg-card" id="pkg-pro" onclick="selectPkg('pro',this)">
+          <input type="radio" name="package" value="pro"><div class="pkg-check"></div>
+          <div class="pkg-emoji">🥇</div><div class="pkg-name">Pro Bot</div>
+          <div class="pkg-price">₦200,000</div><div class="pkg-days">⏱ 14 days</div>
+          <ul class="pkg-features"><li>Everything in Business</li><li>CRM integration</li><li>Analytics & reporting</li><li>Unlimited flows</li><li>Priority support</li></ul>
+        </div>
+      </div>
+    </div>
+    <div class="form-nav"><button class="btn-next" onclick="nextSec(0)">Continue →</button></div>
+  </div>
+
+  <!-- STEP 1: PERSONAL & BUSINESS INFO -->
+  <div class="form-section" id="sec-1">
+    <div class="section-card">
+      <div class="section-head"><div class="section-icon">👤</div><div><h2>About You & Your Business</h2><p>Your contact and business details</p></div><div class="step-badge">Step 2 of 4</div></div>
+      <div class="fields">
+        <div class="field-row">
+          <div class="field"><label>Full Name <span class="req">*</span></label><input type="text" id="fullName" placeholder="e.g. Chioma Okafor"></div>
+          <div class="field"><label>Business Name <span class="req">*</span></label><input type="text" id="bizName" placeholder="e.g. Luxe Boutique"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Your WhatsApp Number <span class="req">*</span></label><input type="tel" id="whatsapp" placeholder="e.g. 08012345678"></div>
+          <div class="field"><label>Bot WhatsApp Number <span class="req">*</span></label><input type="tel" id="botNumber" placeholder="Dedicated SIM for the bot"></div>
+        </div>
+        <p class="hint" style="margin-top:-8px;">📱 The bot number must be a dedicated SIM — separate from your personal number. Any network, costs about ₦200.</p>
+        <div class="field-row">
+          <div class="field"><label>Email Address</label><input type="email" id="email" placeholder="e.g. chioma@gmail.com"></div>
+          <div class="field"><label>Business Location <span class="req">*</span></label><input type="text" id="location" placeholder="e.g. Lagos, Nigeria"></div>
+        </div>
+        <div class="field"><label>Type of Business <span class="req">*</span></label>
+          <select id="bizType"><option value="">Select...</option><option>Fashion / Boutique / Clothing</option><option>Food / Restaurant / Catering</option><option>Real Estate / Property</option><option>Beauty / Salon / Spa</option><option>Electronics / Gadgets</option><option>Education / Training</option><option>Healthcare / Pharmacy</option><option>Events / Photography</option><option>Logistics / Delivery</option><option>E-commerce / Online Store</option><option>Consulting / Professional Services</option><option>Other</option></select>
+        </div>
+        <div class="field"><label>Describe your business in 2-3 sentences <span class="req">*</span></label><textarea id="bizDesc" placeholder="e.g. We sell women's fashion — clothing, shoes and accessories. We operate online and deliver across Nigeria. Customers contact us via WhatsApp to order..."></textarea></div>
+      </div>
+    </div>
+    <div class="form-nav"><button class="btn-back" onclick="prevSec(1)">← Back</button><button class="btn-next" onclick="nextSec(1)">Continue →</button></div>
+  </div>
+
+  <!-- STEP 2: BOT TRAINING INFO -->
+  <div class="form-section" id="sec-2">
+    <div class="section-card">
+      <div class="section-head"><div class="section-icon">🧠</div><div><h2>Train Your Bot</h2><p>The more detail you give, the smarter your bot will be</p></div><div class="step-badge">Step 3 of 4</div></div>
+      <div class="fields">
+        <div class="field"><label>List ALL your products or services with prices <span class="req">*</span></label><textarea id="products" style="min-height:120px;" placeholder="List everything your customers can buy. Include prices.&#10;e.g.&#10;— Red floral dress: ₦15,000&#10;— Blue denim jeans: ₦12,000&#10;— Free delivery on orders above ₦30,000"></textarea><p class="hint">Be as detailed as possible — this is what the bot will tell customers</p></div>
+        <div class="field"><label>Top 10 questions customers ask — and your answers <span class="req">*</span></label><textarea id="faqs" style="min-height:160px;" placeholder="Write each question and your ideal answer.&#10;e.g.&#10;Q: Do you deliver to Abuja?&#10;A: Yes! Delivery takes 2-3 days and costs ₦3,500&#10;&#10;Q: What payment methods do you accept?&#10;A: Bank transfer, Opay and Palmpay&#10;&#10;Q: Can I return an item?&#10;A: Yes, within 48 hours if unused..."></textarea></div>
+        <div class="field-row">
+          <div class="field"><label>Working hours <span class="req">*</span></label><input type="text" id="hours" placeholder="e.g. Mon-Sat, 8am-9pm"></div>
+          <div class="field"><label>Delivery/service areas <span class="req">*</span></label><input type="text" id="areas" placeholder="e.g. Lagos, Abuja, PH, nationwide"></div>
+        </div>
+        <div class="field"><label>Payment methods accepted <span class="req">*</span></label><input type="text" id="payment" placeholder="e.g. Bank transfer, Opay, Palmpay, cash on delivery"></div>
+        <div class="field"><label>What tone should the bot use?</label>
+          <div class="check-group">
+            <label class="check-item"><input type="radio" name="tone" value="friendly-casual"> <span>Friendly and casual — like chatting with a friend</span></label>
+            <label class="check-item"><input type="radio" name="tone" value="professional"> <span>Professional and formal</span></label>
+            <label class="check-item"><input type="radio" name="tone" value="mix"> <span>A mix — warm but professional</span></label>
+          </div>
+        </div>
+        <div class="field"><label>Languages your customers use</label>
+          <div class="check-grid">
+            <label class="check-item"><input type="checkbox" name="lang" value="english"> <span>English</span></label>
+            <label class="check-item"><input type="checkbox" name="lang" value="pidgin"> <span>Nigerian Pidgin</span></label>
+            <label class="check-item"><input type="checkbox" name="lang" value="yoruba"> <span>Yoruba</span></label>
+            <label class="check-item"><input type="checkbox" name="lang" value="igbo"> <span>Igbo</span></label>
+            <label class="check-item"><input type="checkbox" name="lang" value="hausa"> <span>Hausa</span></label>
+            <label class="check-item"><input type="checkbox" name="lang" value="mix"> <span>Mix of all</span></label>
+          </div>
+        </div>
+        <div class="field"><label>Anything the bot should NEVER say or do?</label><textarea id="neverSay" style="min-height:70px;" placeholder="e.g. Never mention competitor prices. Never promise delivery in less than 24 hours..."></textarea></div>
+        <div class="field"><label>Anything the bot should ALWAYS mention?</label><textarea id="alwaysSay" style="min-height:70px;" placeholder="e.g. Always mention free delivery on orders above ₦50,000..."></textarea></div>
+      </div>
+    </div>
+    <div class="form-nav"><button class="btn-back" onclick="prevSec(2)">← Back</button><button class="btn-next" onclick="nextSec(2)">Continue →</button></div>
+  </div>
+
+  <!-- STEP 3: FINAL DETAILS -->
+  <div class="form-section" id="sec-3">
+    <div class="section-card">
+      <div class="section-head"><div class="section-icon">🚀</div><div><h2>Final Details</h2><p>Almost done!</p></div><div class="step-badge">Step 4 of 4</div></div>
+      <div class="fields">
+        <div class="field"><label>Your selected package</label><input type="text" id="selectedPkgDisplay" readonly style="color:var(--green);font-weight:700;cursor:default;"></div>
+        <div class="field"><label>When do you need it ready?</label>
+          <div class="check-group">
+            <label class="check-item"><input type="radio" name="timeline" value="asap"> <span>As soon as possible</span></label>
+            <label class="check-item"><input type="radio" name="timeline" value="2weeks"> <span>Within 2 weeks</span></label>
+            <label class="check-item"><input type="radio" name="timeline" value="flexible"> <span>Flexible — no rush</span></label>
+          </div>
+        </div>
+        <div class="field"><label>Brand name/style for the bot to follow?</label><textarea id="branding" style="min-height:70px;" placeholder="e.g. Our brand is Luxe Boutique. We use pink and gold. Our tagline is 'Fashion for the Bold.'"></textarea></div>
+        <div class="field"><label>Anything else we should know?</label><textarea id="extra" style="min-height:80px;" placeholder="Any special requirements or instructions for your bot..."></textarea></div>
+        <div class="field"><label>How did you hear about SmartBot Builds?</label>
+          <select id="referral"><option value="">Select...</option><option>Referral from a friend</option><option>Facebook</option><option>Instagram</option><option>WhatsApp</option><option>Flyer</option><option>Google search</option><option>Other</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="form-nav"><button class="btn-back" onclick="prevSec(3)">← Back</button><button class="btn-submit" onclick="submitForm()">Submit Brief 🚀</button></div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success" id="success">
+    <div class="success-icon">🎉</div>
+    <h2>Brief Received!</h2>
+    <p>Thank you! Segun will review your brief and reach out within 24 hours to get your Genius Bot started.</p>
+    <div style="background:rgba(0,200,83,0.08);border:1px solid rgba(0,200,83,0.25);border-radius:14px;padding:18px 20px;margin-bottom:24px;text-align:left;">
+      <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:10px;">📱 Next Step — Get Your Bot SIM Ready</div>
+      <div style="font-size:13px;color:var(--text-dim);line-height:1.8;">Buy a dedicated SIM card (any network) for your bot number. This SIM is used <strong style="color:var(--text);">only</strong> for your WhatsApp bot. Cost: approximately <strong style="color:var(--green);">₦200</strong> from any phone shop.</div>
+    </div>
+    <a href="https://wa.me/2348154857377?text=Hi Segun! I just submitted my Genius Bot brief." target="_blank" class="success-btn">💬 WhatsApp Segun Now</a>
+    <p style="margin-top:18px;font-size:13px;color:var(--text-dim);">Or call/WhatsApp: <strong style="color:var(--green);">08154857377</strong></p>
+  </div>
+</div>
+
+<script>
+let currentStep = 0, selectedPackage = '';
+
+// ── Helpers ──────────────────────────────────────────────
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  el.style.borderColor = '#ff3d57';
+  el.style.boxShadow = '0 0 0 3px rgba(255,61,87,0.12)';
+  let err = el.parentElement.querySelector('.field-error');
+  if (!err) { err = document.createElement('p'); err.className = 'field-error'; err.style.cssText = 'color:#ff3d57;font-size:12px;margin-top:4px;'; el.parentElement.appendChild(err); }
+  err.textContent = msg;
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+function clearError(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.borderColor = '';
+  el.style.boxShadow = '';
+  const err = el.parentElement.querySelector('.field-error');
+  if (err) err.remove();
+}
+function val(id) { return document.getElementById(id).value.trim(); }
+function isValidNigerianPhone(p) { return /^(\+234|234|0)[789][01]\d{8}$/.test(p.replace(/\s/g,'')); }
+function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+function hasRubbish(str) {
+  // Reject if less than 3 chars, all same character, only symbols, or repeating pattern like "aaa" or "123"
+  if (str.length < 3) return true;
+  if (/^(.)\1+$/.test(str)) return true; // all same char e.g. "aaaa"
+  if (/^[^a-zA-Z0-9₦]+$/.test(str)) return true; // only symbols
+  if (/^(abc|xyz|123|test|asdf|qwerty|none|n\/a|na|nil|no|yes)$/i.test(str)) return true;
+  return false;
+}
+function hasMinWords(str, min) { return str.trim().split(/\s+/).filter(w => w.length > 1).length >= min; }
+
+// Add live clearing of errors on input
+document.addEventListener('input', e => { if (e.target.id) clearError(e.target.id); });
+
+// ── Package selection ─────────────────────────────────────
+function selectPkg(pkg, el) {
+  document.querySelectorAll('.pkg-card').forEach(c => { c.classList.remove('selected'); c.querySelector('.pkg-check').textContent = ''; });
+  el.classList.add('selected');
+  el.querySelector('.pkg-check').textContent = '✓';
+  selectedPackage = pkg;
+  const names = { starter: 'Starter Bot — ₦50,000', business: 'Business Bot — ₦100,000', pro: 'Pro Bot — ₦200,000' };
+  document.getElementById('selectedPkgDisplay').value = names[pkg] || '';
+}
+
+// ── Progress ──────────────────────────────────────────────
+function updateProgress(s) {
+  const pct = Math.round((s / 4) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-text').textContent = 'Step ' + (s + 1) + ' of 4';
+  document.querySelectorAll('.step-dot').forEach((d, i) => {
+    d.className = 'step-dot' + (i === s ? ' active' : i < s ? ' done' : '');
+  });
+}
+
+// ── Navigation ────────────────────────────────────────────
+function nextSec(cur) {
+  if (cur === 0) {
+    if (!selectedPackage) { alert('Please select a Genius Bot package to continue.'); return; }
+  }
+
+  if (cur === 1) {
+    let ok = true;
+
+    // Full name — at least 2 words, no rubbish
+    const name = val('fullName');
+    if (!name || hasRubbish(name) || !hasMinWords(name, 2)) {
+      showError('fullName', 'Please enter your real full name (first and last name).'); ok = false;
+    }
+
+    // Business name — at least 2 chars, no rubbish
+    const biz = val('bizName');
+    if (!biz || hasRubbish(biz)) {
+      showError('bizName', 'Please enter your real business name.'); ok = false;
+    }
+
+    // WhatsApp — valid Nigerian number
+    const wa = val('whatsapp');
+    if (!wa || !isValidNigerianPhone(wa)) {
+      showError('whatsapp', 'Please enter a valid Nigerian phone number e.g. 08012345678.'); ok = false;
+    }
+
+    // Bot number — valid Nigerian number, different from personal number
+    const bot = val('botNumber');
+    if (!bot || !isValidNigerianPhone(bot)) {
+      showError('botNumber', 'Please enter a valid Nigerian number for the bot SIM.'); ok = false;
+    } else if (bot.replace(/\s/g,'') === wa.replace(/\s/g,'')) {
+      showError('botNumber', 'The bot SIM number must be different from your personal WhatsApp number.'); ok = false;
+    }
+
+    // Email — optional but if filled must be valid
+    const email = val('email');
+    if (email && !isValidEmail(email)) {
+      showError('email', 'Please enter a valid email address.'); ok = false;
+    }
+
+    // Location — at least 3 chars, not rubbish
+    const loc = val('location');
+    if (!loc || hasRubbish(loc)) {
+      showError('location', 'Please enter your city and state e.g. Lagos, Nigeria.'); ok = false;
+    }
+
+    // Business type
+    if (!document.getElementById('bizType').value) {
+      showError('bizType', 'Please select your type of business.'); ok = false;
+    }
+
+    // Business description — at least 15 words
+    const desc = val('bizDesc');
+    if (!desc || !hasMinWords(desc, 15)) {
+      showError('bizDesc', 'Please describe your business properly — at least 15 words.'); ok = false;
+    }
+
+    if (!ok) return;
+  }
+
+  if (cur === 2) {
+    let ok = true;
+
+    // Products — must mention at least one price (₦ or naira or number)
+    const products = val('products');
+    if (!products || !hasMinWords(products, 10)) {
+      showError('products', 'Please list your products/services in detail — at least 10 words.'); ok = false;
+    } else if (!/[₦\d]/.test(products)) {
+      showError('products', 'Please include prices for your products/services e.g. ₦5,000.'); ok = false;
+    }
+
+    // FAQs — must have at least one Q and A pattern
+    const faqs = val('faqs');
+    if (!faqs || !hasMinWords(faqs, 20)) {
+      showError('faqs', 'Please provide at least 3 questions and answers — minimum 20 words.'); ok = false;
+    }
+
+    // Working hours
+    const hours = val('hours');
+    if (!hours || hasRubbish(hours)) {
+      showError('hours', 'Please enter your working hours e.g. Mon-Sat 9am-6pm.'); ok = false;
+    }
+
+    // Delivery areas
+    const areas = val('areas');
+    if (!areas || hasRubbish(areas)) {
+      showError('areas', 'Please enter your delivery or service areas.'); ok = false;
+    }
+
+    // Payment methods
+    const payment = val('payment');
+    if (!payment || hasRubbish(payment)) {
+      showError('payment', 'Please enter your payment methods e.g. Bank transfer, Opay.'); ok = false;
+    }
+
+    if (!ok) return;
+  }
+
+  document.getElementById('sec-' + cur).classList.remove('active');
+  currentStep = cur + 1;
+  document.getElementById('sec-' + currentStep).classList.add('active');
+  updateProgress(currentStep);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function prevSec(cur) {
+  document.getElementById('sec-' + cur).classList.remove('active');
+  currentStep = cur - 1;
+  document.getElementById('sec-' + currentStep).classList.add('active');
+  updateProgress(currentStep);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Submit ────────────────────────────────────────────────
+function submitForm() {
+  let ok = true;
+
+  // Timeline
+  if (!document.querySelector('input[name="timeline"]:checked')) {
+    alert('Please select when you need the bot ready.'); ok = false;
+  }
+
+  if (!ok) return;
+
+  const langs = [...document.querySelectorAll('input[name="lang"]:checked')].map(l => l.value).join(', ') || 'Not specified';
+  const tone = document.querySelector('input[name="tone"]:checked')?.value || 'Not selected';
+  const timeline = document.querySelector('input[name="timeline"]:checked')?.value || 'Not specified';
+  const pkgNames = { starter: 'Starter Bot — ₦50,000', business: 'Business Bot — ₦100,000', pro: 'Pro Bot — ₦200,000' };
+
+  const msg =
+`🤖 *NEW GENIUS BOT PROJECT BRIEF*
+━━━━━━━━━━━━━━━━━━
+
+📦 *PACKAGE*
+${pkgNames[selectedPackage]}
+
+👤 *CLIENT DETAILS*
+Name: ${val('fullName')}
+Business: ${val('bizName')}
+WhatsApp: ${val('whatsapp')}
+Email: ${val('email') || 'Not provided'}
+Location: ${val('location')}
+Bot Number: ${val('botNumber')}
+
+🏢 *BUSINESS INFO*
+Type: ${document.getElementById('bizType').value}
+Description: ${val('bizDesc')}
+
+🧠 *BOT TRAINING*
+Products/Services & Prices:
+${val('products')}
+
+Top FAQs:
+${val('faqs')}
+
+Working Hours: ${val('hours')}
+Delivery Areas: ${val('areas')}
+Payment Methods: ${val('payment')}
+Bot Tone: ${tone}
+Languages: ${langs}
+Never Say: ${val('neverSay') || 'Nothing specified'}
+Always Say: ${val('alwaysSay') || 'Nothing specified'}
+
+🚀 *FINAL DETAILS*
+Timeline: ${timeline}
+Branding: ${val('branding') || 'Not specified'}
+Additional Info: ${val('extra') || 'None'}
+Referral: ${document.getElementById('referral').value || 'Not specified'}
+
+Submitted: ${new Date().toLocaleString('en-NG')}`;
+
+  const waUrl = `https://wa.me/2348154857377?text=${encodeURIComponent(msg)}`;
+  document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('dots').style.display = 'none';
+  document.getElementById('success').classList.add('active');
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('prog-pct').textContent = '100%';
+  document.getElementById('prog-text').textContent = 'Submitted ✓';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(() => window.open(waUrl, '_blank'), 1500);
+}
+
+updateProgress(0);
+</script>
+</body>
+</html>
