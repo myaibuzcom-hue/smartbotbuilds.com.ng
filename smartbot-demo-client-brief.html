@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quick Client Brief – SmartBot Builds</title>
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: #080c08;
+  font-family: 'Cabinet Grotesk', sans-serif;
+  color: #e8f5e8;
+  padding: 40px 20px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.container {
+  max-width: 580px;
+  width: 100%;
+  background: #141a14;
+  border: 1px solid rgba(0,200,83,0.2);
+  border-radius: 32px;
+  padding: 32px 28px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+.logo {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.logo span { color: #00c853; }
+.logo-dot {
+  width: 8px;
+  height: 8px;
+  background: #00c853;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+h1 {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  margin: 16px 0 8px;
+  letter-spacing: -0.5px;
+}
+h1 span { color: #00c853; }
+.sub {
+  color: #7a9e7a;
+  font-size: 14px;
+  margin-bottom: 28px;
+  border-left: 3px solid #00c853;
+  padding-left: 12px;
+}
+.field {
+  margin-bottom: 22px;
+}
+label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.required:after {
+  content: " *";
+  color: #ff6b6b;
+}
+input, textarea {
+  width: 100%;
+  background: #1e271e;
+  border: 1px solid #2a352a;
+  border-radius: 14px;
+  padding: 14px 16px;
+  color: #e8f5e8;
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+input:focus, textarea:focus {
+  outline: none;
+  border-color: #00c853;
+  background: #0f140f;
+}
+textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+.hint {
+  font-size: 11px;
+  color: #7a9e7a;
+  margin-top: 5px;
+}
+button {
+  background: #00c853;
+  border: none;
+  width: 100%;
+  padding: 16px;
+  border-radius: 100px;
+  font-weight: 800;
+  font-size: 16px;
+  color: #080c08;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+button:hover {
+  background: #00e676;
+  transform: translateY(-2px);
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.error {
+  color: #ff6b6b;
+  font-size: 12px;
+  margin-top: 5px;
+  display: none;
+}
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 16px;
+  color: #7a9e7a;
+  font-size: 12px;
+}
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: #2a352a;
+}
+.footer {
+  text-align: center;
+  font-size: 12px;
+  color: #7a9e7a;
+  margin-top: 28px;
+}
+.success-msg {
+  display: none;
+  background: #1a4d2e;
+  color: #b9f5c8;
+  padding: 16px;
+  border-radius: 12px;
+  margin-top: 20px;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="logo">
+    <div class="logo-dot"></div>
+    Smart<span>Bot</span> Builds
+  </div>
+  <h1>Quick <span>Client Brief</span></h1>
+  <div class="sub">Answer 5 simple questions to get your DEMO AI WhatsApp bot ready</div>
+
+  <form id="briefForm">
+    <div class="field">
+      <label class="required">1. What products/services do you sell?</label>
+      <textarea id="q1" rows="2" placeholder="e.g., Picture frames, canvas prints, business cards, banners, custom framing..."></textarea>
+      <div class="hint">Be specific – this is what your bot will talk about.</div>
+    </div>
+
+    <div class="field">
+      <label class="required">2. What are your prices? (list common ones)</label>
+      <textarea id="q2" rows="3" placeholder="e.g., A4 frame: ₦3,500&#10;A3 frame: ₦5,500&#10;Canvas print 12x18: ₦15,000&#10;Business cards (100): ₦10,000"></textarea>
+      <div class="hint">Include at least 3-5 common items with prices.</div>
+    </div>
+
+    <div class="field">
+      <label class="required">3. What areas do you deliver to?</label>
+      <input type="text" id="q3" placeholder="e.g., Lagos (Lekki, Ikeja, VI), Abuja, nationwide delivery">
+    </div>
+
+    <div class="field">
+      <label class="required">4. What's your delivery fee?</label>
+      <input type="text" id="q4" placeholder="e.g., ₦2,000 within Lagos, ₦5,000 outside Lagos, free on orders above ₦30,000">
+    </div>
+
+    <div class="field">
+      <label class="required">5. What's your phone number for customer support?</label>
+      <input type="tel" id="q5" placeholder="e.g., 08154857377">
+      <div class="hint">If the bot can't answer, customers will be told to call this number.</div>
+    </div>
+
+    <button type="submit" id="submitBtn">📋 Submit Brief →</button>
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span>No payment needed yet</span>
+      <div class="divider-line"></div>
+    </div>
+    <div class="footer">Your answers will be sent securely to SmartBot Builds.</div>
+  </form>
+  <div id="successMsg" class="success-msg">✅ Brief submitted successfully! Segun will reach out within 24 hours.</div>
+</div>
+
+<script>
+  const form = document.getElementById('briefForm');
+  const btn = document.getElementById('submitBtn');
+  const successMsg = document.getElementById('successMsg');
+  const fields = ['q1', 'q2', 'q3', 'q4', 'q5'];
+  const errorDivs = {};
+
+  // Create error divs dynamically
+  fields.forEach(id => {
+    const input = document.getElementById(id);
+    const errDiv = document.createElement('div');
+    errDiv.className = 'error';
+    errDiv.id = `error_${id}`;
+    input.parentNode.insertBefore(errDiv, input.nextSibling);
+    errorDivs[id] = errDiv;
+  });
+
+  function validate() {
+    let valid = true;
+    fields.forEach(id => {
+      const val = document.getElementById(id).value.trim();
+      const errDiv = errorDivs[id];
+      if (!val) {
+        errDiv.textContent = 'This field is required.';
+        errDiv.style.display = 'block';
+        valid = false;
+      } else {
+        errDiv.style.display = 'none';
+      }
+    });
+    const phone = document.getElementById('q5').value.trim();
+    if (phone && !/^[0-9]{10,14}$/.test(phone.replace(/\D/g, ''))) {
+      errorDivs['q5'].textContent = 'Enter a valid phone number (digits only, 10-14 digits).';
+      errorDivs['q5'].style.display = 'block';
+      valid = false;
+    }
+    return valid;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Submitting...';
+
+    const answers = {
+      products: document.getElementById('q1').value.trim(),
+      prices: document.getElementById('q2').value.trim(),
+      areas: document.getElementById('q3').value.trim(),
+      delivery_fee: document.getElementById('q4').value.trim(),
+      support_phone: document.getElementById('q5').value.trim()
+    };
+
+    const payload = {
+      form_type: 'demo',
+      answers: answers,
+      client_phone: document.getElementById('q5').value.trim() // using support phone as client phone
+    };
+
+    try {
+      const response = await fetch('https://smartbot-genius-bot.myaibuzcom-hue.deno.net/api/submit-brief', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json();
+      if (data.success) {
+        successMsg.style.display = 'block';
+        form.reset();
+        fields.forEach(id => { errorDivs[id].style.display = 'none'; });
+        btn.innerHTML = '✅ Submitted!';
+        setTimeout(() => { btn.innerHTML = '📋 Submit Brief →'; btn.disabled = false; }, 3000);
+      } else {
+        alert('Error: ' + data.error);
+        btn.innerHTML = '📋 Submit Brief →';
+        btn.disabled = false;
+      }
+    } catch (err) {
+      alert('Network error. Please try again.');
+      btn.innerHTML = '📋 Submit Brief →';
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
