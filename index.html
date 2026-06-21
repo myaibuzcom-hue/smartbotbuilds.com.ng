@@ -232,7 +232,25 @@ nav {
   border-color: var(--green);
   color: var(--green);
 }
-
+.btn-demo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #ff9100;
+  color: #fff;
+  padding: 16px 28px;
+  border-radius: 100px;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s;
+  box-shadow: 0 0 30px rgba(255,145,0,0.3);
+}
+.btn-demo:hover {
+  background: #ff6f00;
+  transform: translateY(-2px);
+  box-shadow: 0 0 50px rgba(255,145,0,0.4);
+}
 .hero-stats {
   display: flex;
   gap: 32px;
@@ -929,13 +947,16 @@ footer {
           We build custom AI WhatsApp bots that understand your customers, answer their questions, take orders, and follow up leads — automatically. Never miss a sale again.
         </p>
         <div class="hero-btns">
-          <a href="https://wa.me/2347055403967?text=I'm interested in a WhatsApp bot for my business" target="_blank" class="btn-primary">
-            💬 Chat With Us Now
-          </a>
-          <a href="#pricing" class="btn-secondary">
-            See Pricing →
-          </a>
-        </div>
+  <a href="https://wa.me/2347055403967?text=I'm interested in a WhatsApp bot for my business" target="_blank" class="btn-primary">
+    💬 Chat With Us Now
+  </a>
+  <a href="https://wa.me/2347055403967?text=I want to test the SmartBot demo" target="_blank" class="btn-demo">
+    🧪 Try Demo Bot
+  </a>
+  <a href="#pricing" class="btn-secondary">
+    See Pricing →
+  </a>
+</div>
         <div class="hero-stats">
           <div class="stat-item">
             <div class="stat-num">24/7</div>
