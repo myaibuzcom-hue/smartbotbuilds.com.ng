@@ -862,9 +862,11 @@ footer {
 /* WHATSAPP FLOAT */
 .wa-float {
   position: fixed;
-  bottom: 30px; right: 30px;
-  z-index: 200;
-  width: 60px; height: 60px;
+  bottom: 30px;
+  right: 30px;
+  z-index: 999;
+  width: 60px;
+  height: 60px;
   background: var(--wa-green);
   border-radius: 50%;
   display: flex;
@@ -876,16 +878,17 @@ footer {
   transition: all 0.3s;
   animation: floatPulse 3s infinite;
 }
-
 .wa-float:hover {
   transform: scale(1.1);
   box-shadow: 0 6px 30px rgba(37,211,102,0.6);
 }
+
+/* DEMO FLOAT */
 .demo-float {
   position: fixed;
   bottom: 100px;
   right: 30px;
-  z-index: 200;
+  z-index: 999;
   width: 60px;
   height: 60px;
   background: #ff9100;
@@ -922,6 +925,23 @@ footer {
   .page-content { padding: 100px 20px 60px; }
   .contact-card { padding: 40px 24px; }
 }
+/* Mobile-specific fixes for floating buttons */
+@media (max-width: 768px) {
+  .wa-float {
+    bottom: 20px;
+    right: 20px;
+    width: 55px;
+    height: 55px;
+    font-size: 24px;
+  }
+  .demo-float {
+    bottom: 85px;
+    right: 20px;
+    width: 55px;
+    height: 55px;
+    font-size: 24px;
+  }
+}  
 </style>
 </head>
 <body>
