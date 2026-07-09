@@ -221,7 +221,7 @@
         margin-top: 8px;
       }
 
-      /* FIXED: Correct sibling selector */
+      /* CORRECTED: sibling selector */
       #menuToggle:checked ~ .nav-links {
         right: 0;
       }
@@ -314,10 +314,75 @@
       overflow: hidden;
     }
 
-    .phone-screen img {
-      width: 100%;
-      display: block;
-      border-radius: 28px;
+    /* ===== CHAT UI INSIDE THE PHONE ===== */
+    .chat-header {
+      background: var(--wa-green);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+    }
+    .chat-avatar {
+      width: 32px;
+      height: 32px;
+      background: #1a8c3a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+    .chat-name { font-weight: 700; font-size: 13px; }
+    .chat-status { font-size: 10px; opacity: 0.7; }
+
+    .chat-body {
+      padding: 12px;
+      background: #ece5dd;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .msg {
+      max-width: 85%;
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .msg-bot {
+      background: #fff;
+      border-radius: 0 12px 12px 12px;
+      align-self: flex-start;
+      color: #333;
+    }
+    .msg-user {
+      background: #dcf8c6;
+      border-radius: 12px 0 12px 12px;
+      align-self: flex-end;
+      color: #333;
+    }
+    .typing {
+      background: #fff;
+      padding: 8px 12px;
+      border-radius: 0 12px 12px 12px;
+      align-self: flex-start;
+      display: flex;
+      gap: 4px;
+    }
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      background: #999;
+      border-radius: 50%;
+      animation: typing 1.4s infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typing {
+      0%, 100% { transform: translateY(0); opacity: 0.4; }
+      50% { transform: translateY(-4px); opacity: 1; }
     }
 
     @media (max-width: 992px) {
@@ -695,7 +760,21 @@
       <div class="hero-image">
         <div class="phone-frame">
           <div class="phone-screen">
-            <img src="https://placehold.co/280x500/ECE5DD/333?text=WhatsApp+Chat" alt="WhatsApp conversation demo">
+            <div class="chat-header">
+              <div class="chat-avatar">🤖</div>
+              <div>
+                <div class="chat-name">Luxe Boutique Bot</div>
+                <div class="chat-status">Online · Built by SmartBot Builds</div>
+              </div>
+            </div>
+            <div class="chat-body">
+              <div class="msg msg-bot">👋 Hi! Welcome to Luxe Boutique. How can I help you today?</div>
+              <div class="msg msg-user">Do you have the pink satin dress in size M?</div>
+              <div class="msg msg-bot">Yes! 💕 We have it in stock.<br><strong>Price: ₦18,000</strong><br>Sizes: S, M, L, XL<br>Want to place an order?</div>
+              <div class="msg msg-user">Yes please!</div>
+              <div class="msg msg-bot">Great! Please provide:<br>1. Full name<br>2. Delivery address<br>3. Payment method</div>
+              <div class="typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
+            </div>
           </div>
         </div>
       </div>
