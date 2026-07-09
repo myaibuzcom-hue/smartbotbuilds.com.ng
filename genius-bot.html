@@ -126,7 +126,6 @@
       50% { opacity: 0.3; }
     }
 
-    /* ===== CSS-ONLY CHECKBOX TOGGLE MENU ===== */
     #menuToggle {
       display: none;
     }
@@ -182,7 +181,6 @@
       z-index: 98;
     }
 
-    /* Mobile styles */
     @media (max-width: 768px) {
       .hamburger {
         display: flex;
@@ -238,15 +236,16 @@
       position: relative;
       overflow: hidden;
     }
-    .hero::before {
-      content: '';
+
+    .hero-bg {
       position: absolute;
-      top: -200px;
-      right: -200px;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(0, 200, 83, 0.06) 0%, transparent 70%);
-      pointer-events: none;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.12;
+      z-index: 0;
     }
 
     .hero .container {
@@ -294,8 +293,12 @@
 
     .hero-buttons { display: flex; gap: 14px; flex-wrap: wrap; }
 
-    .hero-image { display: flex; justify-content: center; }
-    .hero-image .phone-frame {
+    .hero-image {
+      display: flex;
+      justify-content: center;
+    }
+
+    .phone-frame {
       width: 280px;
       background: #1a1a1a;
       border-radius: 40px;
@@ -303,90 +306,30 @@
       box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
       border: 1px solid rgba(255, 255, 255, 0.05);
     }
-    .hero-image .phone-screen {
+
+    .phone-screen {
       background: #f0f0f0;
       border-radius: 28px;
       overflow: hidden;
     }
-    .hero-image .chat-header {
-      background: var(--wa-green);
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: #fff;
-    }
-    .hero-image .chat-avatar {
-      width: 32px; height: 32px;
-      background: #1a8c3a;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-    }
-    .hero-image .chat-name { font-weight: 700; font-size: 13px; }
-    .hero-image .chat-status { font-size: 10px; opacity: 0.7; }
-    .hero-image .chat-body {
-      padding: 12px;
-      background: #ece5dd;
-      min-height: 320px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .hero-image .msg {
-      max-width: 85%;
-      padding: 8px 12px;
-      border-radius: 12px;
-      font-size: 12px;
-      line-height: 1.4;
-    }
-    .hero-image .msg-bot {
-      background: #fff;
-      border-radius: 0 12px 12px 12px;
-      align-self: flex-start;
-      color: #333;
-    }
-    .hero-image .msg-user {
-      background: #dcf8c6;
-      border-radius: 12px 0 12px 12px;
-      align-self: flex-end;
-      color: #333;
-    }
-    .hero-image .typing {
-      background: #fff;
-      padding: 8px 12px;
-      border-radius: 0 12px 12px 12px;
-      align-self: flex-start;
-      display: flex;
-      gap: 4px;
-    }
-    .hero-image .typing-dot {
-      width: 6px; height: 6px;
-      background: #999;
-      border-radius: 50%;
-      animation: typing 1.4s infinite;
-    }
-    .hero-image .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-    .hero-image .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 
-    @keyframes typing {
-      0%, 100% { transform: translateY(0); opacity: 0.4; }
-      50% { transform: translateY(-4px); opacity: 1; }
+    .phone-screen img {
+      width: 100%;
+      display: block;
+      border-radius: 28px;
     }
 
     @media (max-width: 992px) {
       .hero .container { grid-template-columns: 1fr; text-align: center; }
       .hero-content { max-width: 100%; }
       .hero-buttons { justify-content: center; }
-      .hero-image .phone-frame { width: 240px; }
+      .phone-frame { width: 240px; margin: 0 auto; }
     }
     @media (max-width: 480px) {
       .hero { padding: 120px 0 60px; }
       .hero h1 { font-size: 32px; }
       .hero-buttons .btn { width: 100%; justify-content: center; }
-      .hero-image .phone-frame { width: 200px; }
+      .phone-frame { width: 200px; }
     }
 
     /* ===== SECTION ===== */
@@ -707,7 +650,7 @@
 </head>
 <body>
 
-  <!-- ===== HEADER WITH CSS-ONLY CHECKBOX TOGGLE ===== -->
+  <!-- ===== HEADER ===== -->
   <header class="header">
     <div class="container">
       <a href="/" class="logo">
@@ -734,6 +677,7 @@
 
   <!-- ===== HERO ===== -->
   <section class="hero">
+    <img src="https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?w=1400&q=80&fit=crop" alt="WhatsApp on smartphone" class="hero-bg">
     <div class="container">
       <div class="hero-content">
         <div class="hero-tag">
@@ -750,21 +694,7 @@
       <div class="hero-image">
         <div class="phone-frame">
           <div class="phone-screen">
-            <div class="chat-header">
-              <div class="chat-avatar">🤖</div>
-              <div>
-                <div class="chat-name">Luxe Boutique Bot</div>
-                <div class="chat-status">Online · Built by SmartBot Builds</div>
-              </div>
-            </div>
-            <div class="chat-body">
-              <div class="msg msg-bot">👋 Hi! Welcome to Luxe Boutique. How can I help you today?</div>
-              <div class="msg msg-user">Do you have the pink satin dress in size M?</div>
-              <div class="msg msg-bot">Yes! 💕 We have it in stock.<br><strong>Price: ₦18,000</strong><br>Sizes: S, M, L, XL<br>Want to place an order?</div>
-              <div class="msg msg-user">Yes please!</div>
-              <div class="msg msg-bot">Great! Please provide:<br>1. Full name<br>2. Delivery address<br>3. Payment method</div>
-              <div class="typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
-            </div>
+            <img src="https://via.placeholder.com/280x500/ECE5DD/333?text=WhatsApp+Chat+Demo" alt="WhatsApp conversation demo">
           </div>
         </div>
       </div>
@@ -979,8 +909,6 @@
   <a href="https://wa.me/2347055403967?text=I%20want%20to%20test%20the%20SmartBot%20demo" target="_blank" class="demo-float" title="Try Demo Bot">🧪</a>
 
   <script>
-    // ✅ Only used for closing the menu when a link is clicked (accessibility enhancement)
-    // The toggle itself works via CSS-only checkbox, no JavaScript needed for the core functionality.
     document.querySelectorAll('.nav-links a').forEach(function(link) {
       link.addEventListener('click', function() {
         const checkbox = document.getElementById('menuToggle');
