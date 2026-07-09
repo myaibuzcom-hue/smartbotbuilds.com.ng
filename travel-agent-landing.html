@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartBot Travel - AI Travel Assistant on WhatsApp</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* ===== ROOT ===== */
+        :root {
+            --bg-dark: #0a0e17;
+            --bg-section: #111824;
+            --gold: #c9a44c;
+            --gold-light: #e3c878;
+            --whatsapp-green: #25D366;
+            --whatsapp-dark: #1fa85a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0c1d4;
+            --text-muted: #6b7f94;
+            --card-bg: #1a2332;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            --radius: 16px;
+            --transition: 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition);
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .section {
+            padding: 80px 0;
+        }
+
+        .section-tag {
+            display: inline-block;
+            background: rgba(201, 164, 76, 0.08);
+            border: 1px solid rgba(201, 164, 76, 0.15);
+            color: var(--gold);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 4px 14px;
+            border-radius: 999px;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(28px, 3.5vw, 40px);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            max-width: 560px;
+            margin: 0 auto 48px;
+            font-size: 16px;
+        }
+
+        .gold {
+            color: var(--gold);
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 32px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 16px;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-whatsapp {
+            background: var(--whatsapp-green);
+            color: #fff;
+            box-shadow: 0 8px 30px rgba(37, 211, 102, 0.3);
+        }
+        .btn-whatsapp:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(37, 211, 102, 0.5);
+            background: var(--whatsapp-dark);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold-light), var(--gold));
+            color: var(--bg-dark);
+            box-shadow: 0 8px 30px rgba(201, 164, 76, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(201, 164, 76, 0.5);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--gold);
+            color: var(--gold);
+        }
+        .btn-outline:hover {
+            background: var(--gold);
+            color: var(--bg-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-sm {
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: rgba(10, 14, 23, 0.95);
+            backdrop-filter: blur(16px);
+            padding: 14px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: #fff;
+            gap: 8px;
+        }
+        .logo i {
+            color: var(--gold);
+        }
+        .logo span {
+            color: var(--gold);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+
+        .header .btn {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+        }
+
+        .hamburger {
+            display: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #fff;
+            background: none;
+            border: none;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: rgba(10, 14, 23, 0.98);
+                padding: 20px 24px;
+                gap: 20px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+            .nav-links.active {
+                display: flex;
+            }
+            .hamburger {
+                display: block;
+            }
+            .header .btn {
+                display: none;
+            }
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            padding: 140px 0 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            right: -200px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(201, 164, 76, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+        }
+
+        .hero-text {
+            flex: 1;
+            max-width: 600px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .hero-text h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(36px, 5vw, 56px);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 16px;
+        }
+        .hero-text h1 span {
+            color: var(--gold);
+        }
+
+        .hero-text p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            line-height: 1.7;
+            max-width: 480px;
+        }
+
+        .hero-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .hero-stats span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .hero-stats span i {
+            color: var(--gold);
+            font-size: 16px;
+        }
+
+        .hero-image {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ===== PHONE MOCKUP ===== */
+        .phone-wrapper {
+            width: 300px;
+            height: 580px;
+            background: #000;
+            border-radius: 40px;
+            padding: 10px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+            border: 2px solid #2a2a2a;
+        }
+
+        .phone-screen {
+            background: #e5ddd5;
+            border-radius: 30px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: #075e54;
+            color: white;
+            padding: 12px 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+        .chat-header i {
+            font-size: 18px;
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow-y: auto;
+        }
+
+        .msg {
+            padding: 10px 14px;
+            border-radius: 10px;
+            max-width: 85%;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #333;
+        }
+        .msg-bot {
+            background: #fff;
+            align-self: flex-start;
+            border-bottom-left-radius: 0;
+        }
+        .msg-user {
+            background: #dcf8c6;
+            align-self: flex-end;
+            border-bottom-right-radius: 0;
+        }
+
+        .chat-input {
+            background: #f0f0f0;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .chat-input span {
+            color: #888;
+            font-size: 13px;
+            flex: 1;
+        }
+        .chat-input i {
+            font-size: 18px;
+            color: #888;
+        }
+
+        .hero-cta-below {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .hero-cta-below p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 992px) {
+            .hero-content {
+                flex-direction: column-reverse;
+                text-align: center;
+            }
+            .hero-text {
+                max-width: 100%;
+            }
+            .hero-text p {
+                max-width: 100%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .hero-stats {
+                justify-content: center;
+            }
+            .hero-text h1 {
+                font-size: 32px;
+            }
+            .phone-wrapper {
+                width: 260px;
+                height: 500px;
+            }
+        }
+
+        /* ===== FEATURES ===== */
+        .features {
+            background: var(--bg-section);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius);
+            padding: 36px 28px;
+            text-align: center;
+            transition: var(--transition);
+        }
+        .feature-card:hover {
+            border-color: rgba(201, 164, 76, 0.2);
+            transform: translateY(-6px);
+        }
+        .feature-card .icon {
+            font-size: 2.5rem;
+            color: var(--gold);
+            margin-bottom: 16px;
+        }
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+        }
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+        }
+        .feature-card .feature-link {
+            color: var(--gold);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .feature-card .feature-link:hover {
+            color: var(--gold-light);
+        }
+
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== HOW IT WORKS ===== */
+        .how-it-works {
+            background: var(--bg-dark);
+        }
+
+        .steps {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .step {
+            flex: 1;
+            min-width: 200px;
+            max-width: 280px;
+            text-align: center;
+        }
+        .step-num {
+            width: 60px;
+            height: 60px;
+            background: rgba(201, 164, 76, 0.1);
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+        .step h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        .step p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* ===== TRY IT ===== */
+        .try-it {
+            background: var(--bg-section);
+        }
+
+        .try-content {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            flex-wrap: wrap;
+        }
+        .try-text {
+            flex: 1;
+        }
+        .try-text h2 {
+            font-size: 2.2rem;
+            margin-bottom: 12px;
+        }
+        .try-text p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .try-number {
+            background: var(--card-bg);
+            padding: 14px 24px;
+            border-radius: 12px;
+            display: inline-block;
+            margin: 16px 0;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .try-number i {
+            color: var(--whatsapp-green);
+            margin-right: 10px;
+        }
+        .try-number span {
+            color: var(--gold);
+        }
+
+        .try-example {
+            background: var(--card-bg);
+            padding: 14px 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--gold);
+            margin-bottom: 24px;
+            display: inline-block;
+        }
+        .try-example em {
+            color: var(--text-secondary);
+            font-style: normal;
+            font-size: 0.85rem;
+            display: block;
+        }
+        .try-example strong {
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .try-icon {
+            flex: 1;
+            text-align: center;
+            font-size: 6rem;
+            color: var(--gold);
+            opacity: 0.6;
+        }
+
+        @media (max-width: 768px) {
+            .try-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .try-number {
+                font-size: 1.3rem;
+                padding: 12px 18px;
+            }
+            .try-icon {
+                display: none;
+            }
+        }
+
+        /* ===== PRICING ===== */
+        .pricing {
+            background: var(--bg-dark);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .pricing-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius);
+            padding: 32px 24px;
+            text-align: center;
+            position: relative;
+            transition: var(--transition);
+        }
+        .pricing-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(201, 164, 76, 0.2);
+        }
+        .pricing-card.popular {
+            border: 2px solid var(--gold);
+            transform: scale(1.02);
+        }
+        .pricing-card.popular:hover {
+            transform: scale(1.02) translateY(-6px);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gold);
+            color: var(--bg-dark);
+            padding: 4px 18px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .pricing-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 6px;
+        }
+        .pricing-card .price {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 4px;
+        }
+        .pricing-card .price-desc {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+        }
+        .pricing-card ul {
+            text-align: left;
+            margin-bottom: 24px;
+            padding: 0 6px;
+        }
+        .pricing-card ul li {
+            padding: 7px 0;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .pricing-card ul li:last-child {
+            border-bottom: none;
+        }
+        .pricing-card ul li::before {
+            content: '✓';
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .pricing-card .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        @media (max-width: 992px) {
+            .pricing-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .pricing-card.popular {
+                transform: scale(1);
+            }
+            .pricing-card.popular:hover {
+                transform: scale(1) translateY(-6px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== TRUST ===== */
+        .trust {
+            background: var(--bg-section);
+            text-align: center;
+        }
+
+        .trust-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .trust-item {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius);
+            padding: 28px 20px;
+            transition: var(--transition);
+        }
+        .trust-item:hover {
+            border-color: rgba(201, 164, 76, 0.15);
+        }
+        .trust-item i {
+            font-size: 2rem;
+            color: var(--gold);
+            margin-bottom: 12px;
+        }
+        .trust-item h4 {
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+        }
+        .trust-item p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .trust-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .trust-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: #060910;
+            padding: 60px 0 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-brand h2 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+        .footer-brand h2 i {
+            color: var(--gold);
+            margin-right: 8px;
+        }
+        .footer-brand p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+            max-width: 300px;
+        }
+
+        .footer-socials {
+            display: flex;
+            gap: 12px;
+        }
+        .footer-socials a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+        .footer-socials a:hover {
+            background: var(--gold);
+            color: var(--bg-dark);
+        }
+
+        .footer-links h4,
+        .footer-contact h4 {
+            font-size: 1rem;
+            margin-bottom: 16px;
+            color: #fff;
+        }
+        .footer-links a,
+        .footer-contact p {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        .footer-links a:hover {
+            color: var(--gold);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        .footer-bottom a {
+            color: var(--gold);
+        }
+        .footer-bottom a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .footer-brand p {
+                max-width: 100%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .footer-socials {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container header-container">
+            <a href="#" class="logo">
+                <i class="fa-solid fa-robot"></i> Smart<span>Bot</span> Travel
+            </a>
+
+            <nav class="nav-links" id="navLinks">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#contact">Contact</a>
+            </nav>
+
+            <a href="https://wa.me/2347055403967?text=I%20want%20to%20book%20a%20flight%20from%20Lagos%20to%20Abuja%20on%20July%2015" class="btn btn-whatsapp btn-sm">
+                <i class="fa-brands fa-whatsapp"></i> Try It Now
+            </a>
+
+            <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero" id="home">
+        <div class="container hero-content">
+            <div class="hero-text">
+                <div class="hero-badge">🚀 Built for Nigerian Businesses</div>
+                <h1>Your AI Travel<br><span>Assistant on WhatsApp</span></h1>
+                <p>Search flights, hotels, and cars instantly – without leaving WhatsApp.</p>
+
+                <div class="hero-stats">
+                    <span><i class="fa-brands fa-whatsapp" style="color: var(--whatsapp-green);"></i> WhatsApp-Native</span>
+                    <span><i class="fa-regular fa-clock"></i> 24/7 Available</span>
+                    <span><i class="fa-solid fa-flag"></i> Built for Nigeria</span>
+                </div>
+
+                <a href="https://wa.me/2347055403967?text=I%20want%20to%20book%20a%20flight%20from%20Lagos%20to%20Abuja%20on%20July%2015" class="btn btn-whatsapp">
+                    <i class="fa-brands fa-whatsapp"></i> Try It Now on WhatsApp
+                </a>
+            </div>
+
+            <div class="hero-image">
+                <div class="phone-wrapper">
+                    <div class="phone-screen">
+                        <div class="chat-header">
+                            <i class="fa-brands fa-whatsapp"></i> SmartBot Travel
+                        </div>
+                        <div class="chat-body">
+                            <div class="msg msg-bot">👋 Welcome! How can I help you book your trip?</div>
+                            <div class="msg msg-user">I want to book a flight from Lagos to Abuja on July 15</div>
+                            <div class="msg msg-bot">✈️ Flight Options from Lagos to Abuja:<br>1. Air Peace - ₦150,000<br>2. Arik Air - ₦120,000<br><br>Reply with the number to book.</div>
+                            <div class="msg msg-user">2</div>
+                            <div class="msg msg-bot">✅ Booking confirmed for Arik Air!</div>
+                        </div>
+                        <div class="chat-input">
+                            <span>Type a message...</span>
+                            <i class="fa-solid fa-paper-plane" style="color: var(--whatsapp-green);"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-cta-below">
+                    <p>Click to chat with SmartBot Travel</p>
+                    <a href="https://wa.me/2347055403967?text=I%20want%20to%20book%20a%20flight%20from%20Lagos%20to%20Abuja%20on%20July%2015" class="btn btn-whatsapp btn-sm">
+                        <i class="fa-brands fa-whatsapp"></i> Try It Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="section features" id="features">
+        <div class="container">
+            <div class="section-tag">What You Can Do</div>
+            <h2 class="section-title">Search, Compare &amp; Book</h2>
+            <p class="section-subtitle">All from your WhatsApp – no app downloads, no websites.</p>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="icon"><i class="fa-solid fa-plane-departure"></i></div>
+                    <h3>Flights</h3>
+                    <p>Search and compare flights instantly. Get the best options from top airlines.</p>
+                    <a href="https://wa.me/2347055403967?text=I%20want%20to%20book%20a%20flight" class="feature-link">Find Flights →</a>
+                </div>
+                <div class="feature-card">
+                    <div class="icon"><i class="fa-solid fa-hotel"></i></div>
+                    <h3>Hotels</h3>
+                    <p>Find and book hotels that fit your budget. View ratings, prices, and locations.</p>
+                    <a href="https://wa.me/2347055403967?text=I%20want%20to%20book%20a%20hotel" class="feature-link">Find Hotels →</a>
+                </div>
+                <div class="feature-card">
+                    <div class="icon"><i class="fa-solid fa-car"></i></div>
+                    <h3>Cars</h3>
+                    <p>Rent a car at your destination. Choose from various types and sizes.</p>
+                    <a href="https://wa.me/2347055403967?text=I%20want%20to%20rent%20a%20car" class="feature-link">Find Cars →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="section how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-tag">Simple Process</div>
+            <h2 class="section-title">How It Works</h2>
+            <p class="section-subtitle">Three simple steps to book your next trip.</p>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <h3>Send a Message</h3>
+                    <p>Tell SmartBot what you need – e.g., "Book a flight to Abuja"</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <h3>Get Options</h3>
+                    <p>The bot instantly replies with the best options for you to choose.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <h3>Book a Deal</h3>
+                    <p>Confirm your choice and your booking is complete.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRY IT YOURSELF -->
+    <section class="section try-it" id="try">
+        <div class="container">
+            <div class="try-content">
+                <div class="try-text">
+                    <div class="section-tag" style="display: inline-block;">Try It Yourself</div>
+                    <h2>Chat with <span class="gold">SmartBot Travel</span></h2>
+                    <p>Send a message to our WhatsApp bot and get instant travel options.</p>
+
+                    <div class="try-number">
+                        <i class="fa-brands fa-whatsapp"></i> <span>0705 540 3967</span>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">Save the number and send a message to get started.</p>
+
+                    <div class="try-example">
+                        <em>Try this example message:</em>
+                        <strong>"I want to book a flight from Lagos to Abuja on July 15th."</strong>
+                    </div>
+
+                    <a href="https://wa.me/2347055403967?text=I%20want%20to%20book%20a%20flight%20from%20Lagos%20to%20Abuja%20on%20July%2015" class="btn btn-whatsapp">
+                        <i class="fa-brands fa-whatsapp"></i> Chat Now
+                    </a>
+                </div>
+                <div class="try-icon">
+                    <i class="fa-solid fa-suitcase-rolling"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="section pricing" id="pricing">
+        <div class="container">
+            <div class="section-tag" style="display: inline-block;">Simple Pricing</div>
+            <h2 class="section-title">Transparent <span class="gold">Pricing</span></h2>
+            <p class="section-subtitle">Choose the plan that fits your business.</p>
+
+            <div class="pricing-grid">
+                <!-- Starter -->
+                <div class="pricing-card">
+                    <h3>Starter</h3>
+                    <div class="price">₦50,000</div>
+                    <div class="price-desc">One-time setup</div>
+                    <ul>
+                        <li>Flight, Hotel &amp; Car Search</li>
+                        <li>Basic Customization</li>
+                        <li>1 Month Free Support</li>
+                    </ul>
+                    <a href="https://wa.me/2347055403967?text=I%20want%20the%20Starter%20Travel%20Bot" class="btn btn-primary">Get Started →</a>
+                </div>
+
+                <!-- Pro (Popular) -->
+                <div class="pricing-card popular">
+                    <div class="popular-badge">Most Popular</div>
+                    <h3>Pro</h3>
+                    <div class="price">₦100,000</div>
+                    <div class="price-desc">One-time setup</div>
+                    <ul>
+                        <li>Everything in Starter</li>
+                        <li>Advanced Customization</li>
+                        <li>Priority Support</li>
+                        <li>Monthly Updates &amp; Maintenance</li>
+                        <li>Analytics Dashboard</li>
+                    </ul>
+                    <a href="https://wa.me/2347055403967?text=I%20want%20the%20Pro%20Travel%20Bot" class="btn btn-primary">Get Started →</a>
+                </div>
+
+                <!-- Enterprise -->
+                <div class="pricing-card">
+                    <h3>Enterprise</h3>
+                    <div class="price">₦200,000</div>
+                    <div class="price-desc">One-time setup</div>
+                    <ul>
+                        <li>Everything in Pro</li>
+                        <li>White-label Option</li>
+                        <li>Dedicated Support</li>
+                        <li>Custom Integrations</li>
+                    </ul>
+                    <a href="https://wa.me/2347055403967?text=I%20want%20the%20Enterprise%20Travel%20Bot" class="btn btn-primary">Get Started →</a>
+                </div>
+
+                <!-- Custom -->
+                <div class="pricing-card">
+                    <h3>Custom</h3>
+                    <div class="price">₦500,000+</div>
+                    <div class="price-desc">Tailored solution</div>
+                    <ul>
+                        <li>Fully Custom Bot</li>
+                        <li>Multi-channel Support</li>
+                        <li>Dedicated Development</li>
+                        <li>Priority Support</li>
+                    </ul>
+                    <a href="https://wa.me/2347055403967?text=I%20want%20a%20custom%20travel%20bot" class="btn btn-primary">Contact Us →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRUST -->
+    <section class="section trust" id="trust">
+        <div class="container">
+            <div class="section-tag" style="display: inline-block;">Trusted by Nigerian Businesses</div>
+            <h2 class="section-title">Why Choose <span class="gold">SmartBot Travel</span></h2>
+            <p class="section-subtitle">Fast, reliable, and always on point.</p>
+
+            <div class="trust-grid">
+                <div class="trust-item">
+                    <i class="fa-solid fa-bolt"></i>
+                    <h4>24/7 Instant Replies</h4>
+                    <p>Fast, reliable, and always on point.</p>
+                </div>
+                <div class="trust-item">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <h4>Secure &amp; Reliable</h4>
+                    <p>Your data is safe with industry-standard security.</p>
+                </div>
+                <div class="trust-item">
+                    <i class="fa-solid fa-users"></i>
+                    <h4>Growing Network</h4>
+                    <p>Join travel agencies, SMEs, and businesses nationwide.</p>
+                </div>
+                <div class="trust-item">
+                    <i class="fa-solid fa-star"></i>
+                    <h4>Proven Results</h4>
+                    <p>Trusted by businesses across Nigeria.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h2><i class="fa-solid fa-robot"></i> Smart<span style="color: var(--gold);">Bot</span> Travel</h2>
+                    <p>Your AI travel assistant on WhatsApp. Search, Compare, Book, Done.</p>
+                    <div class="footer-socials">
+                        <a href="https://wa.me/2348154857377" aria-label="WhatsApp Support">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </a>
+                        <a href="#" aria-label="Instagram">
+                            <i class="fa-brands fa-instagram"></i>
+                        </a>
+                        <a href="#" aria-label="Facebook">
+                            <i class="fa-brands fa-facebook-f"></i>
+                        </a>
+                        <a href="#" aria-label="LinkedIn">
+                            <i class="fa-brands fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <a href="#features">Features</a>
+                    <a href="#how-it-works">How It Works</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#try">Try It Now</a>
+                </div>
+
+                <div class="footer-contact">
+                    <h4>Contact Us</h4>
+                    <p>📞 <a href="https://wa.me/2348154857377">0815 485 7377</a> (Support/Enquiries)</p>
+                    <p>✉️ <a href="mailto:segunjegede@smartbotbuilds.com.ng">segunjegede@smartbotbuilds.com.ng</a></p>
+                    <p>📍 Lagos, Nigeria</p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>Built by <a href="https://smartbotbuilds.com.ng">SmartBot Builds</a> &copy; 2026 SmartBot Builds. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ===== Hamburger Menu =====
+        function toggleMenu() {
+            const nav = document.getElementById('navLinks');
+            nav.classList.toggle('active');
+        }
+
+        // Close menu when a link is clicked
+        document.querySelectorAll('.nav-links a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                const nav = document.getElementById('navLinks');
+                if (nav.classList.contains('active')) {
+                    nav.classList.remove('active');
+                }
+            });
+        });
+
+        // ===== Smooth Scroll for Nav Links =====
+        document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+            anchor.addEventListener('click', function(e) {
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
