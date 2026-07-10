@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Frequently Asked Questions – SmartBot Builds. AI WhatsApp bots and professional websites for Nigerian businesses.">
+  <title>FAQ – SmartBot Builds</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    /* ===== ROOT & RESET ===== */
+    :root {
+      --black: #080c08;
+      --green: #00c853;
+      --green-light: #b9f5c8;
+      --white: #f5faf5;
+      --grey: #2a332a;
+      --grey-light: #7a9e7a;
+      --wa-green: #25d366;
+      --gold: #ffd54f;
+      --text: #e8f5e8;
+      --text-dim: #7a9e7a;
+      --radius: 16px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: 'Cabinet Grotesk', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 28px;
+      border-radius: 100px;
+      font-weight: 700;
+      font-size: 16px;
+      transition: all 0.3s;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--wa-green);
+      color: #fff;
+      box-shadow: 0 0 30px rgba(37, 211, 102, 0.3);
+    }
+    .btn-primary:hover {
+      background: #20c05a;
+      transform: translateY(-2px);
+      box-shadow: 0 0 50px rgba(37, 211, 102, 0.4);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text);
+    }
+    .btn-secondary:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .btn-sm { padding: 10px 20px; font-size: 14px; }
+
+    /* ===== HEADER ===== */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 16px 0;
+      background: rgba(8, 12, 8, 0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(0, 200, 83, 0.08);
+    }
+
+    .header .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-family: 'Clash Display', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo span { color: var(--green); }
+    .logo-dot {
+      width: 8px; height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    #menuToggle { display: none; }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 5px;
+      background: none;
+      border: none;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 26px;
+      height: 2.5px;
+      background: var(--white);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--green); }
+    .nav-links .nav-cta {
+      background: var(--green);
+      color: var(--black) !important;
+      padding: 10px 22px !important;
+      border-radius: 100px;
+      font-weight: 700 !important;
+      font-size: 14px !important;
+    }
+    .nav-links .nav-cta:hover { background: #00e676 !important; }
+
+    .menu-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 98;
+    }
+
+    @media (max-width: 768px) {
+      .hamburger { display: flex; z-index: 101; }
+
+      .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 75%;
+        max-width: 320px;
+        height: 100vh;
+        background: var(--black);
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 40px 32px;
+        gap: 24px;
+        transition: right 0.3s ease;
+        box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+        z-index: 100;
+        border-left: 1px solid rgba(0, 200, 83, 0.1);
+      }
+      .nav-links a { font-size: 18px; color: var(--white); opacity: 0.8; }
+      .nav-links a:hover { opacity: 1; color: var(--green); }
+      .nav-links .nav-cta {
+        background: var(--green);
+        color: var(--black) !important;
+        padding: 12px 24px !important;
+        width: 100%;
+        text-align: center;
+        font-size: 16px !important;
+        margin-top: 8px;
+      }
+      #menuToggle:checked ~ .nav-links { right: 0; }
+      #menuToggle:checked ~ .menu-overlay { display: block; }
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      padding: 140px 0 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.1;
+      z-index: 0;
+    }
+
+    .hero .container { position: relative; z-index: 1; }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 200, 83, 0.1);
+      border: 1px solid rgba(0, 200, 83, 0.25);
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .hero h1 {
+      font-family: 'Clash Display', sans-serif;
+      font-size: clamp(36px, 5vw, 54px);
+      font-weight: 700;
+      line-height: 1.05;
+      margin-bottom: 20px;
+      letter-spacing: -1px;
+    }
+    .hero h1 .accent { color: var(--green); }
+    .hero p {
+      font-size: 17px;
+      color: var(--text-dim);
+      max-width: 640px;
+      margin: 0 auto 32px;
+      line-height: 1.7;
+    }
+    .hero-buttons { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+
+    /* ===== SECTION ===== */
+    .section { padding: 80px 0; }
+    .section-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Clash Display', sans-serif;
+      font-size: clamp(32px, 4vw, 46px);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .section-subtitle {
+      font-size: 17px;
+      color: var(--text-dim);
+      max-width: 560px;
+      margin-bottom: 48px;
+    }
+    .text-center { text-align: center; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
+
+    /* ===== ACCORDION ===== */
+    .faq-list { max-width: 800px; margin: 0 auto; }
+
+    .faq-item {
+      background: var(--grey);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      text-align: left;
+      gap: 12px;
+      transition: background 0.2s;
+    }
+    .faq-question:hover {
+      background: rgba(0, 200, 83, 0.03);
+    }
+
+    .faq-question .icon {
+      font-size: 18px;
+      color: var(--green);
+      transition: transform 0.3s;
+      flex-shrink: 0;
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+
+    .faq-answer p {
+      padding: 0 24px 20px;
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+
+    .faq-item.open .faq-question .icon {
+      transform: rotate(45deg);
+    }
+
+    .faq-item.open .faq-answer {
+      max-height: 500px;
+    }
+
+    /* ===== CTA SECTION ===== */
+    .cta-section {
+      padding: 80px 0;
+      background: rgba(0, 200, 83, 0.03);
+      border-top: 1px solid rgba(0, 200, 83, 0.06);
+      border-bottom: 1px solid rgba(0, 200, 83, 0.06);
+      text-align: center;
+    }
+    .cta-section h2 {
+      font-family: 'Clash Display', sans-serif;
+      font-size: clamp(32px, 4vw, 46px);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .cta-section h2 span { color: var(--green); }
+    .cta-section p {
+      font-size: 17px;
+      color: var(--text-dim);
+      max-width: 560px;
+      margin: 0 auto 32px;
+      line-height: 1.7;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      background: rgba(0, 0, 0, 0.4);
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 60px 0 30px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+    .footer-logo {
+      font-family: 'Clash Display', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+    .footer-logo span { color: var(--green); }
+    .footer p { font-size: 14px; color: var(--text-dim); line-height: 1.7; }
+    .footer h4 { font-size: 14px; font-weight: 700; margin-bottom: 16px; color: var(--text); }
+    .footer ul { list-style: none; }
+    .footer ul li { margin-bottom: 10px; }
+    .footer ul a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+    .footer ul a:hover { color: var(--green); }
+    .footer .socials { display: flex; gap: 12px; margin-top: 16px; }
+    .footer .socials a {
+      width: 40px; height: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-dim);
+      transition: all 0.3s;
+    }
+    .footer .socials a:hover { border-color: var(--green); color: var(--green); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      padding-top: 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+    .footer-bottom a { color: var(--green); text-decoration: none; }
+
+    @media (max-width: 768px) {
+      .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+
+    /* ===== FLOATING BUTTONS ===== */
+    .wa-float {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 100;
+      width: 60px;
+      height: 60px;
+      background: var(--wa-green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+      text-decoration: none;
+      transition: all 0.3s;
+      animation: floatPulse 3s infinite;
+    }
+    .wa-float:hover { transform: scale(1.1); box-shadow: 0 6px 30px rgba(37, 211, 102, 0.6); }
+    .demo-float {
+      position: fixed;
+      bottom: 96px;
+      right: 24px;
+      z-index: 100;
+      width: 60px;
+      height: 60px;
+      background: #ff9100;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(255, 145, 0, 0.4);
+      text-decoration: none;
+      transition: all 0.3s;
+      animation: floatPulse 3s infinite;
+    }
+    .demo-float:hover { transform: scale(1.1); box-shadow: 0 6px 30px rgba(255, 145, 0, 0.6); }
+
+    @keyframes floatPulse {
+      0%, 100% { box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4); }
+      50% { box-shadow: 0 4px 40px rgba(37, 211, 102, 0.7); }
+    }
+
+    @media (max-width: 768px) {
+      .wa-float, .demo-float {
+        width: 50px; height: 50px;
+        font-size: 22px;
+        bottom: 20px;
+        right: 20px;
+      }
+      .demo-float { bottom: 80px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <div class="container">
+      <a href="/" class="logo">
+        <div class="logo-dot"></div>
+        Smart<span>Bot</span> Builds
+      </a>
+
+      <input type="checkbox" id="menuToggle">
+      <label for="menuToggle" class="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </label>
+      <div class="menu-overlay"></div>
+
+      <ul class="nav-links">
+        <li><a href="/genius-bot.html">Genius Bot</a></li>
+        <li><a href="/website-design.html">Website Design</a></li>
+        <li><a href="/pricing.html">Pricing</a></li>
+        <li><a href="/about.html">About</a></li>
+        <li><a href="/faq.html" class="active">FAQ</a></li>
+        <li><a href="https://wa.me/2347055403967?text=I'm%20interested%20in%20your%20services" target="_blank" class="nav-cta">Get Started</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1400&q=80&fit=crop" alt="FAQ background" class="hero-bg">
+    <div class="container">
+      <div class="hero-tag">
+        <div class="logo-dot"></div>
+        Got Questions?
+      </div>
+      <h1>We've Got <span class="accent">Answers</span></h1>
+      <p>Everything you need to know about our services, process, and payment.</p>
+      <div class="hero-buttons">
+        <a href="https://wa.me/2347055403967?text=I%20have%20a%20question%20about%20your%20services" target="_blank" class="btn btn-primary">💬 Ask on WhatsApp</a>
+        <a href="#faqs" class="btn btn-secondary">Read FAQs ↓</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FAQ SECTION ===== -->
+  <section class="section" id="faqs">
+    <div class="container">
+      <div class="section-tag">FAQs</div>
+      <h2 class="section-title">Frequently <span style="color: var(--green);">Asked Questions</span></h2>
+      <p class="section-subtitle">Can't find what you're looking for? Chat with us on WhatsApp – we reply fast.</p>
+
+      <div class="faq-list">
+
+        <!-- 1 -->
+        <div class="faq-item open">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            <span>What is Genius Bot?</span>
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-answer"><p>Genius Bot is an AI-powered WhatsApp assistant that replies to your customers automatically, 24/7. It understands natural language, can answer FAQs, take orders, and follow up leads – so you never miss a sale.</p></div>
+        </div>
+
+        <!-- 2 -->
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            <span>How long does it take to build?</span>
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-answer"><p>Our Genius Bot Starter package is ready in 7 days. Business takes 10 days and Pro takes 14 days. Website timelines are similar – see our pricing page for details.</p></div>
+        </div>
+
+        <!-- 3 -->
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            <span>Do I pay monthly fees?</span>
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-answer"><p>No. You pay a one-time setup fee. There are no monthly charges for the bot or website hosting. You only pay again if you need updates or changes after delivery.</p></div>
+        </div>
+
+        <!-- 4 -->
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            <span>Do I need any technical skills?</span>
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-answer"><p>Not at all. We handle everything – from setup to testing. You just need WhatsApp and a clear idea of what your business does.</p></div>
+        </div>
+
+        <!-- 5 -->
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            <span>Can I update my Genius Bot later?</span>
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-answer"><p>Absolutely. You can request updates (new products, changed prices, new reply flows) any time. We'll quote a small fee based on what you need.</p></div>
+        </div>
+
+        <!-- 6 -->
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            <span>What languages does Genius Bot support?</span>
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-answer"><p>English, Pidgin, Yoruba, and Igbo. More languages can be added on request for Pro packages.</p></div>
+        </div>
+
+        <!-- 7 -->
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            <span>What payment methods do you accept?</span>
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-answer"><p>Bank transfer, Opay, and Palmpay. We require 50% upfront and 50% on delivery.</p></div>
+        </div>
+
+        <!-- 8 -->
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            <span>What if I’m not happy with the result?</span>
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-answer"><p>You get 7 days of free edits after delivery (14 days for Premium). We'll work with you until you're satisfied.</p></div>
+        </div>
+
+        <!-- 9 -->
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            <span>Do you offer refunds?</span>
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-answer"><p>Due to the custom nature of our work, we don’t offer refunds. But we do everything possible to make sure you’re happy – the free edit period is there for that reason.</p></div>
+        </div>
+
+        <!-- 10 -->
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            <span>Where are you based?</span>
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-answer"><p>Lagos, Nigeria. But we work with businesses all over the country – and beyond.</p></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA SECTION ===== -->
+  <section class="cta-section">
+    <div class="container">
+      <h2>Still Have <span>Questions?</span></h2>
+      <p>Chat with Segun directly on WhatsApp. He'll answer your questions personally.</p>
+      <a href="https://wa.me/2347055403967?text=I%20have%20a%20question%20about%20your%20services" target="_blank" class="btn btn-primary">💬 Chat With Segun</a>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">Smart<span>Bot</span> Builds</div>
+          <p>AI WhatsApp bots and professional websites for Nigerian businesses. Founded by Segun Jegede.</p>
+          <div class="socials">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+        <div>
+          <h4>Services</h4>
+          <ul>
+            <li><a href="/genius-bot.html">Genius Bot</a></li>
+            <li><a href="/website-design.html">Website Design</a></li>
+            <li><a href="/pricing.html">Pricing</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <ul>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/faq.html">FAQ</a></li>
+            <li><a href="/contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li><i class="fas fa-phone" style="color: var(--green); width: 20px;"></i> 08154857377</li>
+            <li><i class="fas fa-envelope" style="color: var(--green); width: 20px;"></i> segunjegede@smartbotbuilds.com.ng</li>
+            <li><i class="fas fa-map-marker-alt" style="color: var(--green); width: 20px;"></i> Lagos, Nigeria</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 SmartBot Builds Enterprises. Built by <a href="/">SmartBot Builds</a>.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== FLOATING BUTTONS ===== -->
+  <a href="https://wa.me/2347055403967?text=I'm%20interested%20in%20your%20services" target="_blank" class="wa-float" title="Chat with us on WhatsApp">💬</a>
+  <a href="https://wa.me/2347055403967?text=I%20want%20to%20test%20the%20SmartBot%20demo" target="_blank" class="demo-float" title="Try Demo Bot">🧪</a>
+
+  <script>
+    // Accordion functionality
+    function toggleFaq(btn) {
+      const item = btn.parentElement;
+      const isOpen = item.classList.contains('open');
+      
+      // Close all items
+      document.querySelectorAll('.faq-item').forEach(faq => faq.classList.remove('open'));
+      
+      // If it wasn't open, open it
+      if (!isOpen) {
+        item.classList.add('open');
+      }
+    }
+
+    // Mobile menu close
+    document.querySelectorAll('.nav-links a').forEach(function(link) {
+      link.addEventListener('click', function() {
+        const checkbox = document.getElementById('menuToggle');
+        if (checkbox) checkbox.checked = false;
+      });
+    });
+  </script>
+</body>
+</html>
