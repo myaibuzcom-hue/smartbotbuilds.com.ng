@@ -10,8 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <style>
-    /* ===== ALL STYLES SAME AS PREVIOUS (I'll include the full CSS for completeness) ===== */
-    /* (I'm pasting the full CSS to avoid missing anything) */
+    /* ===== ROOT & RESET ===== */
     :root {
       --black: #080c08;
       --green: #00c853;
@@ -37,6 +36,7 @@
 
     .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
+    /* ===== BUTTONS ===== */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -85,7 +85,7 @@
 
     .btn-sm { padding: 10px 20px; font-size: 14px; }
 
-    /* HEADER */
+    /* ===== HEADER ===== */
     .header {
       position: fixed;
       top: 0;
@@ -221,7 +221,7 @@
         margin-top: 8px;
       }
 
-      #menuToggle:checked ~ .container .nav-links {
+      #menuToggle:checked ~ .nav-links {
         right: 0;
       }
 
@@ -230,7 +230,7 @@
       }
     }
 
-    /* HERO */
+    /* ===== HERO ===== */
     .hero {
       padding: 140px 0 80px;
       position: relative;
@@ -309,25 +309,11 @@
     }
     .hero-image .mockup img {
       width: 100%;
-      height: 100%;
-      max-height: 300px;
+      max-height: 250px;
       object-fit: cover;
       border-radius: 8px;
       margin-bottom: 16px;
     }
-    .hero-image .mockup i {
-      font-size: 64px;
-      color: var(--green);
-      margin-bottom: 16px;
-      display: block;
-    }
-    .hero-image .mockup h3 {
-      font-family: 'Clash Display', sans-serif;
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-    .hero-image .mockup p { color: var(--text-dim); font-size: 14px; }
     .hero-image .mockup .badge {
       display: inline-block;
       background: rgba(0, 200, 83, 0.1);
@@ -336,7 +322,7 @@
       font-size: 12px;
       padding: 4px 12px;
       border-radius: 100px;
-      margin-top: 12px;
+      margin: 4px;
     }
 
     @media (max-width: 992px) {
@@ -351,7 +337,7 @@
       .hero-image .mockup { padding: 16px; }
     }
 
-    /* SECTIONS */
+    /* ===== SECTION ===== */
     .section { padding: 80px 0; }
     .section-tag {
       display: inline-block;
@@ -375,10 +361,8 @@
       max-width: 560px;
       margin-bottom: 48px;
     }
-    .text-center { text-align: center; }
-    .mx-auto { margin-left: auto; margin-right: auto; }
 
-    /* FEATURES */
+    /* ===== FEATURES ===== */
     .features-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -407,7 +391,7 @@
       .features-grid { grid-template-columns: 1fr; }
     }
 
-    /* HOW IT WORKS */
+    /* ===== HOW IT WORKS ===== */
     .steps-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -439,7 +423,7 @@
       .steps-grid { grid-template-columns: 1fr; }
     }
 
-    /* PRICING */
+    /* ===== PRICING ===== */
     .pricing-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -532,7 +516,7 @@
       .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
     }
 
-    /* CTA */
+    /* ===== CTA SECTION ===== */
     .cta-section {
       padding: 80px 0;
       background: rgba(0, 200, 83, 0.03);
@@ -556,7 +540,7 @@
       line-height: 1.7;
     }
 
-    /* FOOTER */
+    /* ===== FOOTER ===== */
     .footer {
       background: rgba(0, 0, 0, 0.4);
       border-top: 1px solid rgba(255, 255, 255, 0.04);
@@ -612,7 +596,7 @@
       .footer-grid { grid-template-columns: 1fr; gap: 24px; }
     }
 
-    /* FLOATING BUTTONS */
+    /* ===== FLOATING BUTTONS ===== */
     .wa-float {
       position: fixed;
       bottom: 24px;
@@ -715,12 +699,13 @@
       </div>
       <div class="hero-image">
         <div class="mockup">
-          <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80&fit=crop" alt="Website mockup" style="max-height:250px; object-fit:cover; border-radius:8px;">
-          <i class="fas fa-laptop-code" style="font-size: 48px; margin-top: 10px;"></i>
-          <h3>Your Website Here</h3>
-          <p>Professional design, mobile-friendly, WhatsApp button included.</p>
-          <div class="badge">Free .com.ng domain</div>
-          <div class="badge" style="margin-left: 8px;">Free hosting forever</div>
+          <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80&fit=crop" alt="Website mockup">
+          <div>
+            <span class="badge">Free .com.ng domain</span>
+            <span class="badge">Free hosting forever</span>
+            <span class="badge">WhatsApp button included</span>
+          </div>
+          <p style="color: var(--text-dim); font-size: 14px; margin-top: 12px;">Professional design, mobile-friendly, ready in 7 days.</p>
         </div>
       </div>
     </div>
@@ -932,7 +917,6 @@
   <a href="https://wa.me/2347055403967?text=I%20want%20to%20test%20the%20SmartBot%20demo" target="_blank" class="demo-float" title="Try Demo Bot">🧪</a>
 
   <script>
-    // Close mobile menu when a link is clicked (accessibility enhancement)
     document.querySelectorAll('.nav-links a').forEach(function(link) {
       link.addEventListener('click', function() {
         const checkbox = document.getElementById('menuToggle');
