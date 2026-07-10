@@ -301,15 +301,9 @@
     .founder-avatar {
       width: 240px;
       height: 240px;
-      background: var(--grey);
       border-radius: 50%;
       border: 3px solid var(--green);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 72px;
-      font-weight: 700;
-      color: var(--green);
+      object-fit: cover;
       box-shadow: 0 0 40px rgba(0, 200, 83, 0.2);
     }
     .founder-content h2 {
@@ -558,8 +552,9 @@
   <section class="section" id="story">
     <div class="container">
       <div class="founder-grid">
+        <!-- Replace the entire founder-image div -->
         <div class="founder-image">
-          <div class="founder-avatar">S</div>
+          <img src="founder.png" alt="Segun Jegede" class="founder-avatar">
         </div>
         <div class="founder-content">
           <div class="section-tag">Our Founder</div>
