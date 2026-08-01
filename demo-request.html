@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Request a Demo – SmartBot Builds</title>
+  <link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #080c08;
+      --green: #00c853;
+      --green-light: rgba(0,200,83,0.08);
+      --green-border: rgba(0,200,83,0.25);
+      --white: #f5faf5;
+      --grey: #141a14;
+      --grey-mid: #1e271e;
+      --grey-light: #2a352a;
+      --text: #e8f5e8;
+      --text-dim: #7a9e7a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--black); color: var(--text); font-family: 'Cabinet Grotesk', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .card { background: var(--grey); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 40px; max-width: 560px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+    .logo { font-family: 'Clash Display', sans-serif; font-size: 18px; font-weight: 700; color: var(--white); display: flex; align-items: center; gap: 8px; margin-bottom: 30px; }
+    .logo span { color: var(--green); }
+    .logo-dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    h1 { font-family: 'Clash Display', sans-serif; font-size: 28px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
+    p.sub { font-size: 14px; color: var(--text-dim); margin-bottom: 28px; line-height: 1.6; }
+    .field { margin-bottom: 18px; }
+    .field label { font-size: 13px; font-weight: 700; display: block; margin-bottom: 6px; }
+    .req { color: var(--green); }
+    .field input, .field select, .field textarea {
+      width: 100%; background: var(--grey-mid); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px; padding: 13px 15px; color: var(--text);
+      font-family: 'Cabinet Grotesk', sans-serif; font-size: 14px; outline: none;
+      transition: border 0.2s;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--green); }
+    .field textarea { min-height: 90px; resize: vertical; }
+    .btn {
+      background: var(--green); border: none; color: #000; padding: 15px 30px; border-radius: 100px;
+      font-family: 'Cabinet Grotesk', sans-serif; font-size: 15px; font-weight: 800; cursor: pointer;
+      width: 100%; transition: all 0.3s; margin-top: 10px;
+    }
+    .btn:hover { background: #00e676; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,200,83,0.3); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .success-msg { display: none; text-align: center; padding: 30px 0; }
+    .success-msg.show { display: block; }
+    .success-msg .icon { font-size: 55px; margin-bottom: 16px; }
+    .success-msg h2 { font-family: 'Clash Display', sans-serif; font-size: 24px; margin-bottom: 10px; }
+    .success-msg p { color: var(--text-dim); font-size: 14px; }
+    .error-msg { color: #ff5252; font-size: 13px; margin-top: -10px; margin-bottom: 16px; display: none; }
+    @media (max-width: 500px) { .card { padding: 28px 22px; } }
+  </style>
+</head>
+<body>
+  <div class="card" id="form-card">
+    <div class="logo"><div class="logo-dot"></div>Smart<span>Bot</span> Builds</div>
+    <h1>Request a Demo</h1>
+    <p class="sub">See Genius Bot in action. Fill this form and Segun will personally set up a custom demo for your business type.</p>
+    <div id="error" class="error-msg"></div>
+
+    <div class="field">
+      <label>Full Name <span class="req">*</span></label>
+      <input type="text" id="fullName" placeholder="Your name">
+    </div>
+    <div class="field">
+      <label>Business Name <span class="req">*</span></label>
+      <input type="text" id="bizName" placeholder="Your business name">
+    </div>
+    <div class="field">
+      <label>WhatsApp Number <span class="req">*</span></label>
+      <input type="tel" id="whatsapp" placeholder="08012345678">
+    </div>
+    <div class="field">
+      <label>Business Type <span class="req">*</span></label>
+      <select id="bizType">
+        <option value="">Select...</option>
+        <option>Fashion / Boutique</option>
+        <option>Food / Restaurant</option>
+        <option>Real Estate</option>
+        <option>Beauty / Salon</option>
+        <option>E-commerce / Online Store</option>
+        <option>Service Business (consulting, cleaning, etc.)</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>I want to see a demo of:</label>
+      <select id="demoType">
+        <option value="chatbot">AI WhatsApp Chatbot (Genius Bot)</option>
+        <option value="both">Both Chatbot & Website</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>What does your business sell/do? <span class="req">*</span></label>
+      <textarea id="bizDesc" placeholder="Describe your products or services briefly..."></textarea>
+    </div>
+    <div class="field">
+      <label>Sample products/services with prices (optional)</label>
+      <textarea id="sampleProducts" placeholder="e.g. Wedding cake – ₦50,000&#10;Small chops – ₦5,000/pack"></textarea>
+    </div>
+    <div class="field">
+      <label>Preferred bot tone</label>
+      <select id="tone">
+        <option value="friendly">Friendly & casual (with Pidgin)</option>
+        <option value="professional">Professional & formal</option>
+        <option value="mix">Mix of both</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>What's the #1 thing you want the bot to handle?</label>
+      <select id="botJob">
+        <option value="all">All of the above</option>
+        <option value="faq">Answer FAQs</option>
+        <option value="orders">Take orders</option>
+        <option value="booking">Book appointments</option>
+        <option value="leads">Follow up leads</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Any specific requests?</label>
+      <textarea id="message" placeholder="e.g., I'd like to see how it takes orders..."></textarea>
+    </div>
+    <button class="btn" onclick="submitRequest()">Request Demo 🚀</button>
+  </div>
+
+  <div class="success-msg" id="success">
+    <div class="icon">🎉</div>
+    <h2>Demo Request Received!</h2>
+    <p>Segun will review your details and set up a personalized demo. He'll WhatsApp you within a few hours.</p>
+  </div>
+
+  <script>
+    async function submitRequest() {
+      const fullName = document.getElementById('fullName').value.trim();
+      const bizName = document.getElementById('bizName').value.trim();
+      const whatsapp = document.getElementById('whatsapp').value.trim();
+      const bizType = document.getElementById('bizType').value;
+      const demoType = document.getElementById('demoType').value;
+      const bizDesc = document.getElementById('bizDesc').value.trim();
+      const sampleProducts = document.getElementById('sampleProducts').value.trim();
+      const tone = document.getElementById('tone').value;
+      const botJob = document.getElementById('botJob').value;
+      const message = document.getElementById('message').value.trim();
+
+      // Basic validation
+      if (!fullName || !bizName || !whatsapp || !bizType || !bizDesc) {
+        document.getElementById('error').innerText = 'Please fill all required fields.';
+        document.getElementById('error').style.display = 'block';
+        return;
+      }
+      if (!/^\d{10,14}$/.test(whatsapp.replace(/[\s\+\-]/g, ''))) {
+        document.getElementById('error').innerText = 'Please enter a valid WhatsApp number.';
+        document.getElementById('error').style.display = 'block';
+        return;
+      }
+      document.getElementById('error').style.display = 'none';
+      const btn = document.querySelector('.btn');
+      btn.disabled = true;
+      btn.innerText = 'Submitting...';
+
+      const payload = {
+        form_type: 'demo-request',
+        answers: {
+          fullName,
+          businessName: bizName,
+          whatsapp,
+          businessType: bizType,
+          demoType,
+          bizDesc,
+          sampleProducts,
+          tone,
+          botJob,
+          message
+        },
+        client_phone: whatsapp
+      };
+
+      try {
+        // IMPORTANT: Replace this URL with your actual Deno Deploy endpoint
+        const res = await fetch('https://smartbot-genius-bot.myaibuzcom-hue.deno.net/api/submit-brief', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('form-card').style.display = 'none';
+          document.getElementById('success').classList.add('show');
+        } else {
+          document.getElementById('error').innerText = 'Error: ' + (data.error || 'Unknown');
+          document.getElementById('error').style.display = 'block';
+          btn.disabled = false;
+          btn.innerText = 'Request Demo 🚀';
+        }
+      } catch (e) {
+        document.getElementById('error').innerText = 'Network error. Please try again.';
+        document.getElementById('error').style.display = 'block';
+        btn.disabled = false;
+        btn.innerText = 'Request Demo 🚀';
+      }
+    }
+  </script>
+</body>
+</html>
