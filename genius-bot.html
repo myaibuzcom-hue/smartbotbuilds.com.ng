@@ -221,7 +221,6 @@
         margin-top: 8px;
       }
 
-      /* CORRECTED: sibling selector */
       #menuToggle:checked ~ .nav-links {
         right: 0;
       }
@@ -576,6 +575,23 @@
       .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
     }
 
+    /* ===== CLIENT SUCCESS PLACEHOLDER (honest) ===== */
+    .success-placeholder {
+      background: var(--grey);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius);
+      padding: 40px 24px;
+      text-align: center;
+      margin-top: 48px;
+    }
+    .success-placeholder p {
+      font-size: 16px;
+      color: var(--text-dim);
+      line-height: 1.7;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
     /* ===== CTA SECTION ===== */
     .cta-section {
       padding: 80px 0;
@@ -682,21 +698,25 @@
       bottom: 96px;
       right: 24px;
       z-index: 100;
-      width: 60px;
+      width: auto;
       height: 60px;
       background: #ff9100;
-      border-radius: 50%;
+      border-radius: 100px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
+      padding: 0 20px;
+      font-size: 16px;
+      font-weight: 700;
       color: #fff;
       box-shadow: 0 4px 20px rgba(255, 145, 0, 0.4);
       text-decoration: none;
       transition: all 0.3s;
       animation: floatPulse 3s infinite;
+      white-space: nowrap;
+      gap: 8px;
     }
-    .demo-float:hover { transform: scale(1.1); box-shadow: 0 6px 30px rgba(255, 145, 0, 0.6); }
+    .demo-float:hover { transform: scale(1.05); box-shadow: 0 6px 30px rgba(255, 145, 0, 0.6); }
 
     @keyframes floatPulse {
       0%, 100% { box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4); }
@@ -705,8 +725,10 @@
 
     @media (max-width: 768px) {
       .wa-float, .demo-float {
-        width: 50px; height: 50px;
-        font-size: 22px;
+        width: auto;
+        height: 50px;
+        font-size: 14px;
+        padding: 0 16px;
         bottom: 20px;
         right: 20px;
       }
@@ -736,7 +758,7 @@
         <li><a href="/pricing.html">Pricing</a></li>
         <li><a href="/about.html">About</a></li>
         <li><a href="/faq.html">FAQ</a></li>
-        <li><a href="https://wa.me/2347055403967?text=I'm%20interested%20in%20your%20services" target="_blank" class="nav-cta">Get Started</a></li>
+        <li><a href="/demo-request.html" class="nav-cta">Request a Demo</a></li>
       </ul>
     </div>
   </header>
@@ -753,7 +775,7 @@
         <h1>Your Business,<br><span class="accent">Replying 24/7</span><br>While You Sleep.</h1>
         <p>Genius Bot is an AI-powered WhatsApp assistant that replies to your customers automatically – 24/7, 365 days a year.</p>
         <div class="hero-buttons">
-          <a href="https://wa.me/2347055403967?text=I'm%20interested%20in%20Genius%20Bot" target="_blank" class="btn btn-primary">💬 Get Started</a>
+          <a href="/demo-request.html" class="btn btn-primary">🧪 Request a Free Demo</a>
           <a href="#features" class="btn btn-secondary">Learn More ↓</a>
         </div>
       </div>
@@ -886,7 +908,7 @@
             <li>Custom built for your business</li>
             <li>Free edits for 7 days after delivery</li>
           </ul>
-          <a href="https://wa.me/2347055403967?text=I'm%20interested%20in%20the%20Genius%20Bot%20Starter%20package" target="_blank" class="btn btn-primary">Get Started</a>
+          <a href="/demo-request.html" class="btn btn-primary">Request a Demo</a>
         </div>
 
         <!-- Business (Popular) -->
@@ -903,7 +925,7 @@
             <li>Brand voice training</li>
             <li>Priority delivery</li>
           </ul>
-          <a href="https://wa.me/2347055403967?text=I'm%20interested%20in%20the%20Genius%20Bot%20Business%20package" target="_blank" class="btn btn-primary">Get Started</a>
+          <a href="/demo-request.html" class="btn btn-primary">Request a Demo</a>
         </div>
 
         <!-- Pro -->
@@ -919,7 +941,7 @@
             <li>Unlimited response flows</li>
             <li>Priority support — direct line to Segun</li>
           </ul>
-          <a href="https://wa.me/2347055403967?text=I'm%20interested%20in%20the%20Genius%20Bot%20Pro%20package" target="_blank" class="btn btn-primary">Get Started</a>
+          <a href="/demo-request.html" class="btn btn-primary">Request a Demo</a>
         </div>
       </div>
 
@@ -927,6 +949,11 @@
         💳 Payment: <strong style="color: var(--green);">50% upfront</strong>, 50% on delivery · Bank Transfer · Opay · Palmpay<br>
         <strong style="color: var(--green);">No monthly fees</strong> — you only pay if you need updates after delivery.
       </p>
+
+      <!-- Honest client success placeholder -->
+      <div class="success-placeholder">
+        <p>🚀 <strong>We're building our first client success stories right now.</strong><br>Yours could be the one we showcase here next. Every demo we run brings us closer — and your business gets the founder's full attention.</p>
+      </div>
     </div>
   </section>
 
@@ -934,8 +961,8 @@
   <section class="cta-section">
     <div class="container">
       <h2>Ready to <span>Never Miss a Sale</span> Again?</h2>
-      <p>Chat with us on WhatsApp right now. We'll show you how a Genius Bot can help your business grow.</p>
-      <a href="https://wa.me/2347055403967?text=I'm%20interested%20in%20Genius%20Bot" target="_blank" class="btn btn-primary">💬 Chat With Us Now</a>
+      <p>Request a free, no-obligation demo today. We'll show you exactly how a Genius Bot fits your business — with zero risk.</p>
+      <a href="/demo-request.html" class="btn btn-primary">🧪 Request Your Free Demo Now</a>
     </div>
   </section>
 
@@ -985,11 +1012,11 @@
   </footer>
 
   <!-- ===== FLOATING BUTTONS ===== -->
-  <a href="https://wa.me/2347055403967?text=I'm%20interested%20in%20your%20services" target="_blank" class="wa-float" title="Chat with us on WhatsApp">💬</a>
-  <a href="https://wa.me/2347055403967?text=I%20want%20to%20test%20the%20SmartBot%20demo" target="_blank" class="demo-float" title="Try Demo Bot">🧪</a>
+  <a href="https://wa.me/2348154857377?text=Hi%2C%20I%27m%20interested%20in%20your%20services" target="_blank" class="wa-float" title="Chat with us on WhatsApp">💬</a>
+  <a href="/demo-request.html" class="demo-float" title="Request a Free Demo">🧪 Free Demo</a>
 
   <script>
-    // Close mobile menu when a link is clicked (accessibility enhancement)
+    // Close mobile menu when a link is clicked
     document.querySelectorAll('.nav-links a').forEach(function(link) {
       link.addEventListener('click', function() {
         const checkbox = document.getElementById('menuToggle');
