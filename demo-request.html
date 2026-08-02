@@ -51,6 +51,7 @@
     .success-msg h2 { font-family: 'Clash Display', sans-serif; font-size: 24px; margin-bottom: 10px; }
     .success-msg p { color: var(--text-dim); font-size: 14px; }
     .error-msg { color: #ff5252; font-size: 13px; margin-top: -10px; margin-bottom: 16px; display: none; }
+    .video-note { background: var(--green-light); border: 1px solid var(--green-border); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: var(--green); margin-bottom: 18px; }
     @media (max-width: 500px) { .card { padding: 28px 22px; } }
   </style>
 </head>
@@ -94,6 +95,19 @@
       </select>
     </div>
     <div class="field">
+      <label>What's your approximate budget for this solution? <span class="req">*</span></label>
+      <select id="budget">
+        <option value="">Select...</option>
+        <option value="50-100">₦50,000 – ₦100,000</option>
+        <option value="100-200">₦100,000 – ₦200,000</option>
+        <option value="200+">₦200,000+</option>
+        <option value="exploring">Just exploring — not ready to buy yet</option>
+      </select>
+      <div id="budget-note" class="video-note" style="display:none;">
+        We recommend watching our quick video demo first. <a href="https://youtu.be/placeholder" target="_blank" style="color:var(--green);">Watch here</a>. If you're ready for a custom demo later, come back and fill this form.
+      </div>
+    </div>
+    <div class="field">
       <label>What does your business sell/do? <span class="req">*</span></label>
       <textarea id="bizDesc" placeholder="Describe your products or services briefly..."></textarea>
     </div>
@@ -123,7 +137,7 @@
       <label>Any specific requests?</label>
       <textarea id="message" placeholder="e.g., I'd like to see how it takes orders..."></textarea>
     </div>
-    <button class="btn" onclick="submitRequest()">Request Demo 🚀</button>
+    <button class="btn" id="submit-btn" onclick="submitRequest()">Request Demo 🚀</button>
   </div>
 
   <div class="success-msg" id="success">
@@ -133,12 +147,28 @@
   </div>
 
   <script>
+    // Hide/Show budget note and toggle submit button behavior
+    const budgetSelect = document.getElementById('budget');
+    const budgetNote = document.getElementById('budget-note');
+    const submitBtn = document.getElementById('submit-btn');
+
+    budgetSelect.addEventListener('change', function() {
+      if (this.value === 'exploring') {
+        budgetNote.style.display = 'block';
+        submitBtn.textContent = 'Watch Video Demo 🎬';
+      } else {
+        budgetNote.style.display = 'none';
+        submitBtn.textContent = 'Request Demo 🚀';
+      }
+    });
+
     async function submitRequest() {
       const fullName = document.getElementById('fullName').value.trim();
       const bizName = document.getElementById('bizName').value.trim();
       const whatsapp = document.getElementById('whatsapp').value.trim();
       const bizType = document.getElementById('bizType').value;
       const demoType = document.getElementById('demoType').value;
+      const budget = budgetSelect.value;
       const bizDesc = document.getElementById('bizDesc').value.trim();
       const sampleProducts = document.getElementById('sampleProducts').value.trim();
       const tone = document.getElementById('tone').value;
@@ -146,7 +176,7 @@
       const message = document.getElementById('message').value.trim();
 
       // Basic validation
-      if (!fullName || !bizName || !whatsapp || !bizType || !bizDesc) {
+      if (!fullName || !bizName || !whatsapp || !bizType || !budget || !bizDesc) {
         document.getElementById('error').innerText = 'Please fill all required fields.';
         document.getElementById('error').style.display = 'block';
         return;
@@ -157,9 +187,21 @@
         return;
       }
       document.getElementById('error').style.display = 'none';
-      const btn = document.querySelector('.btn');
-      btn.disabled = true;
-      btn.innerText = 'Submitting...';
+
+      // If budget is "Just exploring", redirect to video demo, don't submit
+      if (budget === 'exploring') {
+        window.open('https://youtu.be/placeholder', '_blank'); // Replace with actual video demo URL
+        // Optionally show a message and keep form visible
+        document.getElementById('form-card').style.display = 'none';
+        const successDiv = document.getElementById('success');
+        successDiv.classList.add('show');
+        successDiv.innerHTML = `<div class="icon">📹</div><h2>Check Out the Video Demo</h2><p>We've opened a video walkthrough for you. When you're ready to explore a custom demo, come back and fill this form with a budget range.</p>`;
+        return;
+      }
+
+      // Disable button
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Submitting...';
 
       const payload = {
         form_type: 'demo-request',
@@ -169,6 +211,7 @@
           whatsapp,
           businessType: bizType,
           demoType,
+          budget,
           bizDesc,
           sampleProducts,
           tone,
@@ -192,14 +235,14 @@
         } else {
           document.getElementById('error').innerText = 'Error: ' + (data.error || 'Unknown');
           document.getElementById('error').style.display = 'block';
-          btn.disabled = false;
-          btn.innerText = 'Request Demo 🚀';
+          submitBtn.disabled = false;
+          submitBtn.innerText = 'Request Demo 🚀';
         }
       } catch (e) {
         document.getElementById('error').innerText = 'Network error. Please try again.';
         document.getElementById('error').style.display = 'block';
-        btn.disabled = false;
-        btn.innerText = 'Request Demo 🚀';
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Request Demo 🚀';
       }
     }
   </script>
