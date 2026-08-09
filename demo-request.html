@@ -52,6 +52,7 @@
     .success-msg p { color: var(--text-dim); font-size: 14px; }
     .error-msg { color: #ff5252; font-size: 13px; margin-top: -10px; margin-bottom: 16px; display: none; }
     .video-note { background: var(--green-light); border: 1px solid var(--green-border); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: var(--green); margin-bottom: 18px; }
+    .hint { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
     @media (max-width: 500px) { .card { padding: 28px 22px; } }
   </style>
 </head>
@@ -59,7 +60,7 @@
   <div class="card" id="form-card">
     <div class="logo"><div class="logo-dot"></div>Smart<span>Bot</span> Builds</div>
     <h1>Request a Demo</h1>
-    <p class="sub">See Genius Bot in action. Fill this form and Segun will personally set up a custom demo for your business type.</p>
+    <p class="sub">See Genius Bot in action. Fill this form and Segun will personally set up a live trial on your WhatsApp number.</p>
     <div id="error" class="error-msg"></div>
 
     <div class="field">
@@ -71,8 +72,14 @@
       <input type="text" id="bizName" placeholder="Your business name">
     </div>
     <div class="field">
-      <label>WhatsApp Number <span class="req">*</span></label>
+      <label>Your Personal WhatsApp Number <span class="req">*</span></label>
       <input type="tel" id="whatsapp" placeholder="08012345678">
+      <p class="hint">For Segun to contact you about your demo.</p>
+    </div>
+    <div class="field">
+      <label>WhatsApp Number for the Bot <span class="req">*</span></label>
+      <input type="tel" id="botNumber" placeholder="Dedicated SIM for the AI bot">
+      <p class="hint">📱 Must be a number not already in use with WhatsApp Business, or a brand new SIM. Costs about ₦200 from any phone shop. This is the number your customers will message.</p>
     </div>
     <div class="field">
       <label>Business Type <span class="req">*</span></label>
@@ -143,11 +150,10 @@
   <div class="success-msg" id="success">
     <div class="icon">🎉</div>
     <h2>Demo Request Received!</h2>
-    <p>Segun will review your details and set up a personalized demo. He'll WhatsApp you within a few hours.</p>
+    <p>Segun will review your details and set up a live trial on your bot number. He'll WhatsApp you within a few hours.</p>
   </div>
 
   <script>
-    // Hide/Show budget note and toggle submit button behavior
     const budgetSelect = document.getElementById('budget');
     const budgetNote = document.getElementById('budget-note');
     const submitBtn = document.getElementById('submit-btn');
@@ -166,6 +172,7 @@
       const fullName = document.getElementById('fullName').value.trim();
       const bizName = document.getElementById('bizName').value.trim();
       const whatsapp = document.getElementById('whatsapp').value.trim();
+      const botNumber = document.getElementById('botNumber').value.trim();
       const bizType = document.getElementById('bizType').value;
       const demoType = document.getElementById('demoType').value;
       const budget = budgetSelect.value;
@@ -175,31 +182,37 @@
       const botJob = document.getElementById('botJob').value;
       const message = document.getElementById('message').value.trim();
 
-      // Basic validation
-      if (!fullName || !bizName || !whatsapp || !bizType || !budget || !bizDesc) {
+      if (!fullName || !bizName || !whatsapp || !botNumber || !bizType || !budget || !bizDesc) {
         document.getElementById('error').innerText = 'Please fill all required fields.';
         document.getElementById('error').style.display = 'block';
         return;
       }
       if (!/^\d{10,14}$/.test(whatsapp.replace(/[\s\+\-]/g, ''))) {
-        document.getElementById('error').innerText = 'Please enter a valid WhatsApp number.';
+        document.getElementById('error').innerText = 'Please enter a valid personal WhatsApp number.';
+        document.getElementById('error').style.display = 'block';
+        return;
+      }
+      if (!/^\d{10,14}$/.test(botNumber.replace(/[\s\+\-]/g, ''))) {
+        document.getElementById('error').innerText = 'Please enter a valid WhatsApp number for the bot.';
+        document.getElementById('error').style.display = 'block';
+        return;
+      }
+      if (botNumber.replace(/\s/g,'') === whatsapp.replace(/\s/g,'')) {
+        document.getElementById('error').innerText = 'The bot number must be different from your personal WhatsApp number.';
         document.getElementById('error').style.display = 'block';
         return;
       }
       document.getElementById('error').style.display = 'none';
 
-      // If budget is "Just exploring", redirect to video demo, don't submit
       if (budget === 'exploring') {
-        window.open('https://youtu.be/placeholder', '_blank'); // Replace with actual video demo URL
-        // Optionally show a message and keep form visible
+        window.open('https://youtu.be/placeholder', '_blank');
         document.getElementById('form-card').style.display = 'none';
         const successDiv = document.getElementById('success');
         successDiv.classList.add('show');
-        successDiv.innerHTML = `<div class="icon">📹</div><h2>Check Out the Video Demo</h2><p>We've opened a video walkthrough for you. When you're ready to explore a custom demo, come back and fill this form with a budget range.</p>`;
+        successDiv.innerHTML = `<div class="icon">📹</div><h2>Check Out the Video Demo</h2><p>We've opened a video walkthrough for you. When you're ready to explore a live trial, come back and fill this form with a budget range.</p>`;
         return;
       }
 
-      // Disable button
       submitBtn.disabled = true;
       submitBtn.innerText = 'Submitting...';
 
@@ -209,6 +222,7 @@
           fullName,
           businessName: bizName,
           whatsapp,
+          botNumber,
           businessType: bizType,
           demoType,
           budget,
@@ -222,7 +236,6 @@
       };
 
       try {
-        // IMPORTANT: Replace this URL with your actual Deno Deploy endpoint
         const res = await fetch('https://smartbot-genius-bot.myaibuzcom-hue.deno.net/api/submit-brief', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
