@@ -145,7 +145,21 @@ header{background:rgba(8,12,8,0.97);backdrop-filter:blur(20px);border-bottom:1px
         </div>
         <div class="field-row">
           <div class="field"><label>Your WhatsApp Number <span class="req">*</span></label><input type="tel" id="whatsapp" placeholder="e.g. 08012345678"></div>
-          <div class="field"><label>Bot WhatsApp Number <span class="req">*</span></label><input type="tel" id="botNumber" placeholder="Dedicated SIM for the bot"></div>
+          <div class="field">
+  <label>Do you already have a WhatsApp Business Account (WABA)? <span class="req">*</span></label>
+  <select id="hasWaba">
+    <option value="">Select...</option>
+    <option value="yes">Yes, I have set up my WABA</option>
+    <option value="no">No, I need the setup guide</option>
+  </select>
+  <p class="hint">If you don't have one yet, don't worry — <a href="https://smartbotbuilds.com.ng/waba-setup-guide.html" target="_blank" style="color:var(--green);">follow this guide</a> to create your WABA and get your Phone Number ID.</p>
+</div>
+
+<div class="field" id="phoneIdField" style="display:none;">
+  <label>WhatsApp Phone Number ID <span class="req">*</span></label>
+  <input type="text" id="phoneNumberId" placeholder="The Phone Number ID from your Meta app">
+  <p class="hint">Found in your WABA under Phone numbers. <a href="https://smartbotbuilds.com.ng/waba-setup-guide.html" target="_blank" style="color:var(--green);">See the guide</a>.</p>
+</div>
         </div>
         <p class="hint" style="margin-top:-8px;">📱 The bot number must be a dedicated SIM — separate from your personal number. Any network, costs about ₦200.</p>
         <div class="field-row">
@@ -298,8 +312,13 @@ function nextSec(cur) {
     if (!biz || hasRubbish(biz)) { showError('bizName', 'Please enter your real business name.'); ok = false; }
     const wa = val('whatsapp');
     if (!wa || !isValidNigerianPhone(wa)) { showError('whatsapp', 'Please enter a valid Nigerian phone number e.g. 08012345678.'); ok = false; }
-    const bot = val('botNumber');
-    if (!bot || !isValidNigerianPhone(bot)) { showError('botNumber', 'Please enter a valid Nigerian number for the bot SIM.'); ok = false; } else if (bot.replace(/\s/g,'') === wa.replace(/\s/g,'')) { showError('botNumber', 'The bot SIM number must be different from your personal WhatsApp number.'); ok = false; }
+    const hasWaba = document.getElementById('hasWaba').value;
+if (!hasWaba) { showError('hasWaba', 'Please tell us if you have a WhatsApp Business Account.'); ok = false; }
+
+if (hasWaba === 'yes') {
+  const phoneId = val('phoneNumberId');
+  if (!phoneId || phoneId.length < 5) { showError('phoneNumberId', 'Please enter your WhatsApp Phone Number ID from your Meta app.'); ok = false; }
+}
     const email = val('email');
     if (email && !isValidEmail(email)) { showError('email', 'Please enter a valid email address.'); ok = false; }
     const loc = val('location');
@@ -359,7 +378,8 @@ function submitForm() {
     whatsapp: val('whatsapp'),
     email: val('email') || 'Not provided',
     location: val('location'),
-    botNumber: val('botNumber'),
+    hasWaba: document.getElementById('hasWaba').value,
+    phoneNumberId: document.getElementById('phoneNumberId').value.trim(),
     businessType: document.getElementById('bizType').value,
     description: val('bizDesc'),
     products: val('products'),
@@ -409,6 +429,16 @@ function submitForm() {
     alert('Network error. Please try again.');
     btn.disabled = false;
     btn.innerHTML = 'Submit Brief 🚀';
+  });
+}
+
+// WABA / Phone ID field toggle
+const hasWabaSelect = document.getElementById('hasWaba');
+const phoneIdField = document.getElementById('phoneIdField');
+
+if (hasWabaSelect && phoneIdField) {
+  hasWabaSelect.addEventListener('change', function() {
+    phoneIdField.style.display = this.value === 'yes' ? 'block' : 'none';
   });
 }
 
