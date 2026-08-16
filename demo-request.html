@@ -77,10 +77,20 @@
       <p class="hint">For Segun to contact you about your demo.</p>
     </div>
     <div class="field">
-      <label>WhatsApp Number for the Bot <span class="req">*</span></label>
-      <input type="tel" id="botNumber" placeholder="Dedicated SIM for the AI bot">
-      <p class="hint">📱 Must be a number not already in use with WhatsApp Business, or a brand new SIM. Costs about ₦200 from any phone shop. This is the number your customers will message.</p>
-    </div>
+  <label>Do you already have a WhatsApp Business Account (WABA)? <span class="req">*</span></label>
+  <select id="hasWaba">
+    <option value="">Select...</option>
+    <option value="yes">Yes, I have set up my WABA</option>
+    <option value="no">No, I need the setup guide</option>
+  </select>
+  <p class="hint">If you don't have one yet, <a href="https://smartbotbuilds.com.ng/waba-setup-guide.html" target="_blank" style="color:var(--green);">follow this guide</a> to create your WABA and get your Phone Number ID.</p>
+</div>
+
+<div class="field" id="phoneIdField" style="display:none;">
+  <label>WhatsApp Phone Number ID <span class="req">*</span></label>
+  <input type="text" id="phoneNumberId" placeholder="The Phone Number ID from your Meta app">
+  <p class="hint">Found in your WABA under Phone numbers. <a href="https://smartbotbuilds.com.ng/waba-setup-guide.html" target="_blank" style="color:var(--green);">See the guide</a>.</p>
+</div>
     <div class="field">
       <label>Business Type <span class="req">*</span></label>
       <select id="bizType">
@@ -172,7 +182,19 @@
       const fullName = document.getElementById('fullName').value.trim();
       const bizName = document.getElementById('bizName').value.trim();
       const whatsapp = document.getElementById('whatsapp').value.trim();
-      const botNumber = document.getElementById('botNumber').value.trim();
+      const hasWaba = document.getElementById('hasWaba').value;
+const phoneNumberId = document.getElementById('phoneNumberId').value.trim();
+
+if (!hasWaba) {
+  document.getElementById('error').innerText = 'Please tell us if you have a WhatsApp Business Account.';
+  document.getElementById('error').style.display = 'block';
+  return;
+}
+if (hasWaba === 'yes' && !phoneNumberId) {
+  document.getElementById('error').innerText = 'Please enter your WhatsApp Phone Number ID.';
+  document.getElementById('error').style.display = 'block';
+  return;
+}
       const bizType = document.getElementById('bizType').value;
       const demoType = document.getElementById('demoType').value;
       const budget = budgetSelect.value;
@@ -222,7 +244,8 @@
           fullName,
           businessName: bizName,
           whatsapp,
-          botNumber,
+          hasWaba,
+          phoneNumberId,
           businessType: bizType,
           demoType,
           budget,
@@ -258,6 +281,15 @@
         submitBtn.innerText = 'Request Demo 🚀';
       }
     }
+    // WABA / Phone ID field toggle
+const hasWabaSelect = document.getElementById('hasWaba');
+const phoneIdField = document.getElementById('phoneIdField');
+
+if (hasWabaSelect && phoneIdField) {
+  hasWabaSelect.addEventListener('change', function() {
+    phoneIdField.style.display = this.value === 'yes' ? 'block' : 'none';
+  });
+}
   </script>
 </body>
 </html>
