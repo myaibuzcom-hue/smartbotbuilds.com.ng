@@ -31,19 +31,28 @@
     h1 { font-family: 'Clash Display', sans-serif; font-size: 32px; font-weight: 700; margin-bottom: 20px; letter-spacing: -0.5px; }
     h1 span { color: var(--green); }
     p.sub { color: var(--text-dim); margin-bottom: 30px; font-size: 16px; }
-    .step-card { background: var(--grey); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 24px; margin-bottom: 16px; }
-    .step-card h2 { font-size: 20px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
-    .step-num { width: 34px; height: 34px; background: var(--green-light); border: 1px solid var(--green-border); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: var(--green); }
-    .step-card ol, .step-card ul { padding-left: 24px; margin-bottom: 16px; }
-    .step-card li { margin-bottom: 10px; }
+    .option-card { background: var(--grey); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 24px; margin-bottom: 16px; cursor: pointer; transition: border 0.3s; }
+    .option-card:hover { border-color: var(--green-border); }
+    .option-card h2 { font-size: 20px; font-weight: 700; margin-bottom: 12px; color: var(--green); }
+    .option-card .expand-hint { font-size: 14px; color: var(--text-dim); }
+    .details { display: none; margin-top: 20px; }
+    .details.show { display: block; }
+    .details > ol { padding-left: 24px; margin-bottom: 16px; }
+    .details > ol > li { margin-bottom: 24px; }
+    .step-title { font-weight: 700; font-size: 16px; color: var(--white); margin-bottom: 10px; }
+    .substeps { padding-left: 24px; margin-top: 10px; }
+    .substeps li { margin-bottom: 10px; }
     .note { background: rgba(0,200,83,0.06); border: 1px solid rgba(0,200,83,0.2); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: var(--green); margin: 12px 0; }
     .warning { background: rgba(255,145,0,0.06); border: 1px solid rgba(255,145,0,0.2); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: var(--orange); margin: 12px 0; }
     .btn { display: inline-block; background: var(--green); color: #000; padding: 12px 24px; border-radius: 100px; font-weight: 700; text-decoration: none; margin-top: 16px; transition: all 0.3s; }
     .btn:hover { background: #00e676; transform: translateY(-2px); }
+    .wa-link { color: var(--green); font-weight: 700; text-decoration: underline; }
+    .faq-item { margin-bottom: 16px; }
+    .faq-item h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
     @media (max-width: 600px) {
       header { padding: 14px 18px; }
       h1 { font-size: 26px; }
-      .step-card { padding: 18px; }
+      .option-card { padding: 18px; }
     }
   </style>
 </head>
@@ -55,150 +64,202 @@
 </header>
 
 <div class="container">
-  <h1>WhatsApp Business Account (WABA)<br><span>Setup Guide</span></h1>
-  <p class="sub">Follow these steps carefully to create your own WhatsApp Business Account, connect your bot number, and get your Phone Number ID. Once complete, return to the form and submit your details.</p>
+  <h1>WhatsApp Business Account (WABA)<br><span>Simple Setup Guide</span></h1>
+  <p class="sub">Choose one of the two options below. We will guide you step by step.</p>
 
-  <div class="step-card">
-    <h2><span class="step-num">1</span> Create a Meta Business Account</h2>
-    <ol>
-      <li>Open your web browser (Chrome, Firefox, or Safari).</li>
-      <li>In the address bar, type exactly: <strong>business.facebook.com/overview</strong> and press Enter.</li>
-      <li>If you are not logged into Facebook, log in with your personal Facebook account.</li>
-      <li>If you are logged in but don't have a business account, click <strong>"Create an account"</strong>.</li>
-      <li>Enter your business name. If you don't have a registered business, enter your personal name (e.g., "Chioma Okafor").</li>
-      <li>Enter your email address (the one you check regularly).</li>
-      <li>Click <strong>Submit</strong>.</li>
-      <li>Go to your email inbox (or spam folder). Find an email from Meta/Facebook with a confirmation link. Click that link.</li>
-      <li>You are now logged into Meta Business Suite.</li>
-    </ol>
-    <div class="note">💡 If you already have a Meta Business Account, skip this step and log in.</div>
+  <!-- OPTION A: DO IT YOURSELF -->
+  <div class="option-card" onclick="toggleDetails('optionA')">
+    <h2>Option A: Do It Yourself (6 Steps)</h2>
+    <p class="expand-hint">Click to see the detailed step-by-step guide</p>
+    <div class="details" id="optionA">
+      <ol>
+        <li>
+          <div class="step-title">Create a Meta Business Account</div>
+          <ol class="substeps" type="1">
+            <li>Open your web browser and go to <strong>business.facebook.com/overview</strong>.</li>
+            <li>If you see a login button, log in with your Facebook account.</li>
+            <li>Click <strong>"Create account"</strong>.</li>
+            <li>Enter your business name (or personal name) and your email address.</li>
+            <li>Click <strong>Submit</strong>.</li>
+            <li>Go to your email inbox or spam folder, find the confirmation email from Meta, and click the confirmation link.</li>
+          </ol>
+        </li>
+        <li>
+          <div class="step-title">Create a WhatsApp Business Account (WABA)</div>
+          <ol class="substeps" type="1">
+            <li>After confirming your email, you'll be inside Meta Business Suite.</li>
+            <li>Look at the left menu. If you don't see the menu, click the three horizontal lines (hamburger) at the top left.</li>
+            <li>Scroll down and click <strong>Settings</strong> (gear icon).</li>
+            <li>Under the <strong>Accounts</strong> section, click <strong>WhatsApp Accounts</strong>.</li>
+            <li>Click the blue <strong>Add</strong> button, then select <strong>Create a new WhatsApp Business Account</strong>.</li>
+            <li>Enter a name (your business name), select your time zone (for Nigeria choose <strong>(GMT+01:00) West Central Africa</strong>), and click <strong>Create</strong>.</li>
+          </ol>
+        </li>
+        <li>
+          <div class="step-title">Add Your Dedicated Bot Number</div>
+          <ol class="substeps" type="1">
+            <li>Click on your new WABA name.</li>
+            <li>Look for <strong>Phone numbers</strong> and click <strong>Add phone number</strong>.</li>
+            <li>In the phone number field, enter the number you want to use for the bot. Start with +234 and remove the leading zero. Example: if the number is <strong>09064586135</strong>, enter <strong>+2349064586135</strong>.</li>
+            <li>For the display name, enter your business name.</li>
+            <li>Choose <strong>SMS</strong> or <strong>Voice call</strong> for verification.</li>
+            <li>Click <strong>Next</strong> or <strong>Continue</strong>.</li>
+            <li>Meta will send a 6-digit code to that number via SMS or call. The code will arrive on the phone where the SIM is inserted.</li>
+            <li>Enter that code in the field and click <strong>Verify</strong>.</li>
+          </ol>
+        </li>
+        <li>
+          <div class="step-title">Generate a Permanent Access Token</div>
+          <ol class="substeps" type="1">
+            <li>Still in Meta Business Suite, click <strong>Settings</strong> (gear icon) again.</li>
+            <li>Under <strong>Accounts</strong>, click <strong>System users</strong>.</li>
+            <li>Click the blue <strong>Add</strong> button and choose <strong>Create system user</strong>.</li>
+            <li>In the form, type <strong>SmartBot Integration</strong> as the system user name, and set role to <strong>Admin</strong>.</li>
+            <li>Click <strong>Create</strong>.</li>
+            <li>Find the new system user in the list and click on its name.</li>
+            <li>Click <strong>Add assets</strong>, select <strong>WhatsApp Accounts</strong>, check the box next to your WABA, and turn on <strong>Manage</strong> access. Click <strong>Save</strong>.</li>
+            <li>Now click <strong>Generate token</strong>.</li>
+            <li>Select <strong>whatsapp_business_messaging</strong> and <strong>whatsapp_business_management</strong>.</li>
+            <li>Click <strong>Generate</strong>.</li>
+            <li>Copy the long token that appears. <strong>Keep it secret and send it to us via WhatsApp</strong>.</li>
+          </ol>
+        </li>
+        <li>
+          <div class="step-title">Set Webhook URL</div>
+          <ol class="substeps" type="1">
+            <li>Go back to <strong>Settings</strong> → <strong>WhatsApp Accounts</strong>.</li>
+            <li>Click on your WABA name.</li>
+            <li>Find the <strong>Configuration</strong> or <strong>Webhooks</strong> section.</li>
+            <li>Click <strong>Edit</strong>.</li>
+            <li>In the <strong>Callback URL</strong> field, type exactly: <strong>https://smartbot-genius-bot.myaibuzcom-hue.deno.net</strong></li>
+            <li>In the <strong>Verify token</strong> field, type exactly: <strong>smartbot</strong></li>
+            <li>Click <strong>Verify and Save</strong>. You should see a green success message.</li>
+            <li>If asked to subscribe to fields, make sure <strong>messages</strong> is checked.</li>
+          </ol>
+        </li>
+        <li>
+          <div class="step-title">Get Your Phone Number ID and Send to Us</div>
+          <ol class="substeps" type="1">
+            <li>Go back to <strong>Settings</strong> → <strong>WhatsApp Accounts</strong> → your WABA → <strong>Phone numbers</strong>.</li>
+            <li>Find your number. Next to it is the <strong>Phone Number ID</strong>.</li>
+            <li>Copy the Phone Number ID.</li>
+            <li>Send the <strong>Phone Number ID</strong> and the <strong>Access Token</strong> to us via WhatsApp. We will activate your bot.</li>
+          </ol>
+        </li>
+      </ol>
+      <div class="note">✅ This DIY route takes about 20 minutes. If you prefer not to do these steps, use Option B and we'll handle it.</div>
+    </div>
   </div>
 
-  <div class="step-card">
-    <h2><span class="step-num">2</span> Create a WhatsApp Business Account (WABA)</h2>
-    <ol>
-      <li>In Meta Business Suite, look at the left side of the screen. If you don't see a menu, click the <strong>three horizontal lines</strong> (hamburger icon) at the top left.</li>
-      <li>Scroll down in the left menu and find <strong>"Settings"</strong> (gear icon). Click it.</li>
-      <li>In the Settings page, look for a section called <strong>"Accounts"</strong>. Under Accounts, click <strong>"WhatsApp Accounts"</strong>.</li>
-      <li>You will see a blue button that says <strong>"Add"</strong>. Click it.</li>
-      <li>A dropdown menu appears. Click <strong>"Create a new WhatsApp Business Account"</strong>.</li>
-      <li>Fill in:
-        <ul>
-          <li><strong>Account name:</strong> Enter your business name (or your name).</li>
-          <li><strong>Time zone:</strong> Select your time zone. For Nigeria, choose <strong>(GMT+01:00) West Central Africa</strong>.</li>
-        </ul>
-      </li>
-      <li>Click <strong>Create</strong>.</li>
-      <li>You will see your new WhatsApp Business Account listed on the page. Click on its name to open it.</li>
-    </ol>
+  <!-- OPTION B: LET US HANDLE EVERYTHING -->
+  <div class="option-card" onclick="toggleDetails('optionB')">
+    <h2>Option B: Let Us Handle Everything (Recommended)</h2>
+    <p class="expand-hint">Click to see the detailed guide for adding us as Admin</p>
+    <div class="details" id="optionB">
+      <ol>
+        <li>
+          <div class="step-title">Open Meta Business Suite</div>
+          <ol class="substeps" type="1">
+            <li>Go to <strong>business.facebook.com/overview</strong> and log in with your Facebook account.</li>
+          </ol>
+        </li>
+        <li>
+          <div class="step-title">Go to Settings</div>
+          <ol class="substeps" type="1">
+            <li>Click the <strong>Settings</strong> gear icon at the bottom left.</li>
+          </ol>
+        </li>
+        <li>
+          <div class="step-title">Open People</div>
+          <ol class="substeps" type="1">
+            <li>Under the <strong>Users</strong> section, click <strong>People</strong>.</li>
+          </ol>
+        </li>
+        <li>
+          <div class="step-title">Add a Person</div>
+          <ol class="substeps" type="1">
+            <li>Click the blue <strong>Add</strong> button.</li>
+          </ol>
+        </li>
+        <li>
+          <div class="step-title">Search for Segun</div>
+          <ol class="substeps" type="1">
+            <li>In the search box, type <strong>Segun Jegede</strong> or his email <strong>segunjegedeak@gmail.com</strong>.</li>
+          </ol>
+        </li>
+        <li>
+          <div class="step-title">Select His Profile</div>
+          <ol class="substeps" type="1">
+            <li>Click on his name when it appears.</li>
+          </ol>
+        </li>
+        <li>
+          <div class="step-title">Choose Admin Role</div>
+          <ol class="substeps" type="1">
+            <li>In the role dropdown, select <strong>Admin</strong>.</li>
+          </ol>
+        </li>
+        <li>
+          <div class="step-title">Send Invitation</div>
+          <ol class="substeps" type="1">
+            <li>Click <strong>Send Invitation</strong> or <strong>Confirm</strong>.</li>
+          </ol>
+        </li>
+        <li>
+          <div class="step-title">Notify Segun via WhatsApp</div>
+          <ol class="substeps" type="1">
+            <li>After you've added him, please send a WhatsApp message to <strong>08154857377</strong> so he can proceed immediately.</li>
+            <li>You can use this link:
+              <br><br>
+              <a class="wa-link" href="https://wa.me/2348154857377?text=I%20have%20added%20you%20as%20Admin%20for%20my%20business" target="_blank" onclick="event.stopPropagation();">Send WhatsApp Message</a>
+            </li>
+          </ol>
+        </li>
+      </ol>
+      <div class="note">📱 When we add your bot number, Meta will send an OTP to your SIM. Please send that OTP to us, and we'll handle the rest.</div>
+    </div>
   </div>
 
-  <div class="step-card">
-    <h2><span class="step-num">3</span> Add a Dedicated Bot Number</h2>
-    <ol>
-      <li>Inside your WABA page, look for a section called <strong>"Phone numbers"</strong>.</li>
-      <li>Click the blue <strong>"Add phone number"</strong> button.</li>
-      <li>A form appears:
-        <ul>
-          <li><strong>Phone number:</strong> Enter the dedicated SIM number you prepared. Start with <code>+234</code> and remove the first zero. Example: if the number is <code>07069593730</code>, type <code>+2347069593730</code>.</li>
-          <li><strong>Display name:</strong> Enter your business name as it should appear to customers.</li>
-        </ul>
-      </li>
-      <li>Choose <strong>"SMS"</strong> or <strong>"Voice call"</strong> as the verification method.</li>
-      <li>Click <strong>Next</strong> or <strong>Continue</strong>.</li>
-      <li>Meta will send a 6-digit code to that number via SMS or call. The code will arrive on the phone where the SIM is inserted.</li>
-      <li>Type that code into the field on the screen.</li>
-      <li>Click <strong>Verify</strong>.</li>
-      <li>After verification, Meta will show a <strong>"Phone Number ID"</strong> – a long number. It looks like <code>123456789012345</code>.</li>
-      <li><strong>Copy this Phone Number ID and keep it safe.</strong> You will need it later.</li>
-    </ol>
-    <div class="warning">⚠️ If the number is already on WhatsApp, you must delete that WhatsApp account first (or use a new SIM). See the FAQ below.</div>
+  <!-- FAQ -->
+  <div class="option-card">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item">
+      <h3>Do I need to create an App?</h3>
+      <p>No. That's an old step. We handle app creation if needed.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Do I need to create a System User?</h3>
+      <p>Only if you choose Option A (Do It Yourself). If you choose Option B, we create it for you.</p>
+    </div>
+    <div class="faq-item">
+      <h3>What is a Phone Number ID?</h3>
+      <p>It's a unique number Meta gives after you add your bot number to your WABA. We use it to identify your bot.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Can I use my personal WhatsApp number?</h3>
+      <p>No. The bot needs a dedicated SIM that is not already on WhatsApp. Buy a new SIM (₦200) if needed.</p>
+    </div>
   </div>
 
-  <div class="step-card">
-    <h2><span class="step-num">4</span> Generate a Permanent Access Token</h2>
-    <ol>
-      <li>Still in Meta Business Suite, click <strong>"Settings"</strong> (gear icon) in the left menu again.</li>
-      <li>Under <strong>"Accounts"</strong>, click <strong>"System users"</strong>.</li>
-      <li>Click the blue <strong>"Add"</strong> button → <strong>"Create system user"</strong>.</li>
-      <li>In the form:
-        <ul>
-          <li><strong>System user name:</strong> Type <code>SmartBot Integration</code>.</li>
-          <li><strong>Role:</strong> Choose <strong>Admin</strong>.</li>
-        </ul>
-      </li>
-      <li>Click <strong>Create</strong>.</li>
-      <li>You will see the new system user in a list. Click on its name.</li>
-      <li>Click <strong>"Add assets"</strong>.</li>
-      <li>A window opens. Select <strong>"WhatsApp Accounts"</strong>.</li>
-      <li>Check the box next to your WABA.</li>
-      <li>Turn on <strong>"Manage"</strong> access by toggling the switch.</li>
-      <li>Click <strong>Save</strong>.</li>
-      <li>Now click <strong>"Generate token"</strong>.</li>
-      <li>Select the permissions:
-        <ul>
-          <li><code>whatsapp_business_messaging</code></li>
-          <li><code>whatsapp_business_management</code></li>
-        </ul>
-      </li>
-      <li>Click <strong>Generate</strong>.</li>
-      <li>Copy the long token that appears. <strong>Keep it secret. Do not send it to anyone.</strong></li>
-      <li>Click <strong>Done</strong>.</li>
-    </ol>
-  </div>
-
-  <div class="step-card">
-    <h2><span class="step-num">5</span> Set Webhook URL</h2>
-    <ol>
-      <li>In Meta Business Suite, go back to <strong>Settings</strong> → <strong>WhatsApp Accounts</strong>.</li>
-      <li>Click on your WABA name.</li>
-      <li>Look for a tab or section called <strong>"Configuration"</strong> or <strong>"Webhooks"</strong>. It may be under "Webhook fields".</li>
-      <li>Click <strong>Edit</strong>.</li>
-      <li>In the <strong>Callback URL</strong> field, type exactly:
-        <br><code>https://smartbot-genius-bot.myaibuzcom-hue.deno.net</code>
-      </li>
-      <li>In the <strong>Verify token</strong> field, type exactly:
-        <br><code>smartbot</code>
-      </li>
-      <li>Click <strong>Verify and Save</strong>.</li>
-      <li>You should see a green success message. If you get an error, double-check the URL and token spelling.</li>
-      <li>After saving, subscribe to the <strong>messages</strong> field if you see a list of fields.</li>
-    </ol>
-    <div class="note">🔒 The callback URL is safe to share. It is not a secret, and it is protected by the verify token.</div>
-  </div>
-
-  <div class="step-card">
-    <h2><span class="step-num">6</span> Get Your Phone Number ID (Again)</h2>
-    <ol>
-      <li>Go back to <strong>Settings</strong> → <strong>WhatsApp Accounts</strong> → your WABA → <strong>Phone numbers</strong>.</li>
-      <li>Find the number you added. Next to it, you'll see the <strong>Phone Number ID</strong>.</li>
-      <li>Copy that ID.</li>
-    </ol>
-  </div>
-
-  <div class="step-card">
-    <h2>✅ You're Done!</h2>
-    <p>Now go back to the form you were filling and submit it with your <strong>Phone Number ID</strong>. Segun will activate your bot within hours.</p>
+  <!-- CTA -->
+  <div class="option-card" style="text-align:center;">
+    <p><strong>Ready? Choose an option and let us know.</strong></p>
     <a href="https://smartbotbuilds.com.ng/smartbot-genius-brief.html" class="btn">Go to Genius Bot Brief Form</a>
     <a href="https://smartbotbuilds.com.ng/demo-request.html" class="btn" style="background:transparent;border:1px solid var(--green);color:var(--green);margin-left:10px;">Go to Demo Request Form</a>
   </div>
-
-  <div class="step-card">
-    <h2>❓ FAQ</h2>
-    <h3>My number is already on WhatsApp. What do I do?</h3>
-    <p>You have two options:</p>
-    <ul>
-      <li><strong>Option A:</strong> Delete the existing WhatsApp account on that number (Settings → Account → Delete My Account). Then add it again in your WABA.</li>
-      <li><strong>Option B:</strong> Buy a new SIM (any network, ~₦200) and use that new number for the bot.</li>
-    </ul>
-    <h3>What is a Phone Number ID?</h3>
-    <p>It's a unique number Meta gives after you add your bot number to your WABA. It lets our system identify your bot and apply your business's training.</p>
-    <h3>Do I need to send my token to SmartBot Builds?</h3>
-    <p>No. The token is secret. Keep it to yourself. We only need the Phone Number ID.</p>
-    <h3>Is the callback URL safe to share?</h3>
-    <p>Yes. The URL is not a secret. It's protected by the verify token, and only Meta can send valid events to it.</p>
-  </div>
 </div>
+
+<script>
+  function toggleDetails(id) {
+    const element = document.getElementById(id);
+    if (element.classList.contains('show')) {
+      element.classList.remove('show');
+    } else {
+      document.querySelectorAll('.details').forEach(d => d.classList.remove('show'));
+      element.classList.add('show');
+    }
+  }
+</script>
 
 </body>
 </html>
