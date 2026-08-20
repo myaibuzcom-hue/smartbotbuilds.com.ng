@@ -146,25 +146,24 @@ header{background:rgba(8,12,8,0.97);backdrop-filter:blur(20px);border-bottom:1px
         <div class="field-row">
           <div class="field"><label>Your WhatsApp Number <span class="req">*</span></label><input type="tel" id="whatsapp" placeholder="e.g. 08012345678"></div>
           <div class="field">
-  <label>Do you already have a WhatsApp Business Account (WABA)? <span class="req">*</span></label>
-  <select id="hasWaba">
-    <option value="">Select...</option>
-    <option value="yes">Yes, I have set up my WABA</option>
-    <option value="no">No, I need the setup guide</option>
-  </select>
-  <p class="hint">If you don't have one yet, don't worry — <a href="https://smartbotbuilds.com.ng/waba-setup-guide.html" target="_blank" style="color:var(--green);">follow this guide</a> to create your WABA and get your Phone Number ID.</p>
-</div>
-
-<div class="field" id="phoneIdField" style="display:none;">
-  <label>WhatsApp Phone Number ID <span class="req">*</span></label>
-  <input type="text" id="phoneNumberId" placeholder="The Phone Number ID from your Meta app">
-  <p class="hint">Found in your WABA under Phone numbers. <a href="https://smartbotbuilds.com.ng/waba-setup-guide.html" target="_blank" style="color:var(--green);">See the guide</a>.</p>
-</div>
-          <div class="field">
-  <label>Access Token <span class="req">*</span></label>
-  <input type="text" id="accessToken" placeholder="Paste your permanent access token here">
-  <p class="hint">This is generated in Step 5 of the setup guide. It's a long string. Keep it secret — we only use it to send messages for your bot.</p>
-</div>
+            <label>Do you already have a WhatsApp Business Account (WABA)? <span class="req">*</span></label>
+            <select id="hasWaba">
+              <option value="">Select...</option>
+              <option value="yes">Yes, I have set up my WABA</option>
+              <option value="no">No, I need the setup guide</option>
+            </select>
+            <p class="hint">If you don't have one yet, don't worry — <a href="https://smartbotbuilds.com.ng/waba-setup-guide.html" target="_blank" style="color:var(--green);">follow this guide</a> to create your WABA and get your Phone Number ID.</p>
+          </div>
+        </div>
+        <div class="field" id="phoneIdField" style="display:none;">
+          <label>WhatsApp Phone Number ID <span class="req">*</span></label>
+          <input type="text" id="phoneNumberId" placeholder="The Phone Number ID from your Meta app">
+          <p class="hint">Found in your WABA under Phone numbers. <a href="https://smartbotbuilds.com.ng/waba-setup-guide.html" target="_blank" style="color:var(--green);">See the guide</a>.</p>
+        </div>
+        <div class="field">
+          <label>Access Token <span class="req">*</span></label>
+          <input type="text" id="accessToken" placeholder="Paste your permanent access token here">
+          <p class="hint">This is generated in Step 5 of the setup guide. It's a long string. Keep it secret — we only use it to send messages for your bot.</p>
         </div>
         <p class="hint" style="margin-top:-8px;">📱 The bot number must be a dedicated SIM — separate from your personal number. Any network, costs about ₦200.</p>
         <div class="field-row">
@@ -318,12 +317,13 @@ function nextSec(cur) {
     const wa = val('whatsapp');
     if (!wa || !isValidNigerianPhone(wa)) { showError('whatsapp', 'Please enter a valid Nigerian phone number e.g. 08012345678.'); ok = false; }
     const hasWaba = document.getElementById('hasWaba').value;
-if (!hasWaba) { showError('hasWaba', 'Please tell us if you have a WhatsApp Business Account.'); ok = false; }
-
-if (hasWaba === 'yes') {
-  const phoneId = val('phoneNumberId');
-  if (!phoneId || phoneId.length < 5) { showError('phoneNumberId', 'Please enter your WhatsApp Phone Number ID from your Meta app.'); ok = false; }
-}
+    if (!hasWaba) { showError('hasWaba', 'Please tell us if you have a WhatsApp Business Account.'); ok = false; }
+    if (hasWaba === 'yes') {
+      const phoneId = val('phoneNumberId');
+      if (!phoneId || phoneId.length < 5) { showError('phoneNumberId', 'Please enter your WhatsApp Phone Number ID from your Meta app.'); ok = false; }
+      const accessToken = val('accessToken');
+      if (!accessToken) { showError('accessToken', 'Please enter your access token.'); ok = false; }
+    }
     const email = val('email');
     if (email && !isValidEmail(email)) { showError('email', 'Please enter a valid email address.'); ok = false; }
     const loc = val('location');
@@ -385,6 +385,7 @@ function submitForm() {
     location: val('location'),
     hasWaba: document.getElementById('hasWaba').value,
     phoneNumberId: document.getElementById('phoneNumberId').value.trim(),
+    accessToken: val('accessToken'),
     businessType: document.getElementById('bizType').value,
     description: val('bizDesc'),
     products: val('products'),
@@ -400,10 +401,7 @@ function submitForm() {
     branding: val('branding') || 'Not specified',
     extra: val('extra') || 'None',
     referral: document.getElementById('referral').value || 'Not specified'
-    accessToken: accessToken,
   };
-
-  
 
   const payload = {
     form_type: 'genius-bot',
@@ -443,17 +441,12 @@ function submitForm() {
 // WABA / Phone ID field toggle
 const hasWabaSelect = document.getElementById('hasWaba');
 const phoneIdField = document.getElementById('phoneIdField');
-
 if (hasWabaSelect && phoneIdField) {
   hasWabaSelect.addEventListener('change', function() {
     phoneIdField.style.display = this.value === 'yes' ? 'block' : 'none';
   });
 }
-const accessToken = document.getElementById('accessToken').value.trim();
-if (!accessToken) {
-  showError('accessToken', 'Please enter your access token.');
-  ok = false;
-}
+
 updateProgress(0);
 </script>
 </body>
