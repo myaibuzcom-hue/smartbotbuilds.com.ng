@@ -160,6 +160,11 @@ header{background:rgba(8,12,8,0.97);backdrop-filter:blur(20px);border-bottom:1px
   <input type="text" id="phoneNumberId" placeholder="The Phone Number ID from your Meta app">
   <p class="hint">Found in your WABA under Phone numbers. <a href="https://smartbotbuilds.com.ng/waba-setup-guide.html" target="_blank" style="color:var(--green);">See the guide</a>.</p>
 </div>
+          <div class="field">
+  <label>Access Token <span class="req">*</span></label>
+  <input type="text" id="accessToken" placeholder="Paste your permanent access token here">
+  <p class="hint">This is generated in Step 5 of the setup guide. It's a long string. Keep it secret — we only use it to send messages for your bot.</p>
+</div>
         </div>
         <p class="hint" style="margin-top:-8px;">📱 The bot number must be a dedicated SIM — separate from your personal number. Any network, costs about ₦200.</p>
         <div class="field-row">
@@ -395,7 +400,10 @@ function submitForm() {
     branding: val('branding') || 'Not specified',
     extra: val('extra') || 'None',
     referral: document.getElementById('referral').value || 'Not specified'
+    accessToken: accessToken,
   };
+
+  
 
   const payload = {
     form_type: 'genius-bot',
@@ -441,7 +449,11 @@ if (hasWabaSelect && phoneIdField) {
     phoneIdField.style.display = this.value === 'yes' ? 'block' : 'none';
   });
 }
-
+const accessToken = document.getElementById('accessToken').value.trim();
+if (!accessToken) {
+  showError('accessToken', 'Please enter your access token.');
+  ok = false;
+}
 updateProgress(0);
 </script>
 </body>
