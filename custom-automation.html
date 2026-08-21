@@ -419,6 +419,48 @@
     </div>
   </section>
 
+    <!-- QUOTE FORM -->
+  <section id="quote">
+    <div class="sec-head reveal">
+      <div class="sec-eyebrow">Request a quote</div>
+      <h2>Tell us about your project</h2>
+      <p>Fill the form and Segun will send you a scoped quote within a few hours.</p>
+    </div>
+    <div class="quote-form reveal" style="max-width:640px; margin:0 auto;">
+      <form id="quoteForm" onsubmit="submitQuote(event)">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <div class="field">
+            <label style="display:block; font-size:0.9rem; margin-bottom:6px; color:var(--ink-300);">Full Name <span style="color:var(--emerald);">*</span></label>
+            <input type="text" id="qfName" required style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--line); background:var(--navy-900); color:var(--ink-100); font-family:'Cabinet Grotesk', sans-serif; font-size:0.95rem;">
+          </div>
+          <div class="field">
+            <label style="display:block; font-size:0.9rem; margin-bottom:6px; color:var(--ink-300);">Business Name <span style="color:var(--emerald);">*</span></label>
+            <input type="text" id="qfBiz" required style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--line); background:var(--navy-900); color:var(--ink-100); font-family:'Cabinet Grotesk', sans-serif; font-size:0.95rem;">
+          </div>
+        </div>
+        <div class="field" style="margin-top:14px;">
+          <label style="display:block; font-size:0.9rem; margin-bottom:6px; color:var(--ink-300);">WhatsApp Number <span style="color:var(--emerald);">*</span></label>
+          <input type="tel" id="qfPhone" required style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--line); background:var(--navy-900); color:var(--ink-100); font-family:'Cabinet Grotesk', sans-serif; font-size:0.95rem;">
+        </div>
+        <div class="field" style="margin-top:14px;">
+          <label style="display:block; font-size:0.9rem; margin-bottom:6px; color:var(--ink-300);">Budget Range <span style="color:var(--emerald);">*</span></label>
+          <select id="qfBudget" required style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--line); background:var(--navy-900); color:var(--ink-100); font-family:'Cabinet Grotesk', sans-serif; font-size:0.95rem;">
+            <option value="">Select budget</option>
+            <option>₦200k – ₦500k</option>
+            <option>₦500k – ₦1M</option>
+            <option>₦1M+</option>
+          </select>
+        </div>
+        <div class="field" style="margin-top:14px;">
+          <label style="display:block; font-size:0.9rem; margin-bottom:6px; color:var(--ink-300);">Project Description <span style="color:var(--emerald);">*</span></label>
+          <textarea id="qfDesc" required rows="4" style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--line); background:var(--navy-900); color:var(--ink-100); font-family:'Cabinet Grotesk', sans-serif; font-size:0.95rem; resize:vertical;"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-top:20px; width:100%; justify-content:center;">Request Quote →</button>
+        <p id="qfStatus" style="margin-top:12px; text-align:center; font-size:0.9rem; color:var(--emerald); display:none;">✅ Your quote request has been sent. Segun will contact you shortly.</p>
+      </form>
+    </div>
+  </section>
+
   <!-- FINAL CTA -->
   <section style="padding-top:0;">
     <div class="final-cta reveal">
@@ -447,6 +489,54 @@
     entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
   }, { threshold:0.15 });
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  <script>
+  const WHATSAPP_NUMBER = "2347055403967";
+  const WHATSAPP_MESSAGE = "Hi, I have a custom AI/automation project I'd like to discuss with SmartBot Builds.";
+  const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+  document.querySelectorAll('.wa-cta').forEach(el => el.setAttribute('href', waLink));
+
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold:0.15 });
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  async function submitQuote(e) {
+    e.preventDefault();
+    const status = document.getElementById('qfStatus');
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    const payload = {
+      form_type: 'custom-quote',
+      answers: {
+        fullName: document.getElementById('qfName').value.trim(),
+        businessName: document.getElementById('qfBiz').value.trim(),
+        whatsapp: document.getElementById('qfPhone').value.trim(),
+        budget: document.getElementById('qfBudget').value,
+        description: document.getElementById('qfDesc').value.trim()
+      },
+      client_phone: document.getElementById('qfPhone').value.trim()
+    };
+    try {
+      const res = await fetch('https://smartbot-genius-bot.myaibuzcom-hue.deno.net/api/submit-brief', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.success) {
+        status.style.display = 'block';
+        e.target.reset();
+      } else {
+        alert('Error: ' + data.error);
+      }
+    } catch (err) {
+      alert('Network error. Please try again.');
+    }
+    btn.disabled = false;
+    btn.textContent = 'Request Quote →';
+  }
+</script>
 </script>
 
 </body>
