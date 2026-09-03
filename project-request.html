@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Start Your Project — SmartBot Builds</title>
+    <meta name="description" content="Tell us your idea and Segun will send you a quote within 24 hours. Custom AI, CRMs, dashboards, and automation for Nigerian businesses." />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0b0b1a;
+            --bg-secondary: #12122a;
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0c8;
+            --accent: #00d4ff;
+            --accent-glow: rgba(0, 212, 255, 0.15);
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --radius: 16px;
+            --radius-lg: 24px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ===== GLOW ORBES ===== */
+        .glow-orbe {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.2;
+        }
+
+        .glow-orbe-1 {
+            width: 500px;
+            height: 500px;
+            top: -150px;
+            right: -150px;
+            background: radial-gradient(circle, #00d4ff20, transparent 70%);
+        }
+
+        .glow-orbe-2 {
+            width: 400px;
+            height: 400px;
+            bottom: -100px;
+            left: -100px;
+            background: radial-gradient(circle, #7c3aed20, transparent 70%);
+        }
+
+        /* ===== NAVIGATION ===== */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 16px 24px;
+            background: rgba(11, 11, 26, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 1.3rem;
+        }
+
+        .nav-logo img {
+            height: 36px;
+            width: auto;
+            border-radius: 8px;
+        }
+
+        .nav-logo span {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-links .nav-cta {
+            background: var(--accent);
+            color: var(--bg-primary) !important;
+            padding: 8px 24px;
+            border-radius: 50px;
+            font-weight: 700 !important;
+            transition: all 0.3s !important;
+        }
+
+        .nav-links .nav-cta:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px var(--accent-glow);
+        }
+
+        .nav-wa {
+            color: #25D366 !important;
+        }
+
+        .nav-wa:hover {
+            color: #34d87a !important;
+        }
+
+        /* ===== HERO ===== */
+        .page-hero {
+            position: relative;
+            z-index: 1;
+            padding: 60px 24px 40px;
+            text-align: center;
+        }
+
+        .page-hero h1 {
+            font-size: 2.8rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+        }
+
+        .page-hero h1 .highlight {
+            background: linear-gradient(135deg, var(--accent), #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-hero p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 560px;
+            margin: 0 auto;
+        }
+
+        /* ===== FORM ===== */
+        .form-section {
+            position: relative;
+            z-index: 1;
+            padding: 0 24px 80px;
+            flex: 1;
+        }
+
+        .form-card {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 48px 56px;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-card .form-intro {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .form-card .form-intro .badge {
+            display: inline-block;
+            background: rgba(0, 212, 255, 0.08);
+            color: var(--accent);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .form-card .form-intro h2 {
+            font-size: 1.6rem;
+            font-weight: 800;
+        }
+
+        .form-card .form-intro p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+        }
+
+        .form-group label .required {
+            color: var(--accent);
+            margin-left: 2px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.6;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .form-group select {
+            appearance: none;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .form-group select option {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 16px;
+            background: var(--accent);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 60px var(--accent-glow);
+        }
+
+        .form-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 24px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .form-footer a {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* ===== SUCCESS STATE ===== */
+        .success-state {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .success-state .icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .success-state h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .success-state p {
+            color: var(--text-secondary);
+            max-width: 400px;
+            margin: 0 auto 8px;
+        }
+
+        .success-state .btn-back {
+            display: inline-block;
+            margin-top: 20px;
+            color: var(--accent);
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .success-state .btn-back:hover {
+            color: var(--text-primary);
+        }
+
+        /* ===== LOADING STATE ===== */
+        .loading-state {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading-state .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-subtle);
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-state p {
+            color: var(--text-secondary);
+        }
+
+        /* ===== PRICING INDICATOR ===== */
+        .pricing-hint {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            margin-bottom: 24px;
+        }
+
+        .pricing-hint .row {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .pricing-hint .label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .pricing-hint .value {
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .pricing-hint .value .from {
+            font-weight: 400;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            position: relative;
+            z-index: 1;
+            background: var(--bg-primary);
+            border-top: 1px solid var(--border-subtle);
+            padding: 32px 24px;
+            text-align: center;
+        }
+
+        footer p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--accent);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 700px) {
+            .form-card {
+                padding: 32px 24px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .page-hero h1 {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .page-hero {
+                padding: 40px 16px 24px;
+            }
+
+            .form-section {
+                padding: 0 16px 60px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-card {
+                padding: 24px 16px;
+            }
+
+            .page-hero h1 {
+                font-size: 1.6rem;
+            }
+
+            .form-card .form-intro h2 {
+                font-size: 1.3rem;
+            }
+
+            .pricing-hint .row {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== GLOW ORBES ===== -->
+    <div class="glow-orbe glow-orbe-1"></div>
+    <div class="glow-orbe glow-orbe-2"></div>
+
+    <!-- ===== NAVIGATION ===== -->
+    <nav>
+        <div class="container">
+            <a href="/" class="nav-logo">
+                <img src="/favicon.ico" alt="SmartBot Builds" />
+                SmartBot<span>Builds</span>
+            </a>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/#services">Services</a>
+                <a href="/#case-study">Case Study</a>
+                <a href="https://wa.me/2348154857377" class="nav-wa">💬 WhatsApp</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== PAGE HERO ===== -->
+    <section class="page-hero">
+        <div class="container">
+            <h1>Tell Us About <span class="highlight">Your Project</span></h1>
+            <p>Fill in the details below and Segun will send you a quote within 24 hours.</p>
+        </div>
+    </section>
+
+    <!-- ===== FORM ===== -->
+    <section class="form-section">
+        <div class="container">
+            <div class="form-card">
+
+                <!-- Pricing Hint -->
+                <div class="pricing-hint">
+                    <div class="row">
+                        <span class="label">💰 Starting Price</span>
+                        <span class="value"><span class="from">From</span> ₦500,000</span>
+                        <span class="label">·</span>
+                        <span class="label">One-time payment · No monthly fees</span>
+                    </div>
+                </div>
+
+                <!-- Form Intro -->
+                <div class="form-intro">
+                    <span class="badge">📋 Project Brief</span>
+                    <h2>What Do You Need Built?</h2>
+                    <p>We'll use this to understand your requirements and send a fixed quote.</p>
+                </div>
+
+                <!-- Form -->
+                <form id="projectForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Full Name <span class="required">*</span></label>
+                            <input type="text" id="name" name="name" placeholder="e.g. Segun Jegede" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">WhatsApp Number <span class="required">*</span></label>
+                            <input type="tel" id="phone" name="phone" placeholder="e.g. 2348154857377" required />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" placeholder="e.g. segun@smartbotbuilds.com.ng" />
+                        </div>
+                        <div class="form-group">
+                            <label for="business">Business Name</label>
+                            <input type="text" id="business" name="business" placeholder="Your business or organization" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="service">What do you need built? <span class="required">*</span></label>
+                        <select id="service" name="service" required>
+                            <option value="">Select a service...</option>
+                            <option value="crm">Custom CRM / Lead Management System</option>
+                            <option value="dashboard">AI Dashboard / Analytics Platform</option>
+                            <option value="automation">Process Automation Tool</option>
+                            <option value="portal">Admin Portal / Internal Tool</option>
+                            <option value="webapp">Full-stack Web Application</option>
+                            <option value="analytics">Data Analytics / Business Intelligence System</option>
+                            <option value="ai">AI-Powered Tool / Agent</option>
+                            <option value="other">Other — I'll explain</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Project Description <span class="required">*</span></label>
+                        <textarea id="description" name="description" placeholder="Describe what you need built. What problems are you trying to solve? Who will use it?" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="budget">Estimated Budget (₦)</label>
+                        <input type="number" id="budget" name="budget" placeholder="e.g. 800000" />
+                    </div>
+
+                    <button type="submit" class="form-submit" id="submitBtn">Send Project Request →</button>
+                </form>
+
+                <!-- Loading State -->
+                <div class="loading-state" id="loadingState">
+                    <div class="spinner"></div>
+                    <p>Submitting your request...</p>
+                </div>
+
+                <!-- Success State -->
+                <div class="success-state" id="successState">
+                    <span class="icon">✅</span>
+                    <h2>Request Sent!</h2>
+                    <p>Thank you! Segun will review your project and send a quote within 24 hours.</p>
+                    <p style="font-size:0.9rem;color:var(--text-secondary);">
+                        📱 You can also reach him directly on <a href="https://wa.me/2348154857377" style="color:var(--accent);">08154857377</a>
+                    </p>
+                    <a href="/" class="btn-back">← Back to Home</a>
+                </div>
+
+                <!-- Form Footer -->
+                <div class="form-footer" id="formFooter">
+                    <p>Prefer to talk? <a href="https://wa.me/2348154857377">Chat on WhatsApp</a> or call Segun: <strong style="color:var(--text-primary);">08154857377</strong></p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <div class="container">
+            <p>
+                &copy; 2026 SmartBot Builds Enterprises. Built in Lagos, Nigeria.
+                <br />
+                <span style="font-size:0.8rem;opacity:0.5;">
+                    All projects include full source code ownership. One-time payment. No monthly fees.
+                </span>
+            </p>
+        </div>
+    </footer>
+
+    <!-- ===== SCRIPT ===== -->
+    <script>
+        const form = document.getElementById('projectForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const loadingState = document.getElementById('loadingState');
+        const successState = document.getElementById('successState');
+        const formFooter = document.getElementById('formFooter');
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Show loading
+            loadingState.style.display = 'block';
+            submitBtn.disabled = true;
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+
+            try {
+                const response = await fetch('/api/submit-project', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    loadingState.style.display = 'none';
+                    successState.style.display = 'block';
+                    form.style.display = 'none';
+                    formFooter.style.display = 'none';
+                } else {
+                    throw new Error('Submission failed');
+                }
+            } catch (error) {
+                loadingState.style.display = 'none';
+                submitBtn.disabled = false;
+                alert('Something went wrong. Please WhatsApp Segun directly: 08154857377');
+            }
+        });
+    </script>
+
+</body>
+</html>
