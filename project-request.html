@@ -654,6 +654,10 @@
 
             try {
                 const response = await fetch('https://smartbot-genius-bot.myaibuzcom-hue.deno.net/api/submit-project', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+});
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
