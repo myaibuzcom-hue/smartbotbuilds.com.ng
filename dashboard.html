@@ -152,22 +152,15 @@
   .funnel-stage .fpct{ font-size:0.72rem; color:var(--gold); margin-top:4px; }
   @media (max-width:800px){ .funnel{ flex-direction:column; gap:20px; } .funnel-stage:not(:last-child)::after{ content:'⌄'; right:auto; left:50%; top:auto; bottom:-18px; } }
 
-  .toolbar select,
-.toolbar select option,
-#statusFilter,
-#statusFilter option,
-#serviceFilter,
-#serviceFilter option,
-#sourceFilter,
-#sourceFilter option {
-  background: #0d1333 !important;
-  color: #e8f5e8 !important;
-  border: 1px solid var(--border-strong);
-  border-radius: 8px;
-  padding: 9px 12px;
-  font-family: 'Poppins', sans-serif;
-  font-size: 0.82rem;
-}
+  .toolbar{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:16px; }
+  .toolbar select, .toolbar select option{
+    background: #0d1333 !important;
+    color: #e8f5e8 !important;
+  }
+  .toolbar select{
+    border:1px solid var(--border-strong); border-radius:8px;
+    padding:9px 12px; font-family:'Poppins',sans-serif; font-size:0.82rem;
+  }
   .qa-group{ display:flex; gap:10px; flex-wrap:wrap; margin-left:auto; }
   .btn{ display:inline-flex; align-items:center; gap:6px; padding:9px 16px; border-radius:8px; font-size:0.83rem; font-weight:600; cursor:pointer; border:1px solid transparent; transition:.15s; }
   .btn-green{ background:var(--green); color:#031b0d; }
@@ -176,6 +169,7 @@
   .btn-outline:hover{ background:rgba(232,245,232,0.05); color:var(--text); }
   .btn-gold{ background:var(--gold); color:#2b1400; }
   .btn-gold:hover{ filter:brightness(1.08); }
+  .btn-sm{ padding:5px 12px; font-size:0.72rem; }
 
   table{ width:100%; border-collapse:collapse; }
   th{ text-align:left; font-size:0.74rem; color:var(--text-faint); font-weight:500; padding:0 12px 10px; border-bottom:1px solid var(--border); }
@@ -186,9 +180,13 @@
 
   .badge{ display:inline-block; padding:4px 11px; border-radius:20px; font-size:0.72rem; font-weight:600; }
   .badge-new{ background:rgba(79,141,253,0.15); color:#7ea8ff; }
+  .badge-contacted{ background:rgba(79,141,253,0.15); color:#7ea8ff; }
+  .badge-qualified{ background:rgba(255,145,0,0.14); color:var(--gold); }
+  .badge-converted{ background:rgba(0,200,83,0.16); color:var(--green-glow); }
+  .badge-lost{ background:rgba(232,245,232,0.08); color:var(--text-faint); }
+
   .badge-brief{ background:rgba(255,145,0,0.14); color:var(--gold); }
   .badge-quoted{ background:rgba(232,245,232,0.08); color:var(--text); border:1px solid var(--border-strong); }
-  .badge-converted{ background:rgba(0,200,83,0.16); color:var(--green-glow); }
   .badge-paid{ background:rgba(0,200,83,0.16); color:var(--green-glow); }
   .badge-partial{ background:rgba(255,145,0,0.14); color:var(--gold); }
 
@@ -218,7 +216,11 @@
   .modal{ width:420px; max-width:92vw; background:var(--surface-2); border:1px solid var(--border-strong); border-radius:16px; padding:26px; }
   .modal h3{ font-size:1.05rem; margin-bottom:16px; }
   .modal label{ display:block; font-size:0.78rem; color:var(--text-dim); margin:12px 0 6px; }
-  .modal input, .modal select{ width:100%; background:rgba(232,245,232,0.04); border:1px solid var(--border-strong); border-radius:8px; padding:10px 12px; color:var(--text); font-family:'Poppins',sans-serif; font-size:0.86rem; }
+  .modal input, .modal select{
+    width:100%; background:#0d1333; border:1px solid var(--border-strong); border-radius:8px;
+    padding:10px 12px; color:#e8f5e8; font-family:'Poppins',sans-serif; font-size:0.86rem;
+  }
+  .modal select option{ background:#0d1333; color:#e8f5e8; }
   .modal-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:22px; }
 
   .view h2{ font-size:1.15rem; margin-bottom:14px; }
@@ -268,24 +270,31 @@
 
   .last-updated{ font-size:0.72rem; color:var(--text-faint); margin-top:12px; }
 
-  /* Status stats bar for projects tab */
+  /* Status stats bar */
   .status-stats{ display:flex; gap:16px; flex-wrap:wrap; margin-bottom:16px; padding:12px 16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; }
   .status-stat{ display:flex; align-items:center; gap:8px; font-size:0.8rem; color:var(--text-dim); }
   .status-stat .dot{ width:10px; height:10px; border-radius:50%; flex-shrink:0; }
   .status-stat .num{ font-weight:700; color:var(--text); }
   .status-stat .dot.new{ background:#7ea8ff; }
+  .status-stat .dot.contacted{ background:#5b9eff; }
+  .status-stat .dot.qualified{ background:var(--gold); }
+  .status-stat .dot.converted{ background:var(--green-glow); }
+  .status-stat .dot.lost{ background:var(--text-faint); }
   .status-stat .dot.brief{ background:var(--gold); }
   .status-stat .dot.quoted{ background:var(--text); }
-  .status-stat .dot.converted{ background:var(--green-glow); }
   .status-stat .dot.closed{ background:var(--text-faint); }
 
-  .status-select{ padding:4px 8px; border-radius:6px; background:rgba(232,245,232,0.05); border:1px solid var(--border-strong); color:var(--text); font-size:0.75rem; font-family:'Poppins',sans-serif; cursor:pointer; }
+  .status-select{ padding:4px 8px; border-radius:6px; background:#0d1333; border:1px solid var(--border-strong); color:var(--text); font-size:0.75rem; font-family:'Poppins',sans-serif; cursor:pointer; }
+  .status-select option{ background:#0d1333; color:var(--text); }
   .status-select:focus{ outline:1px solid var(--green); }
-  
-  select, select option {
-  background: #0d1333 !important;
-  color: #e8f5e8 !important;
-}
+
+  .inline-select{ padding:3px 6px; border-radius:4px; background:#0d1333; border:1px solid var(--border-strong); color:var(--text); font-size:0.7rem; font-family:'Poppins',sans-serif; cursor:pointer; }
+  .inline-select option{ background:#0d1333; color:var(--text); }
+
+  select, select option, .status-select, .status-select option, .inline-select, .inline-select option {
+    background: #0d1333 !important;
+    color: #e8f5e8 !important;
+  }
 </style>
 </head>
 <body>
@@ -366,14 +375,12 @@
           <div class="stat-card"><div class="lbl">Converted clients</div><div class="num">0</div></div>
         </div>
 
-        <!-- Quick Actions -->
         <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
           <button class="btn btn-green" id="overviewAddProject">➕ Add project</button>
           <button class="btn btn-outline" id="overviewAddLead">➕ Add lead</button>
           <span class="last-updated" id="lastUpdated">Last updated: —</span>
         </div>
 
-        <!-- Pipeline -->
         <div class="panel">
           <div class="panel-head"><h3>Client conversion pipeline</h3></div>
           <div class="funnel">
@@ -385,19 +392,14 @@
           </div>
         </div>
 
-        <!-- Recent Activity -->
         <div class="activity-grid">
           <div class="activity-feed">
             <h4>📋 Recent activity</h4>
-            <div id="recentActivity">
-              <div style="color:var(--text-faint);padding:12px 0;">Loading...</div>
-            </div>
+            <div id="recentActivity"><div style="color:var(--text-faint);padding:12px 0;">Loading...</div></div>
           </div>
           <div class="activity-feed">
             <h4>📊 Quick stats</h4>
-            <div id="quickStats">
-              <div style="color:var(--text-faint);padding:12px 0;">Loading...</div>
-            </div>
+            <div id="quickStats"><div style="color:var(--text-faint);padding:12px 0;">Loading...</div></div>
           </div>
         </div>
       </div>
@@ -438,8 +440,7 @@
           </div>
         </div>
 
-        <!-- Status Stats Bar -->
-        <div class="status-stats" id="projectStatusStats">
+        <div class="status-stats">
           <span style="color:var(--text-faint);font-size:0.75rem;">📊 Status breakdown</span>
           <div class="status-stat"><span class="dot new"></span>New: <span class="num" id="statNew">0</span></div>
           <div class="status-stat"><span class="dot brief"></span>Brief received: <span class="num" id="statBrief">0</span></div>
@@ -450,45 +451,73 @@
         </div>
 
         <table id="projectsTable">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Business</th>
-              <th>Service</th>
-              <th>Budget</th>
-              <th>Status</th>
-              <th>Source</th>
-              <th>Date</th>
-              <th>Brief</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td colspan="8" style="text-align:center;color:var(--text-faint);padding:30px;">Loading projects...</td></tr>
-          </tbody>
+          <thead><tr><th>Name</th><th>Business</th><th>Service</th><th>Budget</th><th>Status</th><th>Source</th><th>Date</th><th>Brief</th></tr></thead>
+          <tbody><tr><td colspan="8" style="text-align:center;color:var(--text-faint);padding:30px;">Loading projects...</td></tr></tbody>
         </table>
       </div>
 
-      <!-- ===== LEADS ===== -->
+      <!-- ===== WHATSAPP LEADS ===== -->
       <div class="view" id="view-leads" hidden>
-        <h2 class="heading">WhatsApp leads</h2>
+        <div class="page-head">
+          <div><h1 class="heading">WhatsApp leads</h1><p>All leads captured from WhatsApp conversations.</p></div>
+        </div>
+
         <div class="toolbar">
+          <select id="leadStatusFilter">
+            <option value="">All statuses</option>
+            <option value="New">New</option>
+            <option value="Contacted">Contacted</option>
+            <option value="Qualified">Qualified</option>
+            <option value="Converted">Converted</option>
+            <option value="Lost">Lost</option>
+          </select>
+          <select id="leadTagFilter">
+            <option value="">All tags</option>
+            <option value="High Priority">High Priority</option>
+            <option value="Warm Nurture">Warm Nurture</option>
+            <option value="Cold Nurture">Cold Nurture</option>
+            <option value="Finance Follow-up">Finance Follow-up</option>
+            <option value="Nurture (Long Term)">Nurture (Long Term)</option>
+          </select>
           <div class="qa-group">
-            <button class="btn btn-outline" id="addLeadBtn">Add lead</button>
-            <button class="btn btn-gold" id="convertBtn">Convert to project</button>
+            <button class="btn btn-green" id="addLeadBtn">➕ Add lead</button>
+            <button class="btn btn-gold" id="convertBtn">🔄 Convert to project</button>
           </div>
         </div>
+
+        <!-- Lead Stats Bar -->
+        <div class="status-stats">
+          <span style="color:var(--text-faint);font-size:0.75rem;">📊 Lead breakdown</span>
+          <div class="status-stat"><span class="dot new"></span>New: <span class="num" id="leadStatNew">0</span></div>
+          <div class="status-stat"><span class="dot contacted"></span>Contacted: <span class="num" id="leadStatContacted">0</span></div>
+          <div class="status-stat"><span class="dot qualified"></span>Qualified: <span class="num" id="leadStatQualified">0</span></div>
+          <div class="status-stat"><span class="dot converted"></span>Converted: <span class="num" id="leadStatConverted">0</span></div>
+          <div class="status-stat"><span class="dot lost"></span>Lost: <span class="num" id="leadStatLost">0</span></div>
+          <div class="status-stat" style="margin-left:auto;"><span style="color:var(--text-faint);">Total:</span> <span class="num" id="statTotalLeads">0</span></div>
+        </div>
+
         <table id="leadsTable">
-          <thead><tr><th>Name</th><th>Phone</th><th>Status</th><th>Tag</th><th>Source</th><th>Date</th></tr></thead>
-          <tbody><tr><td colspan="6" style="text-align:center;color:var(--text-faint);padding:30px;">Loading leads...</td></tr></tbody>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Status</th>
+              <th>Tag</th>
+              <th>Source</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="7" style="text-align:center;color:var(--text-faint);padding:30px;">Loading leads...</td></tr>
+          </tbody>
         </table>
       </div>
 
       <!-- ===== BRIEFS ===== -->
       <div class="view" id="view-briefs" hidden>
         <h2 class="heading">Brief uploads</h2>
-        <div class="brief-grid">
-          <div style="color:var(--text-faint);padding:20px;">Loading briefs...</div>
-        </div>
+        <div class="brief-grid"><div style="color:var(--text-faint);padding:20px;">Loading briefs...</div></div>
       </div>
 
       <!-- ===== CLIENTS ===== -->
@@ -522,19 +551,12 @@
         <div class="settings-grid">
           <div class="settings-card">
             <h3>Change PIN</h3>
-            <div class="pin-inputs">
-              <input maxlength="1" inputmode="numeric" />
-              <input maxlength="1" inputmode="numeric" />
-              <input maxlength="1" inputmode="numeric" />
-              <input maxlength="1" inputmode="numeric" />
-            </div>
+            <div class="pin-inputs"><input maxlength="1" inputmode="numeric" /><input maxlength="1" inputmode="numeric" /><input maxlength="1" inputmode="numeric" /><input maxlength="1" inputmode="numeric" /></div>
             <button class="btn btn-green" id="savePinBtn">Save PIN</button>
           </div>
           <div class="settings-card">
             <h3>Session</h3>
-            <div class="settings-row"><span>Auto-logout after</span>
-              <select><option>15 minutes</option><option selected>30 minutes</option><option>60 minutes</option></select>
-            </div>
+            <div class="settings-row"><span>Auto-logout after</span><select><option>15 minutes</option><option selected>30 minutes</option><option>60 minutes</option></select></div>
             <div class="settings-row"><span>Require PIN on every visit</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
           </div>
           <div class="settings-card" style="grid-column:span 2;">
@@ -549,6 +571,39 @@
     </main>
   </div>
 
+  <!-- ===== MODAL: ADD LEAD ===== -->
+  <div class="modal-overlay" id="addLeadModal">
+    <div class="modal">
+      <h3 class="heading">➕ Add WhatsApp Lead</h3>
+      <label>Full Name *</label><input type="text" id="leadModalName" placeholder="e.g. Amaka Chukwu" />
+      <label>Phone Number *</label><input type="text" id="leadModalPhone" placeholder="e.g. 08031234567" />
+      <label>Course / Interest</label><input type="text" id="leadModalCourse" placeholder="e.g. MSc Data Science" />
+      <label>Destination</label><input type="text" id="leadModalDest" placeholder="e.g. UK, Canada" />
+      <label>Status</label>
+      <select id="leadModalStatus">
+        <option value="New">New</option>
+        <option value="Contacted">Contacted</option>
+        <option value="Qualified">Qualified</option>
+        <option value="Converted">Converted</option>
+        <option value="Lost">Lost</option>
+      </select>
+      <label>Tag</label>
+      <select id="leadModalTag">
+        <option value="High Priority">High Priority</option>
+        <option value="Warm Nurture">Warm Nurture</option>
+        <option value="Cold Nurture">Cold Nurture</option>
+        <option value="Finance Follow-up">Finance Follow-up</option>
+        <option value="Nurture (Long Term)">Nurture (Long Term)</option>
+        <option value="New Lead (Dashboard)">New Lead (Dashboard)</option>
+      </select>
+      <div class="modal-actions">
+        <button class="btn btn-outline" id="closeLeadModal">Cancel</button>
+        <button class="btn btn-green" id="saveLeadBtn">Save lead</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL: ADD PROJECT ===== -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
       <h3 class="heading">Add project request</h3>
@@ -702,7 +757,6 @@
     document.querySelector('.goal-top b').textContent = '₦' + pipeline.toLocaleString() + ' / ₦' + target.toLocaleString() + ' · ' + Math.round(pct) + '%';
     document.querySelector('.goal-fill').style.width = Math.min(pct, 100) + '%';
 
-    // Funnel
     const quotedCount = projects.filter(p => p.status === 'quoted').length || 0;
     const totalLeads = newLeads + totalProjects + briefCount + quotedCount + converted || 1;
 
@@ -727,10 +781,7 @@
       }
     });
 
-    // Recent Activity
     updateRecentActivity(projects, leads, briefs);
-
-    // Quick Stats
     updateQuickStats(stats);
   }
 
@@ -742,30 +793,13 @@
     const events = [];
 
     projects.slice(0, 3).forEach(p => {
-      events.push({
-        type: 'project',
-        icon: 'project',
-        text: `<strong>${p.name || 'Unknown'}</strong> submitted a project request`,
-        time: new Date(p.created_at).toLocaleDateString()
-      });
+      events.push({ type: 'project', icon: 'project', text: `<strong>${p.name || 'Unknown'}</strong> submitted a project request`, time: new Date(p.created_at).toLocaleDateString() });
     });
-
     leads.slice(0, 3).forEach(l => {
-      events.push({
-        type: 'lead',
-        icon: 'lead',
-        text: `<strong>${l.full_name || 'Unknown'}</strong> — new WhatsApp lead`,
-        time: new Date(l.created_at).toLocaleDateString()
-      });
+      events.push({ type: 'lead', icon: 'lead', text: `<strong>${l.full_name || 'Unknown'}</strong> — new WhatsApp lead`, time: new Date(l.created_at).toLocaleDateString() });
     });
-
     briefs.slice(0, 2).forEach(b => {
-      events.push({
-        type: 'brief',
-        icon: 'brief',
-        text: `<strong>${b.name || 'Unknown'}</strong> uploaded a brief`,
-        time: new Date(b.created_at).toLocaleDateString()
-      });
+      events.push({ type: 'brief', icon: 'brief', text: `<strong>${b.name || 'Unknown'}</strong> uploaded a brief`, time: new Date(b.created_at).toLocaleDateString() });
     });
 
     events.sort((a,b) => new Date(b.time) - new Date(a.time));
@@ -776,13 +810,8 @@
     } else {
       container.innerHTML = topEvents.map(e => `
         <div class="act-item">
-          <div class="act-icon ${e.icon}">
-            ${e.icon === 'project' ? '📋' : e.icon === 'lead' ? '💬' : '📎'}
-          </div>
-          <div>
-            <div class="act-text">${e.text}</div>
-            <div class="act-time">${e.time}</div>
-          </div>
+          <div class="act-icon ${e.icon}">${e.icon === 'project' ? '📋' : e.icon === 'lead' ? '💬' : '📎'}</div>
+          <div><div class="act-text">${e.text}</div><div class="act-time">${e.time}</div></div>
         </div>
       `).join('');
     }
@@ -808,33 +837,15 @@
   }
 
   // ============================================================
-  // UPDATE PROJECTS TABLE (FULLY ENHANCED)
+  // UPDATE PROJECTS TABLE
   // ============================================================
   function updateProjectsTable() {
     const projects = cachedProjects;
+    const statusMap = { 'new': 'badge-new', 'brief_received': 'badge-brief', 'quoted': 'badge-quoted', 'converted': 'badge-converted', 'closed': 'badge-closed' };
+    const statusDisplay = { 'new': 'New', 'brief_received': 'Brief Received', 'quoted': 'Quoted', 'converted': 'Converted', 'closed': 'Closed' };
 
-    const statusMap = {
-      'new': 'badge-new',
-      'brief_received': 'badge-brief',
-      'quoted': 'badge-quoted',
-      'converted': 'badge-converted',
-      'closed': 'badge-closed'
-    };
-
-    const statusDisplay = {
-      'new': 'New',
-      'brief_received': 'Brief Received',
-      'quoted': 'Quoted',
-      'converted': 'Converted',
-      'closed': 'Closed'
-    };
-
-    // ---- Update Status Stats Bar ----
     const counts = { new: 0, brief_received: 0, quoted: 0, converted: 0, closed: 0 };
-    projects.forEach(p => {
-      const s = p.status || 'new';
-      if (counts.hasOwnProperty(s)) counts[s]++;
-    });
+    projects.forEach(p => { const s = p.status || 'new'; if (counts.hasOwnProperty(s)) counts[s]++; });
 
     document.getElementById('statNew').textContent = counts.new;
     document.getElementById('statBrief').textContent = counts.brief_received;
@@ -843,72 +854,31 @@
     document.getElementById('statClosed').textContent = counts.closed;
     document.getElementById('statTotalProjects').textContent = projects.length;
 
-    // ---- Build Table Rows ----
+    const sourceMap = { 'form': '📋 Form', 'whatsapp': '💬 WhatsApp', 'brief_upload': '📎 Brief Upload', 'dashboard': '⚡ Dashboard', 'referral': '🤝 Referral', 'instagram': '📸 Instagram' };
+
     const projectRows = projects.slice(0, 20).map(p => {
       const statusLabel = p.status || 'new';
       const badgeClass = statusMap[statusLabel] || 'badge-new';
       const displayStatus = statusDisplay[statusLabel] || statusLabel.replace('_', ' ').toUpperCase();
-
-      // Format budget with ₦
       let budgetDisplay = '—';
-      if (p.budget) {
-        const num = Number(p.budget);
-        if (!isNaN(num) && num > 0) {
-          budgetDisplay = '₦' + num.toLocaleString();
-        }
-      }
-
-      // Get service type or fallback to '—'
+      if (p.budget) { const num = Number(p.budget); if (!isNaN(num) && num > 0) budgetDisplay = '₦' + num.toLocaleString(); }
       const serviceType = p.service_type || p.service || '—';
-
-      // Get source with nice label
-      const sourceMap = {
-        'form': '📋 Form',
-        'whatsapp': '💬 WhatsApp',
-        'brief_upload': '📎 Brief Upload',
-        'dashboard': '⚡ Dashboard',
-        'referral': '🤝 Referral',
-        'instagram': '📸 Instagram',
-        'fiverr': '💼 Fiverr',
-        'upwork': '💼 Upwork'
-      };
       const sourceLabel = sourceMap[p.source] || p.source || '—';
-
-      // Brief link
-      const briefLink = p.brief_file_url
-        ? `<span class="link-btn" onclick="window.open('${p.brief_file_url}','_blank')">📎 View</span>`
-        : '—';
-
-      return `<tr data-name="${(p.name || '').toLowerCase()} ${(p.business_name || '').toLowerCase()}" 
-                 data-status="${statusLabel}"
-                 data-service="${(p.service_type || p.service || '').toLowerCase()}"
-                 data-source="${(p.source || '').toLowerCase()}">
-        <td class="cell-main">${p.name || 'Unknown'}</td>
-        <td>${p.business_name || '—'}</td>
-        <td>${serviceType}</td>
-        <td>${budgetDisplay}</td>
-        <td><span class="badge ${badgeClass}">${displayStatus}</span></td>
-        <td>${sourceLabel}</td>
-        <td style="font-size:0.78rem; color:var(--text-faint);">${new Date(p.created_at).toLocaleDateString()}</td>
-        <td>${briefLink}</td>
+      const briefLink = p.brief_file_url ? `<span class="link-btn" onclick="window.open('${p.brief_file_url}','_blank')">📎 View</span>` : '—';
+      return `<tr data-name="${(p.name || '').toLowerCase()} ${(p.business_name || '').toLowerCase()}" data-status="${statusLabel}" data-service="${(p.service_type || p.service || '').toLowerCase()}" data-source="${(p.source || '').toLowerCase()}">
+        <td class="cell-main">${p.name || 'Unknown'}</td><td>${p.business_name || '—'}</td><td>${serviceType}</td><td>${budgetDisplay}</td>
+        <td><span class="badge ${badgeClass}">${displayStatus}</span></td><td>${sourceLabel}</td>
+        <td style="font-size:0.78rem; color:var(--text-faint);">${new Date(p.created_at).toLocaleDateString()}</td><td>${briefLink}</td>
       </tr>`;
     }).join('');
-
-    document.querySelector('#projectsTable tbody').innerHTML = projectRows ||
-      '<tr><td colspan="8" style="text-align:center;color:var(--text-faint);padding:30px;">No projects yet</td></tr>';
-
-    // Re-apply filters after render
-    applyFilters();
+    document.querySelector('#projectsTable tbody').innerHTML = projectRows || '<tr><td colspan="8" style="text-align:center;color:var(--text-faint);padding:30px;">No projects yet</td></tr>';
+    applyProjectFilters();
   }
 
-  // ============================================================
-  // APPLY FILTERS (for Projects tab)
-  // ============================================================
-  function applyFilters() {
+  function applyProjectFilters() {
     const statusVal = document.getElementById('statusFilter')?.value || '';
     const serviceVal = document.getElementById('serviceFilter')?.value || '';
     const sourceVal = document.getElementById('sourceFilter')?.value || '';
-
     document.querySelectorAll('#projectsTable tbody tr').forEach(row => {
       const matchStatus = !statusVal || row.dataset.status === statusVal;
       const matchService = !serviceVal || (row.dataset.service || '').includes(serviceVal.toLowerCase());
@@ -922,43 +892,202 @@
   // ============================================================
   function updateBriefs() {
     const briefs = cachedBriefs;
-    const briefHtml = briefs.slice(0, 8).map(b => {
-      const fileName = b.brief_file_name || 'brief.pdf';
-      return `<div class="brief-card">
-        <div class="fname">${fileName}</div>
-        <div class="fmeta"><div>${b.name || 'Unknown'}</div>
-        <div>${b.phone || '—'}</div>
-        <div>${new Date(b.created_at).toLocaleDateString()}</div></div>
+    const briefHtml = briefs.slice(0, 8).map(b => `
+      <div class="brief-card">
+        <div class="fname">${b.brief_file_name || 'brief.pdf'}</div>
+        <div class="fmeta"><div>${b.name || 'Unknown'}</div><div>${b.phone || '—'}</div><div>${new Date(b.created_at).toLocaleDateString()}</div></div>
         <div class="brief-actions">
           <button onclick="window.open('${b.brief_file_url || '#'}','_blank')">View</button>
           <button onclick="window.open('${b.brief_file_url || '#'}','_blank')">Download</button>
         </div>
-      </div>`;
-    }).join('');
+      </div>
+    `).join('');
     document.querySelector('.brief-grid').innerHTML = briefHtml || '<div style="color:var(--text-faint);padding:20px;">No briefs uploaded yet</div>';
   }
 
   // ============================================================
-  // UPDATE LEADS TABLE
+  // UPDATE LEADS TABLE (FULLY FUNCTIONAL)
   // ============================================================
   function updateLeadsTable() {
     const leads = cachedLeads;
-    const leadRows = leads.slice(0, 10).map(l => {
-      const tagClass = 
-        l.tag?.includes('High') ? 'tag-high' :
-        l.tag?.includes('Warm') ? 'tag-warm' :
-        l.tag?.includes('Cold') ? 'tag-cold' :
-        l.tag?.includes('Returning') ? 'tag-returning' : 'tag-follow';
-      return `<tr data-name="${(l.full_name || '').toLowerCase()}">
+
+    // Status stats
+    const statusCounts = { New: 0, Contacted: 0, Qualified: 0, Converted: 0, Lost: 0 };
+    leads.forEach(l => {
+      const s = l.status || 'New';
+      if (statusCounts.hasOwnProperty(s)) statusCounts[s]++;
+    });
+    document.getElementById('leadStatNew').textContent = statusCounts.New;
+    document.getElementById('leadStatContacted').textContent = statusCounts.Contacted;
+    document.getElementById('leadStatQualified').textContent = statusCounts.Qualified;
+    document.getElementById('leadStatConverted').textContent = statusCounts.Converted;
+    document.getElementById('leadStatLost').textContent = statusCounts.Lost;
+    document.getElementById('statTotalLeads').textContent = leads.length;
+
+    // Status badge mapping
+    const statusBadgeMap = {
+      'New': 'badge-new',
+      'Contacted': 'badge-contacted',
+      'Qualified': 'badge-qualified',
+      'Converted': 'badge-converted',
+      'Lost': 'badge-lost'
+    };
+
+    const tagClassMap = {
+      'High Priority': 'tag-high',
+      'Warm Nurture': 'tag-warm',
+      'Cold Nurture': 'tag-cold',
+      'Finance Follow-up': 'tag-follow',
+      'Nurture (Long Term)': 'tag-follow',
+      'New Lead (Dashboard)': 'tag-follow'
+    };
+
+    const leadRows = leads.slice(0, 20).map(l => {
+      const status = l.status || 'New';
+      const badgeClass = statusBadgeMap[status] || 'badge-new';
+      const tag = l.tag || '—';
+      const tagClass = tagClassMap[tag] || 'tag-follow';
+
+      return `<tr data-name="${(l.full_name || '').toLowerCase()}" data-status="${status}" data-tag="${tag}">
         <td class="cell-main">${l.full_name || 'Unknown'}</td>
-        <td>${l.lead_phone || '—'}</td>
-        <td>${l.status || 'New'}</td>
-        <td><span class="badge ${tagClass}">${l.tag || '—'}</span></td>
+        <td style="font-family:monospace; font-size:0.8rem;">${l.lead_phone || '—'}</td>
+        <td>
+          <select class="status-select lead-status-select" data-lead-id="${l.id}" data-current="${status}">
+            <option value="New" ${status === 'New' ? 'selected' : ''}>New</option>
+            <option value="Contacted" ${status === 'Contacted' ? 'selected' : ''}>Contacted</option>
+            <option value="Qualified" ${status === 'Qualified' ? 'selected' : ''}>Qualified</option>
+            <option value="Converted" ${status === 'Converted' ? 'selected' : ''}>Converted</option>
+            <option value="Lost" ${status === 'Lost' ? 'selected' : ''}>Lost</option>
+          </select>
+        </td>
+        <td>
+          <select class="inline-select lead-tag-select" data-lead-id="${l.id}" data-current="${tag}">
+            <option value="High Priority" ${tag === 'High Priority' ? 'selected' : ''}>🔴 High Priority</option>
+            <option value="Warm Nurture" ${tag === 'Warm Nurture' ? 'selected' : ''}>🟢 Warm Nurture</option>
+            <option value="Cold Nurture" ${tag === 'Cold Nurture' ? 'selected' : ''}>🔵 Cold Nurture</option>
+            <option value="Finance Follow-up" ${tag === 'Finance Follow-up' ? 'selected' : ''}>💰 Finance Follow-up</option>
+            <option value="Nurture (Long Term)" ${tag === 'Nurture (Long Term)' ? 'selected' : ''}>📅 Nurture (Long Term)</option>
+            <option value="New Lead (Dashboard)" ${tag === 'New Lead (Dashboard)' ? 'selected' : ''}>📋 New Lead (Dashboard)</option>
+          </select>
+        </td>
         <td>${l.source || 'WhatsApp'}</td>
         <td style="font-size:0.78rem; color:var(--text-faint);">${new Date(l.created_at).toLocaleDateString()}</td>
+        <td>
+          <button class="btn btn-gold btn-sm convert-lead-btn" data-lead-id="${l.id}" data-lead-name="${l.full_name || 'Unknown'}" data-lead-phone="${l.lead_phone || ''}">
+            🔄 Convert
+          </button>
+        </td>
       </tr>`;
     }).join('');
-    document.querySelector('#leadsTable tbody').innerHTML = leadRows || '<tr><td colspan="6" style="text-align:center;color:var(--text-faint);padding:30px;">No leads yet</td></tr>';
+
+    document.querySelector('#leadsTable tbody').innerHTML = leadRows || '<tr><td colspan="7" style="text-align:center;color:var(--text-faint);padding:30px;">No leads yet</td></tr>';
+
+    // Attach event listeners for status change
+    document.querySelectorAll('.lead-status-select').forEach(sel => {
+      sel.addEventListener('change', async function() {
+        const leadId = this.dataset.leadId;
+        const newStatus = this.value;
+        try {
+          const res = await fetch(API_BASE + '/api/crm-update-lead', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: leadId, status: newStatus })
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast('✅ Status updated to ' + newStatus);
+            loadDashboardData();
+          } else {
+            showToast('❌ Error: ' + (data.error || 'Unknown'), true);
+          }
+        } catch (err) {
+          showToast('❌ Error: ' + err.message, true);
+        }
+      });
+    });
+
+    // Attach event listeners for tag change
+    document.querySelectorAll('.lead-tag-select').forEach(sel => {
+      sel.addEventListener('change', async function() {
+        const leadId = this.dataset.leadId;
+        const newTag = this.value;
+        try {
+          const res = await fetch(API_BASE + '/api/crm-update-lead-tag', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: leadId, tag: newTag })
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast('✅ Tag updated to ' + newTag);
+            loadDashboardData();
+          } else {
+            showToast('❌ Error: ' + (data.error || 'Unknown'), true);
+          }
+        } catch (err) {
+          showToast('❌ Error: ' + err.message, true);
+        }
+      });
+    });
+
+    // Attach event listeners for convert button
+    document.querySelectorAll('.convert-lead-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const leadId = this.dataset.leadId;
+        const leadName = this.dataset.leadName;
+        const leadPhone = this.dataset.leadPhone;
+        convertLeadToProject(leadId, leadName, leadPhone);
+      });
+    });
+
+    applyLeadFilters();
+  }
+
+  // ============================================================
+  // CONVERT LEAD TO PROJECT
+  // ============================================================
+  async function convertLeadToProject(leadId, leadName, leadPhone) {
+    if (!confirm(`Convert "${leadName}" to a project request?`)) return;
+
+    try {
+      const res = await fetch(API_BASE + '/api/sb-quick-action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'add-project',
+          data: {
+            name: leadName,
+            phone: leadPhone || 'Manual entry',
+            business: leadName + '\'s Project',
+            service: 'Lead Conversion',
+            description: 'Converted from WhatsApp lead (ID: ' + leadId + ')',
+            budget: ''
+          }
+        })
+      });
+      const result = await res.json();
+      if (result.success) {
+        showToast('✅ Converted to project successfully!');
+        loadDashboardData();
+      } else {
+        showToast('❌ Error: ' + (result.error || 'Unknown'), true);
+      }
+    } catch (err) {
+      showToast('❌ Error: ' + err.message, true);
+    }
+  }
+
+  // ============================================================
+  // APPLY LEAD FILTERS
+  // ============================================================
+  function applyLeadFilters() {
+    const statusVal = document.getElementById('leadStatusFilter')?.value || '';
+    const tagVal = document.getElementById('leadTagFilter')?.value || '';
+    document.querySelectorAll('#leadsTable tbody tr').forEach(row => {
+      const matchStatus = !statusVal || row.dataset.status === statusVal;
+      const matchTag = !tagVal || row.dataset.tag === tagVal;
+      row.classList.toggle('hidden-row', !(matchStatus && matchTag));
+    });
   }
 
   // ============================================================
@@ -1094,7 +1223,8 @@
       navLinks.forEach(l => l.classList.remove("active"));
       link.classList.add("active");
       views.forEach(v => v.hidden = (v.id !== "view-" + target));
-      if (target === "projects") applyFilters();
+      if (target === "projects") applyProjectFilters();
+      if (target === "leads") applyLeadFilters();
       if (target === "reports" && !chartsInitialized) {
         initCharts();
       }
@@ -1123,15 +1253,66 @@
 
     // Overview Add Project
     document.getElementById("overviewAddProject").addEventListener("click", () => {
-      modalOverlay.classList.add("open");
+      document.getElementById("modalOverlay").classList.add("open");
     });
 
     // Overview Add Lead
     document.getElementById("overviewAddLead").addEventListener("click", () => {
-      showToast("Add lead feature coming soon. Use 'Add project' for now.");
+      document.getElementById("addLeadModal").classList.add("open");
     });
 
-    // Modal
+    // Add Lead Modal
+    document.getElementById("addLeadBtn").addEventListener("click", () => {
+      document.getElementById("addLeadModal").classList.add("open");
+    });
+    document.getElementById("closeLeadModal").addEventListener("click", () => {
+      document.getElementById("addLeadModal").classList.remove("open");
+    });
+    document.getElementById("addLeadModal").addEventListener("click", (e) => {
+      if (e.target === e.currentTarget) document.getElementById("addLeadModal").classList.remove("open");
+    });
+
+    // Save Lead
+    document.getElementById("saveLeadBtn").addEventListener("click", async () => {
+      const name = document.getElementById("leadModalName").value.trim();
+      const phone = document.getElementById("leadModalPhone").value.trim();
+      const course = document.getElementById("leadModalCourse").value.trim();
+      const dest = document.getElementById("leadModalDest").value.trim();
+      const status = document.getElementById("leadModalStatus").value;
+      const tag = document.getElementById("leadModalTag").value;
+
+      if (!name || !phone) {
+        showToast("Please enter name and phone", true);
+        return;
+      }
+
+      try {
+        const res = await fetch(API_BASE + '/api/sb-quick-action', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'add-lead',
+            data: { name, phone, course, destination: dest, status, tag }
+          })
+        });
+        const result = await res.json();
+        if (result.success) {
+          showToast("✅ Lead added successfully!");
+          document.getElementById("addLeadModal").classList.remove("open");
+          document.getElementById("leadModalName").value = "";
+          document.getElementById("leadModalPhone").value = "";
+          document.getElementById("leadModalCourse").value = "";
+          document.getElementById("leadModalDest").value = "";
+          loadDashboardData();
+        } else {
+          showToast("❌ Error: " + (result.error || "Unknown"), true);
+        }
+      } catch (err) {
+        showToast("❌ Error: " + err.message, true);
+      }
+    });
+
+    // Project Modal
     const modalOverlay = document.getElementById("modalOverlay");
     document.getElementById("addProjectBtn").addEventListener("click", () => modalOverlay.classList.add("open"));
     document.getElementById("closeModal").addEventListener("click", () => modalOverlay.classList.remove("open"));
@@ -1167,11 +1348,16 @@
           document.getElementById("modalBudget").value = "";
           loadDashboardData();
         } else {
-          showToast("❌ Error: " + (result.error || "Unknown error"), true);
+          showToast("❌ Error: " + (result.error || "Unknown"), true);
         }
       } catch (err) {
         showToast("❌ Error: " + err.message, true);
       }
+    });
+
+    // Convert to Project (bulk from toolbar)
+    document.getElementById("convertBtn").addEventListener("click", () => {
+      showToast("Select a lead and click 'Convert' on the row, or use the 'Convert to project' button on each lead.");
     });
 
     // Export CSV
@@ -1205,26 +1391,20 @@
       }
     });
 
-    // ---- Filters ----
-    document.getElementById("statusFilter").addEventListener("change", applyFilters);
-    document.getElementById("serviceFilter").addEventListener("change", applyFilters);
-    document.getElementById("sourceFilter").addEventListener("change", applyFilters);
+    // Filters
+    document.getElementById("statusFilter").addEventListener("change", applyProjectFilters);
+    document.getElementById("serviceFilter").addEventListener("change", applyProjectFilters);
+    document.getElementById("sourceFilter").addEventListener("change", applyProjectFilters);
+    document.getElementById("leadStatusFilter").addEventListener("change", applyLeadFilters);
+    document.getElementById("leadTagFilter").addEventListener("change", applyLeadFilters);
 
-    // ---- Global Search ----
+    // Global Search
     document.getElementById("globalSearch").addEventListener("input", (e) => {
       const q = e.target.value.toLowerCase().trim();
       document.querySelectorAll("#projectsTable tbody tr, #leadsTable tbody tr").forEach(row => {
         const hay = row.dataset.name || "";
         row.classList.toggle("hidden-row", q && !hay.includes(q));
       });
-    });
-
-    // Add Lead (placeholder)
-    document.getElementById("addLeadBtn").addEventListener("click", () => {
-      showToast("Add lead feature coming soon.");
-    });
-    document.getElementById("convertBtn").addEventListener("click", () => {
-      showToast("Convert to project coming soon.");
     });
 
     // Save PIN (placeholder)
@@ -1240,7 +1420,7 @@
   });
 
   // ============================================================
-  // INIT — load data after PIN unlock via loadDashboardData()
+  // INIT — load data after PIN unlock
   // ============================================================
 </script>
 </body>
