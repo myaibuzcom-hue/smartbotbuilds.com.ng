@@ -394,7 +394,7 @@
 
   <div class="container" id="app"></div>
 
-  <script>
+ <script>
   // ============================================================
   // PIN LOCK
   // ============================================================
@@ -415,7 +415,7 @@
       if(entered.length === 4){
         if(entered === CORRECT_PIN){
           setTimeout(()=> lock.classList.add("hidden"), 200);
-          loadDashboardData(); // Load data after unlock
+          loadDashboardData();
         } else {
           lock.classList.add("shake");
           setTimeout(()=>{ lock.classList.remove("shake"); entered=""; renderDots(); }, 400);
@@ -436,19 +436,15 @@
   // ============================================================
   async function loadDashboardData() {
     try {
-      // Fetch stats
       const statsRes = await fetch(API_BASE + '/api/sb-stats');
       const stats = await statsRes.json();
 
-      // Fetch projects
       const projectsRes = await fetch(API_BASE + '/api/sb-projects');
       const projects = await projectsRes.json();
 
-      // Fetch briefs
       const briefsRes = await fetch(API_BASE + '/api/sb-briefs');
       const briefs = await briefsRes.json();
 
-      // Fetch leads
       const leadsRes = await fetch(API_BASE + '/api/sb-leads');
       const leads = await leadsRes.json();
 
@@ -566,8 +562,7 @@
         }
       });
 
-      // ---- UPDATE CHARTS (with real data) ----
-      // Group projects by month
+      // ---- UPDATE CHARTS ----
       const monthMap = {};
       projects.forEach(p => {
         const d = new Date(p.created_at);
@@ -577,7 +572,6 @@
       const months = Object.keys(monthMap).sort().slice(-6);
       const projectCounts = months.map(m => monthMap[m] || 0);
 
-      // Update project chart
       const chartProjects = Chart.getChart('chartProjects');
       if (chartProjects) {
         chartProjects.data.labels = months.map(m => {
@@ -591,19 +585,16 @@
       // ---- UPDATE NOTIFICATIONS ----
       const notifItems = document.querySelectorAll('.notif-item');
       if (notifItems.length > 0) {
-        // Show latest project as first notification
         if (projects.length > 0) {
           const latest = projects[0];
           notifItems[0].querySelector('p').innerHTML = `<b>New project request</b> — ${latest.name || 'Unknown'}`;
           notifItems[0].querySelector('span').textContent = new Date(latest.created_at).toLocaleDateString();
         }
-        // Show latest lead as second notification
         if (leads.length > 0) {
           const latestLead = leads[0];
           notifItems[1].querySelector('p').innerHTML = `<b>New WhatsApp lead</b> — ${latestLead.full_name || 'Unknown'}`;
           notifItems[1].querySelector('span').textContent = new Date(latestLead.created_at).toLocaleDateString();
         }
-        // Show latest brief as third notification
         if (briefs.length > 0) {
           const latestBrief = briefs[0];
           notifItems[2].querySelector('p').innerHTML = `<b>New brief uploaded</b> — ${latestBrief.name || 'Unknown'}`;
@@ -613,7 +604,6 @@
 
     } catch (err) {
       console.error('Error loading dashboard data:', err);
-      // Show error in the UI
       document.querySelector('.stats-grid').innerHTML = `
         <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--red);">
           <p>⚠️ Error loading data. Please refresh or check your internet connection.</p>
@@ -625,118 +615,134 @@
   }
 
   // ============================================================
-  // NOTIFICATIONS
+  // EVENT LISTENERS (with null checks)
   // ============================================================
-  const notifBtn = document.getElementById("notifBtn");
-  const notifPanel = document.getElementById("notifPanel");
-  notifBtn.addEventListener("click", (e)=>{
-    e.stopPropagation();
-    notifPanel.classList.toggle("open");
-  });
-  document.addEventListener("click", ()=> notifPanel.classList.remove("open"));
-
-  // ============================================================
-  // REFRESH
-  // ============================================================
-  document.getElementById("refreshBtn").addEventListener("click", (e)=>{
-    e.currentTarget.style.transform = "rotate(360deg)";
-    e.currentTarget.style.transition = "transform .5s";
-    loadDashboardData();
-    setTimeout(()=>{ e.currentTarget.style.transform = ""; }, 500);
-  });
-
-  // ============================================================
-  // MODAL
-  // ============================================================
-  const modalOverlay = document.getElementById("modalOverlay");
-  document.getElementById("addProjectBtn").addEventListener("click", ()=> modalOverlay.classList.add("open"));
-  document.getElementById("closeModal").addEventListener("click", ()=> modalOverlay.classList.remove("open"));
-  modalOverlay.addEventListener("click", (e)=>{ if(e.target === modalOverlay) modalOverlay.classList.remove("open"); });
-
-  // ============================================================
-  // SEARCH & FILTER
-  // ============================================================
-  document.getElementById("globalSearch").addEventListener("input", (e)=>{
-    const q = e.target.value.toLowerCase().trim();
-    document.querySelectorAll("#projectsTable tbody tr, #leadsTable tbody tr").forEach(row=>{
-      const hay = row.dataset.name || "";
-      row.classList.toggle("hidden-row", q && !hay.includes(q));
-    });
-  });
-
-  document.getElementById("statusFilter").addEventListener("change", (e)=>{
-    const val = e.target.value;
-    document.querySelectorAll("#projectsTable tbody tr").forEach(row=>{
-      row.classList.toggle("hidden-row", val && row.dataset.status !== val);
-    });
-  });
-
-  // ============================================================
-  // EXPORT CSV
-  // ============================================================
-  document.getElementById("exportCsv").addEventListener("click", async ()=>{
-    try {
-      const res = await fetch(API_BASE + '/api/sb-projects');
-      const data = await res.json();
-      if (!data || data.length === 0) {
-        alert('No data to export');
-        return;
-      }
-      const headers = ['Name', 'Business', 'Service', 'Budget', 'Status', 'Source', 'Date'];
-      const rows = data.map(p => [
-        p.name || '',
-        p.business_name || '',
-        p.service_type || '',
-        p.budget ? '₦' + Number(p.budget).toLocaleString() : '',
-        p.status || '',
-        p.source || '',
-        new Date(p.created_at).toLocaleDateString()
-      ]);
-      const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = 'projects_export_' + new Date().toISOString().slice(0,10) + '.csv';
-      link.click();
-    } catch (err) {
-      alert('Error exporting: ' + err.message);
-    }
-  });
-
-  // ============================================================
-  // ADD PROJECT (via Modal)
-  // ============================================================
-  document.querySelector('.modal .btn-green').addEventListener('click', async ()=>{
-    const inputs = document.querySelectorAll('.modal input, .modal select');
-    const name = inputs[0]?.value?.trim();
-    const business = inputs[1]?.value?.trim();
-    const service = inputs[2]?.value || 'CRM & automation';
-    const budget = inputs[3]?.value?.trim();
-
-    if (!name) {
-      alert('Please enter a client name');
-      return;
-    }
-
-    try {
-      const res = await fetch(API_BASE + '/api/sb-quick-action', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'add-project',
-          data: { name, phone: 'Manual entry', business, service, description: 'Added from dashboard', budget }
-        })
+  document.addEventListener('DOMContentLoaded', function() {
+    // Notifications
+    const notifBtn = document.getElementById("notifBtn");
+    const notifPanel = document.getElementById("notifPanel");
+    if (notifBtn && notifPanel) {
+      notifBtn.addEventListener("click", (e)=>{
+        e.stopPropagation();
+        notifPanel.classList.toggle("open");
       });
-      const result = await res.json();
-      if (result.success) {
-        alert('✅ Project added successfully!');
-        modalOverlay.classList.remove('open');
+      document.addEventListener("click", ()=> notifPanel.classList.remove("open"));
+    }
+
+    // Refresh
+    const refreshBtn = document.getElementById("refreshBtn");
+    if (refreshBtn) {
+      refreshBtn.addEventListener("click", (e)=>{
+        e.currentTarget.style.transform = "rotate(360deg)";
+        e.currentTarget.style.transition = "transform .5s";
         loadDashboardData();
-      } else {
-        alert('❌ Error: ' + (result.error || 'Unknown error'));
-      }
-    } catch (err) {
-      alert('❌ Error: ' + err.message);
+        setTimeout(()=>{ e.currentTarget.style.transform = ""; }, 500);
+      });
+    }
+
+    // Modal
+    const modalOverlay = document.getElementById("modalOverlay");
+    const addProjectBtn = document.getElementById("addProjectBtn");
+    const closeModal = document.getElementById("closeModal");
+    if (addProjectBtn && modalOverlay) {
+      addProjectBtn.addEventListener("click", ()=> modalOverlay.classList.add("open"));
+    }
+    if (closeModal && modalOverlay) {
+      closeModal.addEventListener("click", ()=> modalOverlay.classList.remove("open"));
+      modalOverlay.addEventListener("click", (e)=>{ if(e.target === modalOverlay) modalOverlay.classList.remove("open"); });
+    }
+
+    // Search & Filter
+    const globalSearch = document.getElementById("globalSearch");
+    if (globalSearch) {
+      globalSearch.addEventListener("input", (e)=>{
+        const q = e.target.value.toLowerCase().trim();
+        document.querySelectorAll("#projectsTable tbody tr, #leadsTable tbody tr").forEach(row=>{
+          const hay = row.dataset.name || "";
+          row.classList.toggle("hidden-row", q && !hay.includes(q));
+        });
+      });
+    }
+
+    const statusFilter = document.getElementById("statusFilter");
+    if (statusFilter) {
+      statusFilter.addEventListener("change", (e)=>{
+        const val = e.target.value;
+        document.querySelectorAll("#projectsTable tbody tr").forEach(row=>{
+          row.classList.toggle("hidden-row", val && row.dataset.status !== val);
+        });
+      });
+    }
+
+    // Export CSV
+    const exportCsv = document.getElementById("exportCsv");
+    if (exportCsv) {
+      exportCsv.addEventListener("click", async ()=>{
+        try {
+          const res = await fetch(API_BASE + '/api/sb-projects');
+          const data = await res.json();
+          if (!data || data.length === 0) {
+            alert('No data to export');
+            return;
+          }
+          const headers = ['Name', 'Business', 'Service', 'Budget', 'Status', 'Source', 'Date'];
+          const rows = data.map(p => [
+            p.name || '',
+            p.business_name || '',
+            p.service_type || '',
+            p.budget ? '₦' + Number(p.budget).toLocaleString() : '',
+            p.status || '',
+            p.source || '',
+            new Date(p.created_at).toLocaleDateString()
+          ]);
+          const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+          const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = 'projects_export_' + new Date().toISOString().slice(0,10) + '.csv';
+          link.click();
+        } catch (err) {
+          alert('Error exporting: ' + err.message);
+        }
+      });
+    }
+
+    // Add project (modal save)
+    const saveProjectBtn = document.querySelector('.modal .btn-green');
+    if (saveProjectBtn) {
+      saveProjectBtn.addEventListener('click', async ()=>{
+        const inputs = document.querySelectorAll('.modal input, .modal select');
+        const name = inputs[0]?.value?.trim();
+        const business = inputs[1]?.value?.trim();
+        const service = inputs[2]?.value || 'CRM & automation';
+        const budget = inputs[3]?.value?.trim();
+
+        if (!name) {
+          alert('Please enter a client name');
+          return;
+        }
+
+        try {
+          const res = await fetch(API_BASE + '/api/sb-quick-action', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'add-project',
+              data: { name, phone: 'Manual entry', business, service, description: 'Added from dashboard', budget }
+            })
+          });
+          const result = await res.json();
+          if (result.success) {
+            alert('✅ Project added successfully!');
+            modalOverlay.classList.remove('open');
+            loadDashboardData();
+          } else {
+            alert('❌ Error: ' + (result.error || 'Unknown error'));
+          }
+        } catch (err) {
+          alert('❌ Error: ' + err.message);
+        }
+      });
     }
   });
 
