@@ -615,18 +615,70 @@
 </div>
 
       <!-- ===== CLIENTS ===== -->
-      <div class="view" id="view-clients" hidden>
-        <h2 class="heading">Clients</h2>
-        <table id="clientsTable">
-          <thead><tr><th>Business</th><th>Owner</th><th>Package</th><th>Amount paid</th><th>Payment</th><th>Client since</th></tr></thead>
-          <tbody>
-            <tr><td class="cell-main">EDUPLAN360</td><td>Dare Ojo</td><td>CRM + WhatsApp bot</td><td>₦200,000</td><td><span class="badge badge-paid">Paid</span></td><td>Aug 14, 2026</td></tr>
-            <tr><td class="cell-main">AML Lending Group</td><td>Chuka Eze</td><td>Custom lending platform</td><td>₦1,200,000</td><td><span class="badge badge-paid">Paid</span></td><td>Jul 2, 2026</td></tr>
-            <tr><td class="cell-main">Apex Retail Group</td><td>Femi Adisa</td><td>Sales intelligence dashboard</td><td>₦600,000</td><td><span class="badge badge-paid">Paid</span></td><td>Jun 10, 2026</td></tr>
-            <tr><td class="cell-main">Umeh &amp; Co Law</td><td>Ngozi Umeh</td><td>Admin &amp; client portal</td><td>₦250,000</td><td><span class="badge badge-partial">Partial (50% deposit)</span></td><td>Aug 25, 2026</td></tr>
-          </tbody>
-        </table>
-      </div>
+<div class="view" id="view-clients" hidden>
+  <div class="page-head">
+    <div>
+      <h1 class="heading">🏢 Clients</h1>
+      <p>All converted clients and their project details.</p>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <span id="clientCount" style="font-size:0.85rem; color:var(--text-dim);">0 clients</span>
+      <button class="btn btn-outline" id="refreshClientsBtn" style="padding:6px 14px; font-size:12px;">🔄 Refresh</button>
+    </div>
+  </div>
+
+  <!-- Stats Bar -->
+  <div class="status-stats" style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:16px; padding:12px 16px; background:var(--surface); border:1px solid var(--border); border-radius:12px;">
+    <span style="color:var(--text-faint);font-size:0.75rem;">📊 Client stats</span>
+    <div class="status-stat"><span class="dot converted" style="background:var(--green-glow);"></span>Active: <span class="num" id="clientStatActive">0</span></div>
+    <div class="status-stat"><span class="dot" style="background:var(--gold);"></span>Total Revenue: <span class="num" id="clientStatRevenue">₦0</span></div>
+    <div class="status-stat" style="margin-left:auto;"><span style="color:var(--text-faint);">Total:</span> <span class="num" id="clientStatTotal">0</span></div>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="toolbar" style="margin-bottom:16px;">
+    <div class="search-wrap" style="flex:1; max-width:400px; position:relative;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); opacity:0.5;"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input type="text" id="clientSearch" placeholder="Search by client name, business, or service..." style="width:100%; padding:10px 14px 10px 38px; background:rgba(255,255,255,0.05); border:1px solid var(--border-strong); border-radius:10px; color:var(--text); font-size:0.88rem; outline:none;">
+    </div>
+    <select id="clientServiceFilter" style="padding:8px 14px; border-radius:8px; background:#0d1333; border:1px solid var(--border-strong); color:var(--text); font-size:0.82rem;">
+      <option value="">All services</option>
+      <option value="CRM &amp; automation">CRM &amp; automation</option>
+      <option value="Custom web app">Custom web app</option>
+      <option value="AI-powered tools">AI-powered tools</option>
+      <option value="Data analytics &amp; BI">Data analytics &amp; BI</option>
+      <option value="Admin &amp; client portal">Admin &amp; client portal</option>
+      <option value="Process automation">Process automation</option>
+    </select>
+  </div>
+
+  <!-- Clients Table -->
+  <div class="table-wrap">
+    <table id="clientsTable">
+      <thead>
+        <tr>
+          <th>Business</th>
+          <th>Owner</th>
+          <th>Service</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Client Since</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="clientsTableBody">
+        <tr><td colspan="7" style="text-align:center;color:var(--text-faint);padding:30px;">Loading clients...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Empty State -->
+  <div id="clientEmpty" style="display:none; text-align:center; padding:60px 20px; color:var(--text-faint);">
+    <div style="font-size:48px; margin-bottom:16px;">🏢</div>
+    <h3 style="font-size:18px; margin-bottom:8px;">No clients yet</h3>
+    <p>When a project is marked as "converted" or "paid", clients will appear here.</p>
+  </div>
+</div>
 
       <!-- ===== REPORTS ===== -->
       <div class="view" id="view-reports" hidden>
@@ -774,6 +826,7 @@
   let cachedProjects = [];
   let cachedLeads = [];
   let cachedBriefs = [];
+  let cachedClients = [];
   let cachedStats = {};
 
   // ============================================================
@@ -793,9 +846,14 @@
       const leadsRes = await fetch(API_BASE + '/api/sb-whatsapp-leads');
       cachedLeads = await leadsRes.json();
 
+      // Inside loadDashboardData, add this line after the briefs fetch:
+const clientsRes = await fetch(API_BASE + '/api/sb-clients');
+cachedClients = await clientsRes.json();
+
       updateOverview();
       updateProjectsTable();
       updateBriefs();
+      updateClientsTable();
       updateLeadsTable();
       updateNotifications();
       updateCharts();
@@ -1068,6 +1126,106 @@ function updateBriefs() {
   applyBriefFilters();
 }
 
+  // ============================================================
+// UPDATE CLIENTS TABLE
+// ============================================================
+function updateClientsTable() {
+  const clients = cachedClients || [];
+  const tbody = document.getElementById('clientsTableBody');
+  const empty = document.getElementById('clientEmpty');
+  const countEl = document.getElementById('clientCount');
+  const statActive = document.getElementById('clientStatActive');
+  const statRevenue = document.getElementById('clientStatRevenue');
+  const statTotal = document.getElementById('clientStatTotal');
+
+  // Update stats
+  const total = clients.length;
+  let totalRevenue = 0;
+  clients.forEach(c => { if (c.budget) totalRevenue += Number(c.budget); });
+
+  if (statTotal) statTotal.textContent = total;
+  if (statActive) statActive.textContent = total;
+  if (statRevenue) statRevenue.textContent = '₦' + totalRevenue.toLocaleString();
+  if (countEl) countEl.textContent = total + ' client' + (total !== 1 ? 's' : '');
+
+  if (clients.length === 0) {
+    if (tbody) tbody.innerHTML = '';
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+
+  const statusMap = {
+    'converted': 'badge-converted',
+    'paid': 'badge-paid'
+  };
+  const statusDisplay = {
+    'converted': '✅ Converted',
+    'paid': '💰 Paid'
+  };
+
+  const rows = clients.map(c => {
+    const status = c.status || 'converted';
+    const badgeClass = statusMap[status] || 'badge-converted';
+    const displayStatus = statusDisplay[status] || 'Converted';
+    const budget = c.budget ? '₦' + Number(c.budget).toLocaleString() : '—';
+    const serviceType = c.service_type || '—';
+    const clientName = c.name || 'Unknown';
+    const businessName = c.business_name || '—';
+    const date = new Date(c.updated_at || c.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+    return `<tr data-name="${(clientName + ' ' + businessName).toLowerCase()}" data-service="${(serviceType || '').toLowerCase()}">
+      <td><strong>${businessName}</strong></td>
+      <td>${clientName}</td>
+      <td>${serviceType}</td>
+      <td>${budget}</td>
+      <td><span class="badge ${badgeClass}">${displayStatus}</span></td>
+      <td style="font-size:0.78rem; color:var(--text-faint);">${date}</td>
+      <td>
+        <button class="btn btn-outline btn-sm" style="padding:4px 12px; font-size:11px;" onclick="viewClientProject('${c.id}')">📋 View</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  if (tbody) tbody.innerHTML = rows;
+}
+
+// ============================================================
+// VIEW CLIENT PROJECT (opens drawer or modal)
+// ============================================================
+function viewClientProject(projectId) {
+  // Find the project in cachedProjects or cachedClients
+  const project = cachedProjects.find(p => p.id == projectId) || cachedClients.find(c => c.id == projectId);
+  if (!project) {
+    showToast('Project details not found', true);
+    return;
+  }
+
+  // Build a simple modal with project details
+  const modalHtml = `
+    <div style="position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; z-index:200; padding:20px;" onclick="if(event.target===this) this.remove()">
+      <div style="background:var(--surface-2); border:1px solid var(--border-strong); border-radius:16px; padding:30px; max-width:500px; width:100%; max-height:80vh; overflow-y:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <h3 style="font-size:1.1rem;">📋 Project Details</h3>
+          <button onclick="this.closest('div[style]').remove()" style="background:transparent; border:none; color:var(--text-faint); font-size:20px; cursor:pointer;">✕</button>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div><div style="font-size:0.7rem; color:var(--text-faint);">Client</div><div style="font-weight:600;">${project.name || 'Unknown'}</div></div>
+          <div><div style="font-size:0.7rem; color:var(--text-faint);">Business</div><div>${project.business_name || '—'}</div></div>
+          <div><div style="font-size:0.7rem; color:var(--text-faint);">Service</div><div>${project.service_type || '—'}</div></div>
+          <div><div style="font-size:0.7rem; color:var(--text-faint);">Budget</div><div style="color:var(--green-glow);">${project.budget ? '₦' + Number(project.budget).toLocaleString() : '—'}</div></div>
+          <div style="grid-column:span 2;"><div style="font-size:0.7rem; color:var(--text-faint);">Description</div><div style="font-size:0.85rem;">${project.description || 'No description'}</div></div>
+          <div style="grid-column:span 2;"><div style="font-size:0.7rem; color:var(--text-faint);">Status</div><div><span class="badge badge-converted">${project.status || 'Converted'}</span></div></div>
+          <div style="grid-column:span 2; margin-top:8px;">
+            <button onclick="this.closest('div[style]').remove()" class="btn btn-green" style="width:100%;">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
 // ============================================================
 // APPLY BRIEF FILTERS
 // ============================================================
@@ -1083,6 +1241,21 @@ function applyBriefFilters() {
   });
 }
 
+// ============================================================
+// APPLY CLIENT FILTERS
+// ============================================================
+function applyClientFilters() {
+  const searchVal = document.getElementById('clientSearch')?.value?.toLowerCase().trim() || '';
+  const serviceVal = document.getElementById('clientServiceFilter')?.value?.toLowerCase() || '';
+
+  document.querySelectorAll('#clientsTableBody tr').forEach(row => {
+    const text = row.textContent.toLowerCase();
+    const matchSearch = !searchVal || text.includes(searchVal);
+    const matchService = !serviceVal || row.dataset.service === serviceVal;
+    row.style.display = (matchSearch && matchService) ? '' : 'none';
+  });
+}
+  
   // ============================================================
   // UPDATE LEADS TABLE (FULLY FUNCTIONAL)
   // ============================================================
@@ -1490,6 +1663,26 @@ function applyBriefFilters() {
       }
     });
 
+// ---- Client Search & Filter ----
+const clientSearch = document.getElementById('clientSearch');
+if (clientSearch) {
+  clientSearch.addEventListener('input', applyClientFilters);
+}
+
+const clientServiceFilter = document.getElementById('clientServiceFilter');
+if (clientServiceFilter) {
+  clientServiceFilter.addEventListener('change', applyClientFilters);
+}
+
+// ---- Refresh Clients Button ----
+const refreshClientsBtn = document.getElementById('refreshClientsBtn');
+if (refreshClientsBtn) {
+  refreshClientsBtn.addEventListener('click', function() {
+    loadDashboardData();
+    showToast('🔄 Clients refreshed');
+  });
+}
+    
     // Project Modal
     const modalOverlay = document.getElementById("modalOverlay");
     document.getElementById("addProjectBtn").addEventListener("click", () => modalOverlay.classList.add("open"));
