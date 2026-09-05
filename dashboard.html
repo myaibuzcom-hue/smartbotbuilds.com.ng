@@ -121,7 +121,7 @@
   .goal-bar{ height:8px; border-radius:20px; background:rgba(232,245,232,0.08); overflow:hidden; }
   .goal-fill{ height:100%; width:70%; background:linear-gradient(90deg, var(--gold), var(--green-glow)); border-radius:20px; }
 
-  .stats-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:30px; }
+  .stats-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:20px; }
   .stat-card{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; }
   .stat-card .lbl{ font-size:0.78rem; color:var(--text-faint); margin-bottom:10px; }
   .stat-card .num{ font-size:2.1rem; line-height:1; color:var(--text); }
@@ -140,13 +140,13 @@
   .chart-panel canvas{ max-height:220px; }
   @media (max-width:1000px){ .charts-grid{ grid-template-columns:1fr; } }
 
-  .panel{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:24px; margin-top:26px; }
+  .panel{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:24px; margin-top:20px; }
   .panel-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
   .panel-head h3{ font-size:1.02rem; font-weight:600; }
   .funnel{ display:flex; align-items:stretch; gap:0; }
   .funnel-stage{ flex:1; text-align:center; position:relative; padding:0 10px; }
   .funnel-stage:not(:last-child)::after{ content:'›'; position:absolute; right:-4px; top:20px; color:var(--text-faint); font-size:1.4rem; }
-  .funnel-bar{ height:6px; border-radius:6px; background:linear-gradient(90deg, var(--green), var(--green-glow)); margin:0 auto 14px; }
+  .funnel-bar{ height:6px; border-radius:6px; background:linear-gradient(90deg, var(--green), var(--green-glow)); margin:0 auto 14px; width:100%; }
   .funnel-stage .fnum{ font-size:1.7rem; }
   .funnel-stage .flbl{ font-size:0.78rem; color:var(--text-dim); margin-top:2px; }
   .funnel-stage .fpct{ font-size:0.72rem; color:var(--gold); margin-top:4px; }
@@ -237,6 +237,25 @@
     box-shadow:0 12px 30px rgba(0,0,0,0.4);
   }
   #toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* ---- recent activity ---- */
+  .activity-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px; }
+  .activity-feed{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; }
+  .activity-feed h4{ font-size:0.85rem; font-weight:600; margin-bottom:14px; color:var(--text-dim); }
+  .act-item{ display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); }
+  .act-item:last-child{ border-bottom:none; }
+  .act-icon{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:rgba(0,200,83,0.08); }
+  .act-icon.lead{ background:rgba(255,145,0,0.12); color:var(--gold); }
+  .act-icon.brief{ background:rgba(0,200,83,0.12); color:var(--green-glow); }
+  .act-icon.project{ background:rgba(79,141,253,0.12); color:#7ea8ff; }
+  .act-icon.convert{ background:rgba(0,200,83,0.16); color:var(--green-glow); }
+  .act-text{ flex:1; font-size:0.83rem; color:var(--text-dim); }
+  .act-text strong{ color:var(--text); }
+  .act-time{ font-size:0.7rem; color:var(--text-faint); }
+  .quick-actions-overview{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+  @media (max-width:800px){ .activity-grid{ grid-template-columns:1fr; } }
+
+  .last-updated{ font-size:0.72rem; color:var(--text-faint); margin-top:12px; }
 </style>
 </head>
 <body>
@@ -307,6 +326,7 @@
             <div class="goal-bar"><div class="goal-fill" style="width:0%"></div></div>
           </div>
         </div>
+
         <div class="stats-grid">
           <div class="stat-card feature"><div class="lbl">Revenue pipeline</div><div class="num">₦0</div><div class="delta">Loading...</div></div>
           <div class="stat-card feature"><div class="lbl">Converted revenue</div><div class="num">₦0</div><div class="delta">Loading...</div></div>
@@ -315,6 +335,15 @@
           <div class="stat-card"><div class="lbl">New leads (30d)</div><div class="num">0</div></div>
           <div class="stat-card"><div class="lbl">Converted clients</div><div class="num">0</div></div>
         </div>
+
+        <!-- Quick Actions -->
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
+          <button class="btn btn-green" id="overviewAddProject">➕ Add project</button>
+          <button class="btn btn-outline" id="overviewAddLead">➕ Add lead</button>
+          <span class="last-updated" id="lastUpdated">Last updated: —</span>
+        </div>
+
+        <!-- Pipeline -->
         <div class="panel">
           <div class="panel-head"><h3>Client conversion pipeline</h3></div>
           <div class="funnel">
@@ -323,6 +352,22 @@
             <div class="funnel-stage"><div class="funnel-bar"></div><div class="fnum num">0</div><div class="flbl">Brief received</div><div class="fpct">0%</div></div>
             <div class="funnel-stage"><div class="funnel-bar"></div><div class="fnum num">0</div><div class="flbl">Quote sent</div><div class="fpct">0%</div></div>
             <div class="funnel-stage"><div class="funnel-bar"></div><div class="fnum num">0</div><div class="flbl">Paid client</div><div class="fpct">0%</div></div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="activity-grid">
+          <div class="activity-feed">
+            <h4>📋 Recent activity</h4>
+            <div id="recentActivity">
+              <div style="color:var(--text-faint);padding:12px 0;">Loading...</div>
+            </div>
+          </div>
+          <div class="activity-feed">
+            <h4>📊 Quick stats</h4>
+            <div id="quickStats">
+              <div style="color:var(--text-faint);padding:12px 0;">Loading...</div>
+            </div>
           </div>
         </div>
       </div>
@@ -457,7 +502,7 @@
 
 <script>
   // ============================================================
-  // PIN LOCK (runs immediately)
+  // PIN LOCK
   // ============================================================
   const CORRECT_PIN = "1925";
   let entered = "";
@@ -472,7 +517,7 @@
       if(entered.length === 4){
         if(entered === CORRECT_PIN){
           setTimeout(()=> lock.classList.add("hidden"), 200);
-          loadDashboardData(); // Load data after unlock
+          loadDashboardData();
         } else {
           lock.classList.add("shake");
           setTimeout(()=>{ lock.classList.remove("shake"); entered=""; renderDots(); }, 400);
@@ -504,451 +549,560 @@
   // ============================================================
   // LOAD DASHBOARD DATA
   // ============================================================
+  let cachedProjects = [];
+  let cachedLeads = [];
+  let cachedBriefs = [];
+  let cachedStats = {};
+
   async function loadDashboardData() {
     try {
       const statsRes = await fetch(API_BASE + '/api/sb-stats');
-      const stats = await statsRes.json();
+      cachedStats = await statsRes.json();
 
       const projectsRes = await fetch(API_BASE + '/api/sb-projects');
-      const projects = await projectsRes.json();
+      cachedProjects = await projectsRes.json();
 
       const briefsRes = await fetch(API_BASE + '/api/sb-briefs');
-      const briefs = await briefsRes.json();
+      cachedBriefs = await briefsRes.json();
 
       const leadsRes = await fetch(API_BASE + '/api/sb-leads');
-      const leads = await leadsRes.json();
+      cachedLeads = await leadsRes.json();
 
-      // ---- UPDATE STATS (Overview) ----
-      document.querySelectorAll('.stat-card .num').forEach(el => {
-        const label = el.closest('.stat-card')?.querySelector('.lbl')?.textContent?.trim() || '';
-        if (label.includes('Revenue pipeline')) {
-          el.textContent = '₦' + (stats.pipeline_value || 0).toLocaleString();
-          const delta = el.closest('.stat-card')?.querySelector('.delta');
-          if (delta) delta.textContent = 'Across ' + (stats.total_projects || 0) + ' requests';
-        } else if (label.includes('Converted revenue')) {
-          el.textContent = '₦' + (stats.converted_value || 0).toLocaleString();
-          const delta = el.closest('.stat-card')?.querySelector('.delta');
-          if (delta) delta.textContent = (stats.converted || 0) + ' clients closed';
-        } else if (label.includes('Total projects')) {
-          el.textContent = stats.total_projects || 0;
-        } else if (label.includes('Briefs uploaded')) {
-          el.textContent = stats.briefs_uploaded || 0;
-        } else if (label.includes('New leads (30d)')) {
-          el.textContent = stats.new_leads_30d || 0;
-        } else if (label.includes('Converted clients')) {
-          el.textContent = stats.converted || 0;
-        }
-      });
+      updateOverview();
+      updateProjectsTable();
+      updateBriefs();
+      updateLeadsTable();
+      updateNotifications();
+      updateCharts();
 
-      // ---- UPDATE GOAL CARD ----
-      const pipeline = stats.pipeline_value || 0;
-      const target = 500000;
-      const pct = Math.min((pipeline / target) * 100, 100);
-      document.querySelector('.goal-top b').textContent = '₦' + pipeline.toLocaleString() + ' / ₦' + target.toLocaleString() + ' · ' + Math.round(pct) + '%';
-      document.querySelector('.goal-fill').style.width = Math.min(pct, 100) + '%';
+      // Update last updated timestamp
+      document.getElementById('lastUpdated').textContent = 'Last updated: ' + new Date().toLocaleString();
 
-      // ---- UPDATE PROJECTS TABLE ----
-      const statusMap = {
-        'new': 'badge-new',
-        'brief_received': 'badge-brief',
-        'quoted': 'badge-quoted',
-        'converted': 'badge-converted',
-        'closed': 'badge-closed'
-      };
-      const projectRows = projects.slice(0, 10).map(p => {
-        const statusLabel = p.status || 'new';
-        const badgeClass = statusMap[statusLabel] || 'badge-new';
-        const displayStatus = statusLabel.replace('_', ' ').toUpperCase();
-        return `<tr data-name="${(p.name || '').toLowerCase()} ${(p.business_name || '').toLowerCase()}" data-status="${statusLabel}">
-          <td class="cell-main">${p.name || 'Unknown'}</td>
-          <td>${p.business_name || '—'}</td>
-          <td>${p.service_type || '—'}</td>
-          <td>${p.budget ? '₦' + Number(p.budget).toLocaleString() : '—'}</td>
-          <td><span class="badge ${badgeClass}">${displayStatus}</span></td>
-          <td>${p.source || '—'}</td>
-          <td>${new Date(p.created_at).toLocaleDateString()}</td>
-          <td>${p.brief_file_url ? '<span class="link-btn" onclick="window.open(\'' + p.brief_file_url + '\',\'_blank\')">View</span>' : '—'}</td>
-        </tr>`;
-      }).join('');
-      document.querySelector('#projectsTable tbody').innerHTML = projectRows || '<tr><td colspan="8" style="text-align:center;color:var(--text-faint);padding:30px;">No projects yet</td></tr>';
-
-      // ---- UPDATE BRIEFS ----
-      const briefHtml = briefs.slice(0, 8).map(b => {
-        const fileName = b.brief_file_name || 'brief.pdf';
-        return `<div class="brief-card">
-          <div class="fname">${fileName}</div>
-          <div class="fmeta"><div>${b.name || 'Unknown'}</div>
-          <div>${b.phone || '—'}</div>
-          <div>${new Date(b.created_at).toLocaleDateString()}</div></div>
-          <div class="brief-actions">
-            <button onclick="window.open('${b.brief_file_url || '#'}','_blank')">View</button>
-            <button onclick="window.open('${b.brief_file_url || '#'}','_blank')">Download</button>
-          </div>
-        </div>`;
-      }).join('');
-      document.querySelector('.brief-grid').innerHTML = briefHtml || '<div style="color:var(--text-faint);padding:20px;">No briefs uploaded yet</div>';
-
-      // ---- UPDATE LEADS TABLE ----
-      const leadRows = leads.slice(0, 10).map(l => {
-        const tagClass = 
-          l.tag?.includes('High') ? 'tag-high' :
-          l.tag?.includes('Warm') ? 'tag-warm' :
-          l.tag?.includes('Cold') ? 'tag-cold' :
-          l.tag?.includes('Returning') ? 'tag-returning' : 'tag-follow';
-        return `<tr data-name="${(l.full_name || '').toLowerCase()}">
-          <td class="cell-main">${l.full_name || 'Unknown'}</td>
-          <td>${l.lead_phone || '—'}</td>
-          <td>${l.status || 'New'}</td>
-          <td><span class="badge ${tagClass}">${l.tag || '—'}</span></td>
-          <td>${l.source || 'WhatsApp'}</td>
-          <td>${new Date(l.created_at).toLocaleDateString()}</td>
-        </tr>`;
-      }).join('');
-      document.querySelector('#leadsTable tbody').innerHTML = leadRows || '<tr><td colspan="6" style="text-align:center;color:var(--text-faint);padding:30px;">No leads yet</td></tr>';
-
-      // ---- UPDATE PIPELINE FUNNEL ----
-      const leadCount = stats.new_leads_30d || 0;
-      const projectCount = stats.total_projects || 0;
-      const briefCount = stats.briefs_uploaded || 0;
-      const quotedCount = projects.filter(p => p.status === 'quoted').length || 0;
-      const convertedCount = stats.converted || 0;
-
-      const funnelStages = [
-        { label: 'Lead', count: Math.max(leadCount + projectCount + briefCount + quotedCount + convertedCount, 1) },
-        { label: 'Project request', count: Math.max(projectCount, 1) },
-        { label: 'Brief received', count: Math.max(briefCount, 1) },
-        { label: 'Quote sent', count: Math.max(quotedCount, 1) },
-        { label: 'Paid client', count: Math.max(convertedCount, 1) }
-      ];
-
-      const maxFunnel = Math.max(...funnelStages.map(s => s.count), 1);
-      document.querySelectorAll('.funnel-stage').forEach((stage, i) => {
-        if (i < funnelStages.length) {
-          const s = funnelStages[i];
-          stage.querySelector('.fnum').textContent = s.count;
-          stage.querySelector('.flbl').textContent = s.label;
-          const pct = Math.round((s.count / funnelStages[0].count) * 100);
-          stage.querySelector('.fpct').textContent = pct + '%';
-          const bar = stage.querySelector('.funnel-bar');
-          if (bar) bar.style.width = Math.max((s.count / maxFunnel) * 100, 8) + '%';
-        }
-      });
-
-      // ---- UPDATE NOTIFICATIONS ----
-      const notifItems = document.querySelectorAll('.notif-item');
-      if (notifItems.length > 0) {
-        if (projects.length > 0) {
-          const latest = projects[0];
-          notifItems[0].querySelector('p').innerHTML = `<b>New project request</b> — ${latest.name || 'Unknown'}`;
-          notifItems[0].querySelector('span').textContent = new Date(latest.created_at).toLocaleDateString();
-        }
-        if (leads.length > 0) {
-          const latestLead = leads[0];
-          notifItems[1].querySelector('p').innerHTML = `<b>New WhatsApp lead</b> — ${latestLead.full_name || 'Unknown'}`;
-          notifItems[1].querySelector('span').textContent = new Date(latestLead.created_at).toLocaleDateString();
-        }
-        if (briefs.length > 0) {
-          const latestBrief = briefs[0];
-          notifItems[2].querySelector('p').innerHTML = `<b>New brief uploaded</b> — ${latestBrief.name || 'Unknown'}`;
-          notifItems[2].querySelector('span').textContent = new Date(latestBrief.created_at).toLocaleDateString();
-        }
-        if (projects.filter(p => p.status === 'converted').length > 0) {
-          const latestConverted = projects.filter(p => p.status === 'converted')[0];
-          notifItems[3].querySelector('p').innerHTML = `<b>Client converted</b> — ${latestConverted.name || 'Unknown'}`;
-          notifItems[3].querySelector('span').textContent = new Date(latestConverted.created_at).toLocaleDateString();
-        }
-      }
+      showToast('Data refreshed successfully');
 
     } catch (err) {
       console.error('Error loading dashboard data:', err);
       showToast('Error loading data: ' + err.message, true);
-      document.querySelector('.stats-grid').innerHTML = `
-        <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gold);">
-          <p>⚠️ Error loading data. Please refresh.</p>
-          <p style="font-size:0.8rem;color:var(--text-faint);margin-top:8px;">${err.message}</p>
-          <button onclick="loadDashboardData()" style="margin-top:12px;padding:8px 20px;background:var(--green);border:none;border-radius:8px;color:#000;font-weight:600;cursor:pointer;">Retry</button>
-        </div>
-      `;
     }
   }
 
   // ============================================================
-  // NAVIGATION – VIEW SWITCHING
+  // UPDATE OVERVIEW
   // ============================================================
-  const navLinks = document.querySelectorAll("#sideNav a[data-view]");
-  const views = document.querySelectorAll(".view");
-  let chartsInitialized = false;
+  function updateOverview() {
+    const stats = cachedStats;
+    const projects = cachedProjects;
+    const leads = cachedLeads;
+    const briefs = cachedBriefs;
 
-  navLinks.forEach(link=>{
-    link.addEventListener("click", (e)=>{
-      e.preventDefault();
-      const target = link.dataset.view;
-      navLinks.forEach(l=> l.classList.remove("active"));
-      link.classList.add("active");
-      views.forEach(v=> v.hidden = (v.id !== "view-" + target));
-      if(target === "reports" && !chartsInitialized){
-        initCharts();
-        chartsInitialized = true;
+    const pipeline = stats.pipeline_value || 0;
+    const convertedValue = stats.converted_value || 0;
+    const totalProjects = stats.total_projects || 0;
+    const briefCount = stats.briefs_uploaded || 0;
+    const newLeads = stats.new_leads_30d || 0;
+    const converted = stats.converted || 0;
+
+    // Stats
+    document.querySelectorAll('.stat-card .num').forEach(el => {
+      const label = el.closest('.stat-card')?.querySelector('.lbl')?.textContent?.trim() || '';
+      if (label.includes('Revenue pipeline')) {
+        el.textContent = '₦' + pipeline.toLocaleString();
+        const delta = el.closest('.stat-card')?.querySelector('.delta');
+        if (delta) delta.textContent = 'Across ' + totalProjects + ' requests';
+      } else if (label.includes('Converted revenue')) {
+        el.textContent = '₦' + convertedValue.toLocaleString();
+        const delta = el.closest('.stat-card')?.querySelector('.delta');
+        if (delta) delta.textContent = converted + ' clients closed';
+      } else if (label.includes('Total projects')) {
+        el.textContent = totalProjects;
+      } else if (label.includes('Briefs uploaded')) {
+        el.textContent = briefCount;
+      } else if (label.includes('New leads (30d)')) {
+        el.textContent = newLeads;
+      } else if (label.includes('Converted clients')) {
+        el.textContent = converted;
       }
     });
-  });
+
+    // Goal card
+    const target = 500000;
+    const pct = Math.min((pipeline / target) * 100, 100);
+    document.querySelector('.goal-top b').textContent = '₦' + pipeline.toLocaleString() + ' / ₦' + target.toLocaleString() + ' · ' + Math.round(pct) + '%';
+    document.querySelector('.goal-fill').style.width = Math.min(pct, 100) + '%';
+
+    // Funnel
+    const quotedCount = projects.filter(p => p.status === 'quoted').length || 0;
+    const totalLeads = newLeads + totalProjects + briefCount + quotedCount + converted || 1;
+
+    const funnelStages = [
+      { label: 'Lead', count: Math.max(totalLeads, 1) },
+      { label: 'Project request', count: Math.max(totalProjects, 1) },
+      { label: 'Brief received', count: Math.max(briefCount, 1) },
+      { label: 'Quote sent', count: Math.max(quotedCount, 1) },
+      { label: 'Paid client', count: Math.max(converted, 1) }
+    ];
+
+    const maxFunnel = Math.max(...funnelStages.map(s => s.count), 1);
+    document.querySelectorAll('.funnel-stage').forEach((stage, i) => {
+      if (i < funnelStages.length) {
+        const s = funnelStages[i];
+        stage.querySelector('.fnum').textContent = s.count;
+        stage.querySelector('.flbl').textContent = s.label;
+        const pctStage = Math.round((s.count / funnelStages[0].count) * 100);
+        stage.querySelector('.fpct').textContent = pctStage + '%';
+        const bar = stage.querySelector('.funnel-bar');
+        if (bar) bar.style.width = Math.max((s.count / maxFunnel) * 100, 8) + '%';
+      }
+    });
+
+    // Recent Activity
+    updateRecentActivity(projects, leads, briefs);
+
+    // Quick Stats
+    updateQuickStats(stats);
+  }
 
   // ============================================================
-  // CHARTS (lazy initialized)
+  // RECENT ACTIVITY
   // ============================================================
-  function initCharts(){
+  function updateRecentActivity(projects, leads, briefs) {
+    const container = document.getElementById('recentActivity');
+    const events = [];
+
+    projects.slice(0, 3).forEach(p => {
+      events.push({
+        type: 'project',
+        icon: 'project',
+        text: `<strong>${p.name || 'Unknown'}</strong> submitted a project request`,
+        time: new Date(p.created_at).toLocaleDateString()
+      });
+    });
+
+    leads.slice(0, 3).forEach(l => {
+      events.push({
+        type: 'lead',
+        icon: 'lead',
+        text: `<strong>${l.full_name || 'Unknown'}</strong> — new WhatsApp lead`,
+        time: new Date(l.created_at).toLocaleDateString()
+      });
+    });
+
+    briefs.slice(0, 2).forEach(b => {
+      events.push({
+        type: 'brief',
+        icon: 'brief',
+        text: `<strong>${b.name || 'Unknown'}</strong> uploaded a brief`,
+        time: new Date(b.created_at).toLocaleDateString()
+      });
+    });
+
+    // Sort by time (newest first)
+    events.sort((a,b) => new Date(b.time) - new Date(a.time));
+    const topEvents = events.slice(0, 5);
+
+    if (topEvents.length === 0) {
+      container.innerHTML = '<div style="color:var(--text-faint);padding:12px 0;">No recent activity</div>';
+    } else {
+      container.innerHTML = topEvents.map(e => `
+        <div class="act-item">
+          <div class="act-icon ${e.icon}">
+            ${e.icon === 'project' ? '📋' : e.icon === 'lead' ? '💬' : '📎'}
+          </div>
+          <div>
+            <div class="act-text">${e.text}</div>
+            <div class="act-time">${e.time}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+
+  // ============================================================
+  // QUICK STATS
+  // ============================================================
+  function updateQuickStats(stats) {
+    const container = document.getElementById('quickStats');
+    const total = stats.total_projects || 0;
+    const converted = stats.converted || 0;
+    const rate = total > 0 ? Math.round((converted / total) * 100) : 0;
+
+    container.innerHTML = `
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div><div style="font-size:1.4rem; font-weight:700; color:var(--green-glow);">${stats.new_leads_30d || 0}</div><div style="font-size:0.75rem; color:var(--text-faint);">New leads (30d)</div></div>
+        <div><div style="font-size:1.4rem; font-weight:700; color:var(--gold);">${converted}</div><div style="font-size:0.75rem; color:var(--text-faint);">Converted clients</div></div>
+        <div><div style="font-size:1.4rem; font-weight:700; color:#7ea8ff;">${total}</div><div style="font-size:0.75rem; color:var(--text-faint);">Total projects</div></div>
+        <div><div style="font-size:1.4rem; font-weight:700; color:var(--green-glow);">${rate}%</div><div style="font-size:0.75rem; color:var(--text-faint);">Conversion rate</div></div>
+      </div>
+    `;
+  }
+
+  // ============================================================
+  // UPDATE PROJECTS TABLE
+  // ============================================================
+  function updateProjectsTable() {
+    const projects = cachedProjects;
+    const statusMap = {
+      'new': 'badge-new',
+      'brief_received': 'badge-brief',
+      'quoted': 'badge-quoted',
+      'converted': 'badge-converted',
+      'closed': 'badge-closed'
+    };
+    const projectRows = projects.slice(0, 10).map(p => {
+      const statusLabel = p.status || 'new';
+      const badgeClass = statusMap[statusLabel] || 'badge-new';
+      const displayStatus = statusLabel.replace('_', ' ').toUpperCase();
+      return `<tr data-name="${(p.name || '').toLowerCase()} ${(p.business_name || '').toLowerCase()}" data-status="${statusLabel}">
+        <td class="cell-main">${p.name || 'Unknown'}</td>
+        <td>${p.business_name || '—'}</td>
+        <td>${p.service_type || '—'}</td>
+        <td>${p.budget ? '₦' + Number(p.budget).toLocaleString() : '—'}</td>
+        <td><span class="badge ${badgeClass}">${displayStatus}</span></td>
+        <td>${p.source || '—'}</td>
+        <td>${new Date(p.created_at).toLocaleDateString()}</td>
+        <td>${p.brief_file_url ? '<span class="link-btn" onclick="window.open(\'' + p.brief_file_url + '\',\'_blank\')">View</span>' : '—'}</td>
+      </tr>`;
+    }).join('');
+    document.querySelector('#projectsTable tbody').innerHTML = projectRows || '<tr><td colspan="8" style="text-align:center;color:var(--text-faint);padding:30px;">No projects yet</td></tr>';
+  }
+
+  // ============================================================
+  // UPDATE BRIEFS
+  // ============================================================
+  function updateBriefs() {
+    const briefs = cachedBriefs;
+    const briefHtml = briefs.slice(0, 8).map(b => {
+      const fileName = b.brief_file_name || 'brief.pdf';
+      return `<div class="brief-card">
+        <div class="fname">${fileName}</div>
+        <div class="fmeta"><div>${b.name || 'Unknown'}</div>
+        <div>${b.phone || '—'}</div>
+        <div>${new Date(b.created_at).toLocaleDateString()}</div></div>
+        <div class="brief-actions">
+          <button onclick="window.open('${b.brief_file_url || '#'}','_blank')">View</button>
+          <button onclick="window.open('${b.brief_file_url || '#'}','_blank')">Download</button>
+        </div>
+      </div>`;
+    }).join('');
+    document.querySelector('.brief-grid').innerHTML = briefHtml || '<div style="color:var(--text-faint);padding:20px;">No briefs uploaded yet</div>';
+  }
+
+  // ============================================================
+  // UPDATE LEADS TABLE
+  // ============================================================
+  function updateLeadsTable() {
+    const leads = cachedLeads;
+    const leadRows = leads.slice(0, 10).map(l => {
+      const tagClass = 
+        l.tag?.includes('High') ? 'tag-high' :
+        l.tag?.includes('Warm') ? 'tag-warm' :
+        l.tag?.includes('Cold') ? 'tag-cold' :
+        l.tag?.includes('Returning') ? 'tag-returning' : 'tag-follow';
+      return `<tr data-name="${(l.full_name || '').toLowerCase()}">
+        <td class="cell-main">${l.full_name || 'Unknown'}</td>
+        <td>${l.lead_phone || '—'}</td>
+        <td>${l.status || 'New'}</td>
+        <td><span class="badge ${tagClass}">${l.tag || '—'}</span></td>
+        <td>${l.source || 'WhatsApp'}</td>
+        <td>${new Date(l.created_at).toLocaleDateString()}</td>
+      </tr>`;
+    }).join('');
+    document.querySelector('#leadsTable tbody').innerHTML = leadRows || '<tr><td colspan="6" style="text-align:center;color:var(--text-faint);padding:30px;">No leads yet</td></tr>';
+  }
+
+  // ============================================================
+  // UPDATE NOTIFICATIONS
+  // ============================================================
+  function updateNotifications() {
+    const projects = cachedProjects;
+    const leads = cachedLeads;
+    const briefs = cachedBriefs;
+    const notifItems = document.querySelectorAll('.notif-item');
+
+    if (notifItems.length > 0) {
+      if (projects.length > 0) {
+        const latest = projects[0];
+        notifItems[0].querySelector('p').innerHTML = `<b>New project request</b> — ${latest.name || 'Unknown'}`;
+        notifItems[0].querySelector('span').textContent = new Date(latest.created_at).toLocaleDateString();
+      }
+      if (leads.length > 0) {
+        const latestLead = leads[0];
+        notifItems[1].querySelector('p').innerHTML = `<b>New WhatsApp lead</b> — ${latestLead.full_name || 'Unknown'}`;
+        notifItems[1].querySelector('span').textContent = new Date(latestLead.created_at).toLocaleDateString();
+      }
+      if (briefs.length > 0) {
+        const latestBrief = briefs[0];
+        notifItems[2].querySelector('p').innerHTML = `<b>New brief uploaded</b> — ${latestBrief.name || 'Unknown'}`;
+        notifItems[2].querySelector('span').textContent = new Date(latestBrief.created_at).toLocaleDateString();
+      }
+      const converted = projects.filter(p => p.status === 'converted');
+      if (converted.length > 0) {
+        const latestConverted = converted[0];
+        notifItems[3].querySelector('p').innerHTML = `<b>Client converted</b> — ${latestConverted.name || 'Unknown'}`;
+        notifItems[3].querySelector('span').textContent = new Date(latestConverted.created_at).toLocaleDateString();
+      }
+    }
+  }
+
+  // ============================================================
+  // CHARTS
+  // ============================================================
+  let chartsInitialized = false;
+
+  function initCharts() {
     const gridColor = "rgba(232,245,232,0.06)";
     const textColor = "rgba(232,245,232,0.55)";
     Chart.defaults.color = textColor;
     Chart.defaults.font.family = "Poppins";
 
-    // Projects per month — will update with real data later
     new Chart(document.getElementById("chartProjects"), {
       type: "bar",
-      data: { labels: ["Apr","May","Jun","Jul","Aug","Sep"], datasets: [{ data:[0,0,0,0,0,0], backgroundColor:"#00c853", borderRadius:5, maxBarThickness:28 }] },
-      options: { plugins:{legend:{display:false}}, scales:{ x:{grid:{display:false}}, y:{grid:{color:gridColor}} } }
+      data: { labels: [], datasets: [{ data: [], backgroundColor: "#00c853", borderRadius: 5, maxBarThickness: 28 }] },
+      options: { plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: gridColor }, beginAtZero: true } } }
     });
 
     new Chart(document.getElementById("chartRevenue"), {
       type: "line",
-      data: { labels: ["Apr","May","Jun","Jul","Aug","Sep"], datasets: [{ data:[0,0,0,0,0,0], borderColor:"#00e676", backgroundColor:"rgba(0,230,118,0.12)", fill:true, tension:0.35, pointBackgroundColor:"#00e676" }] },
-      options: { plugins:{legend:{display:false}}, scales:{ x:{grid:{display:false}}, y:{grid:{color:gridColor}, ticks:{callback:(v)=>"₦"+(v/1000)+"k"}} } }
+      data: { labels: [], datasets: [{ data: [], borderColor: "#00e676", backgroundColor: "rgba(0,230,118,0.12)", fill: true, tension: 0.35, pointBackgroundColor: "#00e676" }] },
+      options: { plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: gridColor }, ticks: { callback: (v) => "₦" + (v / 1000) + "k" } } } }
     });
 
     new Chart(document.getElementById("chartSources"), {
       type: "pie",
-      data: { labels: ["WhatsApp","Referral","Instagram","Website form","Fiverr/Upwork"], datasets: [{ data:[0,0,0,0,0], backgroundColor:["#25d366","#00c853","#ff9100","#7ea8ff","#5b6b8c"], borderColor:"#0a0f2c", borderWidth:2 }] },
-      options: { plugins:{legend:{position:"bottom", labels:{boxWidth:10, font:{size:11}}}} }
+      data: { labels: [], datasets: [{ data: [], backgroundColor: ["#25d366", "#00c853", "#ff9100", "#7ea8ff", "#5b6b8c"], borderColor: "#0a0f2c", borderWidth: 2 }] },
+      options: { plugins: { legend: { position: "bottom", labels: { boxWidth: 10, font: { size: 11 } } } } }
     });
 
     new Chart(document.getElementById("chartConversion"), {
       type: "doughnut",
-      data: { labels: ["Converted","Not yet converted"], datasets: [{ data:[0,1], backgroundColor:["#00e676","rgba(232,245,232,0.08)"], borderColor:"#0a0f2c", borderWidth:2 }] },
-      options: { cutout:"72%", plugins:{legend:{position:"bottom", labels:{boxWidth:10, font:{size:11}}}} }
+      data: { labels: ["Converted", "Not yet converted"], datasets: [{ data: [0, 1], backgroundColor: ["#00e676", "rgba(232,245,232,0.08)"], borderColor: "#0a0f2c", borderWidth: 2 }] },
+      options: { cutout: "72%", plugins: { legend: { position: "bottom", labels: { boxWidth: 10, font: { size: 11 } } } } }
     });
 
-    // Load real data into charts
+    chartsInitialized = true;
     updateCharts();
   }
 
-  async function updateCharts() {
-    try {
-      const projectsRes = await fetch(API_BASE + '/api/sb-projects');
-      const projects = await projectsRes.json();
+  function updateCharts() {
+    const projects = cachedProjects;
+    const leads = cachedLeads;
 
-      const leadsRes = await fetch(API_BASE + '/api/sb-leads');
-      const leads = await leadsRes.json();
+    // Projects per month
+    const monthMap = {};
+    projects.forEach(p => {
+      const d = new Date(p.created_at);
+      const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+      monthMap[key] = (monthMap[key] || 0) + 1;
+    });
+    const months = Object.keys(monthMap).sort().slice(-6);
+    const projectCounts = months.map(m => monthMap[m] || 0);
 
-      // ---- Projects per month ----
-      const monthMap = {};
-      projects.forEach(p => {
-        const d = new Date(p.created_at);
-        const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
-        monthMap[key] = (monthMap[key] || 0) + 1;
+    const chartProjects = Chart.getChart('chartProjects');
+    if (chartProjects) {
+      chartProjects.data.labels = months.map(m => {
+        const [y, mo] = m.split('-');
+        return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][parseInt(mo) - 1] + ' ' + y.slice(2);
       });
-      const months = Object.keys(monthMap).sort().slice(-6);
-      const projectCounts = months.map(m => monthMap[m] || 0);
+      chartProjects.data.datasets[0].data = projectCounts.length ? projectCounts : [0];
+      chartProjects.update();
+    }
 
-      const chartProjects = Chart.getChart('chartProjects');
-      if (chartProjects) {
-        chartProjects.data.labels = months.map(m => {
-          const [y, mo] = m.split('-');
-          return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(mo)-1] + ' ' + y.slice(2);
-        });
-        chartProjects.data.datasets[0].data = projectCounts.length ? projectCounts : [0];
-        chartProjects.update();
-      }
+    // Lead sources
+    const sourceMap = {};
+    leads.forEach(l => {
+      const src = l.source || 'WhatsApp';
+      sourceMap[src] = (sourceMap[src] || 0) + 1;
+    });
+    const sourceLabels = Object.keys(sourceMap);
+    const sourceData = sourceLabels.map(s => sourceMap[s]);
 
-      // ---- Lead sources ----
-      const sourceMap = {};
-      leads.forEach(l => {
-        const src = l.source || 'WhatsApp';
-        sourceMap[src] = (sourceMap[src] || 0) + 1;
-      });
-      const sourceLabels = Object.keys(sourceMap);
-      const sourceData = sourceLabels.map(s => sourceMap[s]);
+    const chartSources = Chart.getChart('chartSources');
+    if (chartSources && sourceLabels.length > 0) {
+      chartSources.data.labels = sourceLabels;
+      chartSources.data.datasets[0].data = sourceData;
+      chartSources.update();
+    }
 
-      const chartSources = Chart.getChart('chartSources');
-      if (chartSources && sourceLabels.length > 0) {
-        chartSources.data.labels = sourceLabels;
-        chartSources.data.datasets[0].data = sourceData;
-        chartSources.update();
-      }
-
-      // ---- Conversion rate ----
-      const converted = projects.filter(p => p.status === 'converted').length;
-      const total = projects.length || 1;
-
-      const chartConversion = Chart.getChart('chartConversion');
-      if (chartConversion) {
-        chartConversion.data.datasets[0].data = [converted, Math.max(total - converted, 0)];
-        chartConversion.update();
-      }
-
-    } catch (err) {
-      console.error('Error updating charts:', err);
+    // Conversion rate
+    const converted = projects.filter(p => p.status === 'converted').length;
+    const total = projects.length || 1;
+    const chartConversion = Chart.getChart('chartConversion');
+    if (chartConversion) {
+      chartConversion.data.datasets[0].data = [converted, Math.max(total - converted, 0)];
+      chartConversion.update();
     }
   }
 
   // ============================================================
-  // NOTIFICATIONS
+  // NAVIGATION
   // ============================================================
-  const notifBtn = document.getElementById("notifBtn");
-  const notifPanel = document.getElementById("notifPanel");
-  notifBtn.addEventListener("click", (e)=>{ e.stopPropagation(); notifPanel.classList.toggle("open"); });
-  document.addEventListener("click", ()=> notifPanel.classList.remove("open"));
+  const navLinks = document.querySelectorAll("#sideNav a[data-view]");
+  const views = document.querySelectorAll(".view");
 
-  // ============================================================
-  // REFRESH
-  // ============================================================
-  document.getElementById("refreshBtn").addEventListener("click", (e)=>{
-    e.currentTarget.style.transform = "rotate(360deg)";
-    e.currentTarget.style.transition = "transform .5s";
-    loadDashboardData();
-    updateCharts();
-    setTimeout(()=>{ e.currentTarget.style.transform = ""; }, 500);
-    showToast("Data refreshed.");
-  });
-
-  // ============================================================
-  // MODAL
-  // ============================================================
-  const modalOverlay = document.getElementById("modalOverlay");
-  document.getElementById("addProjectBtn").addEventListener("click", ()=> modalOverlay.classList.add("open"));
-  document.getElementById("closeModal").addEventListener("click", ()=> modalOverlay.classList.remove("open"));
-  modalOverlay.addEventListener("click", (e)=>{ if(e.target === modalOverlay) modalOverlay.classList.remove("open"); });
-
-  document.getElementById("saveProjectBtn").addEventListener("click", async ()=>{
-    const name = document.getElementById("modalName").value.trim();
-    const business = document.getElementById("modalBiz").value.trim();
-    const service = document.getElementById("modalService").value;
-    const budget = document.getElementById("modalBudget").value.trim();
-
-    if (!name) {
-      showToast("Please enter a client name", true);
-      return;
-    }
-
-    try {
-      const res = await fetch(API_BASE + '/api/sb-quick-action', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'add-project',
-          data: { name, phone: 'Manual entry', business, service, description: 'Added from dashboard', budget }
-        })
-      });
-      const result = await res.json();
-      if (result.success) {
-        showToast("✅ Project added successfully!");
-        modalOverlay.classList.remove("open");
-        document.getElementById("modalName").value = "";
-        document.getElementById("modalBiz").value = "";
-        document.getElementById("modalBudget").value = "";
-        loadDashboardData();
-        updateCharts();
-      } else {
-        showToast("❌ Error: " + (result.error || "Unknown error"), true);
+  navLinks.forEach(link => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const target = link.dataset.view;
+      navLinks.forEach(l => l.classList.remove("active"));
+      link.classList.add("active");
+      views.forEach(v => v.hidden = (v.id !== "view-" + target));
+      if (target === "reports" && !chartsInitialized) {
+        initCharts();
       }
-    } catch (err) {
-      showToast("❌ Error: " + err.message, true);
+    });
+  });
+
+  // ============================================================
+  // EVENT LISTENERS
+  // ============================================================
+  document.addEventListener('DOMContentLoaded', function() {
+    // Notifications
+    const notifBtn = document.getElementById("notifBtn");
+    const notifPanel = document.getElementById("notifPanel");
+    if (notifBtn && notifPanel) {
+      notifBtn.addEventListener("click", (e) => { e.stopPropagation(); notifPanel.classList.toggle("open"); });
+      document.addEventListener("click", () => notifPanel.classList.remove("open"));
     }
-  });
 
-  // ============================================================
-  // ADD LEAD (placeholder)
-  // ============================================================
-  document.getElementById("addLeadBtn").addEventListener("click", ()=>{
-    showToast("Add lead feature coming soon. For now, use 'Add project' above.");
-  });
+    // Refresh
+    document.getElementById("refreshBtn").addEventListener("click", (e) => {
+      e.currentTarget.style.transform = "rotate(360deg)";
+      e.currentTarget.style.transition = "transform .5s";
+      loadDashboardData();
+      setTimeout(() => { e.currentTarget.style.transform = ""; }, 500);
+    });
 
-  document.getElementById("convertBtn").addEventListener("click", ()=>{
-    showToast("Convert to project coming soon.");
-  });
+    // Overview Add Project
+    document.getElementById("overviewAddProject").addEventListener("click", () => {
+      modalOverlay.classList.add("open");
+    });
 
-  // ============================================================
-  // EXPORT CSV
-  // ============================================================
-  document.getElementById("exportCsv").addEventListener("click", async ()=>{
-    try {
-      const res = await fetch(API_BASE + '/api/sb-projects');
-      const data = await res.json();
-      if (!data || data.length === 0) {
-        showToast("No data to export", true);
+    // Overview Add Lead
+    document.getElementById("overviewAddLead").addEventListener("click", () => {
+      showToast("Add lead feature coming soon. Use 'Add project' for now.");
+    });
+
+    // Modal
+    const modalOverlay = document.getElementById("modalOverlay");
+    document.getElementById("addProjectBtn").addEventListener("click", () => modalOverlay.classList.add("open"));
+    document.getElementById("closeModal").addEventListener("click", () => modalOverlay.classList.remove("open"));
+    modalOverlay.addEventListener("click", (e) => { if (e.target === modalOverlay) modalOverlay.classList.remove("open"); });
+
+    // Save Project
+    document.getElementById("saveProjectBtn").addEventListener("click", async () => {
+      const name = document.getElementById("modalName").value.trim();
+      const business = document.getElementById("modalBiz").value.trim();
+      const service = document.getElementById("modalService").value;
+      const budget = document.getElementById("modalBudget").value.trim();
+
+      if (!name) {
+        showToast("Please enter a client name", true);
         return;
       }
-      const headers = ['Name', 'Business', 'Service', 'Budget', 'Status', 'Source', 'Date'];
-      const rows = data.map(p => [
-        p.name || '',
-        p.business_name || '',
-        p.service_type || '',
-        p.budget ? '₦' + Number(p.budget).toLocaleString() : '',
-        p.status || '',
-        p.source || '',
-        new Date(p.created_at).toLocaleDateString()
-      ]);
-      const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = 'projects_export_' + new Date().toISOString().slice(0,10) + '.csv';
-      link.click();
-      showToast("✅ CSV exported!");
-    } catch (err) {
-      showToast("❌ Export error: " + err.message, true);
-    }
-  });
 
-  // ============================================================
-  // SAVE PIN (placeholder)
-  // ============================================================
-  document.getElementById("savePinBtn").addEventListener("click", ()=>{
-    const inputs = document.querySelectorAll('.pin-inputs input');
-    const pin = Array.from(inputs).map(i => i.value).join('');
-    if (pin.length === 4 && /^\d{4}$/.test(pin)) {
-      showToast("✅ PIN updated successfully!");
-    } else {
-      showToast("❌ Please enter a valid 4-digit PIN", true);
-    }
-  });
+      try {
+        const res = await fetch(API_BASE + '/api/sb-quick-action', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'add-project',
+            data: { name, phone: 'Manual entry', business, service, description: 'Added from dashboard', budget }
+          })
+        });
+        const result = await res.json();
+        if (result.success) {
+          showToast("✅ Project added successfully!");
+          modalOverlay.classList.remove("open");
+          document.getElementById("modalName").value = "";
+          document.getElementById("modalBiz").value = "";
+          document.getElementById("modalBudget").value = "";
+          loadDashboardData();
+        } else {
+          showToast("❌ Error: " + (result.error || "Unknown error"), true);
+        }
+      } catch (err) {
+        showToast("❌ Error: " + err.message, true);
+      }
+    });
 
-  // ============================================================
-  // SEARCH FILTER
-  // ============================================================
-  document.getElementById("globalSearch").addEventListener("input", (e)=>{
-    const q = e.target.value.toLowerCase().trim();
-    document.querySelectorAll("#projectsTable tbody tr, #leadsTable tbody tr").forEach(row=>{
-      const hay = row.dataset.name || "";
-      row.classList.toggle("hidden-row", q && !hay.includes(q));
+    // Export CSV
+    document.getElementById("exportCsv").addEventListener("click", async () => {
+      try {
+        const res = await fetch(API_BASE + '/api/sb-projects');
+        const data = await res.json();
+        if (!data || data.length === 0) {
+          showToast("No data to export", true);
+          return;
+        }
+        const headers = ['Name', 'Business', 'Service', 'Budget', 'Status', 'Source', 'Date'];
+        const rows = data.map(p => [
+          p.name || '',
+          p.business_name || '',
+          p.service_type || '',
+          p.budget ? '₦' + Number(p.budget).toLocaleString() : '',
+          p.status || '',
+          p.source || '',
+          new Date(p.created_at).toLocaleDateString()
+        ]);
+        const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'projects_export_' + new Date().toISOString().slice(0, 10) + '.csv';
+        link.click();
+        showToast("✅ CSV exported!");
+      } catch (err) {
+        showToast("❌ Export error: " + err.message, true);
+      }
+    });
+
+    // Search & Filters
+    document.getElementById("globalSearch").addEventListener("input", (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      document.querySelectorAll("#projectsTable tbody tr, #leadsTable tbody tr").forEach(row => {
+        const hay = row.dataset.name || "";
+        row.classList.toggle("hidden-row", q && !hay.includes(q));
+      });
+    });
+
+    document.getElementById("statusFilter").addEventListener("change", (e) => {
+      const val = e.target.value;
+      document.querySelectorAll("#projectsTable tbody tr").forEach(row => {
+        row.classList.toggle("hidden-row", val && row.dataset.status !== val);
+      });
+    });
+
+    document.getElementById("serviceFilter").addEventListener("change", (e) => {
+      const val = e.target.value.toLowerCase();
+      document.querySelectorAll("#projectsTable tbody tr").forEach(row => {
+        const service = row.children[2]?.textContent?.toLowerCase() || "";
+        row.classList.toggle("hidden-row", val && !service.includes(val));
+      });
+    });
+
+    // Add Lead (placeholder)
+    document.getElementById("addLeadBtn").addEventListener("click", () => {
+      showToast("Add lead feature coming soon.");
+    });
+    document.getElementById("convertBtn").addEventListener("click", () => {
+      showToast("Convert to project coming soon.");
+    });
+
+    // Save PIN (placeholder)
+    document.getElementById("savePinBtn").addEventListener("click", () => {
+      const inputs = document.querySelectorAll('.pin-inputs input');
+      const pin = Array.from(inputs).map(i => i.value).join('');
+      if (pin.length === 4 && /^\d{4}$/.test(pin)) {
+        showToast("✅ PIN updated successfully!");
+      } else {
+        showToast("❌ Please enter a valid 4-digit PIN", true);
+      }
     });
   });
 
   // ============================================================
-  // STATUS FILTER
+  // INIT — load data after PIN unlock via loadDashboardData()
   // ============================================================
-  document.getElementById("statusFilter").addEventListener("change", (e)=>{
-    const val = e.target.value;
-    document.querySelectorAll("#projectsTable tbody tr").forEach(row=>{
-      row.classList.toggle("hidden-row", val && row.dataset.status !== val);
-    });
-  });
-
-  // ============================================================
-  // SERVICE FILTER
-  // ============================================================
-  document.getElementById("serviceFilter").addEventListener("change", (e)=>{
-    const val = e.target.value.toLowerCase();
-    document.querySelectorAll("#projectsTable tbody tr").forEach(row=>{
-      const service = row.children[2]?.textContent?.toLowerCase() || "";
-      row.classList.toggle("hidden-row", val && !service.includes(val));
-    });
-  });
-
-  // ============================================================
-  // INIT — load data after PIN unlock
-  // ============================================================
-  // Data loads after PIN unlock via loadDashboardData()
-  // Charts update after load
 </script>
 </body>
 </html>
