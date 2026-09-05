@@ -295,6 +295,65 @@
     background: #0d1333 !important;
     color: #e8f5e8 !important;
   }
+
+  .brief-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.brief-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  transition: 0.2s;
+}
+
+.brief-card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+}
+
+.brief-card .fname {
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+
+.brief-card .fmeta {
+  font-size: 0.76rem;
+  color: var(--text-faint);
+  margin-bottom: 12px;
+}
+
+.brief-card .fmeta div {
+  margin-bottom: 2px;
+}
+
+.brief-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.brief-actions button {
+  flex: 1;
+  padding: 7px;
+  border-radius: 7px;
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 0.76rem;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.brief-actions button:hover {
+  background: rgba(232,245,232,0.05);
+  color: var(--text);
+}
 </style>
 </head>
 <body>
@@ -515,10 +574,45 @@
       </div>
 
       <!-- ===== BRIEFS ===== -->
-      <div class="view" id="view-briefs" hidden>
-        <h2 class="heading">Brief uploads</h2>
-        <div class="brief-grid"><div style="color:var(--text-faint);padding:20px;">Loading briefs...</div></div>
-      </div>
+<div class="view" id="view-briefs" hidden>
+  <div class="page-head">
+    <div>
+      <h1 class="heading">📎 Brief uploads</h1>
+      <p>All project briefs uploaded via WhatsApp or the website form.</p>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <span id="briefCount" style="font-size:0.85rem; color:var(--text-dim);">0 briefs</span>
+      <button class="btn btn-outline" id="refreshBriefsBtn" style="padding:6px 14px; font-size:12px;">🔄 Refresh</button>
+    </div>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="toolbar" style="margin-bottom:16px;">
+    <div class="search-wrap" style="flex:1; max-width:400px; position:relative;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); opacity:0.5;"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input type="text" id="briefSearch" placeholder="Search by file name, client name, or phone..." style="width:100%; padding:10px 14px 10px 38px; background:rgba(255,255,255,0.05); border:1px solid var(--border-strong); border-radius:10px; color:var(--text); font-size:0.88rem; outline:none;">
+    </div>
+    <select id="briefStatusFilter" style="padding:8px 14px; border-radius:8px; background:#0d1333; border:1px solid var(--border-strong); color:var(--text); font-size:0.82rem;">
+      <option value="">All statuses</option>
+      <option value="new">New</option>
+      <option value="brief_received">Brief Received</option>
+      <option value="quoted">Quoted</option>
+      <option value="converted">Converted</option>
+    </select>
+  </div>
+
+  <!-- Brief Grid -->
+  <div class="brief-grid" id="briefGrid">
+    <div style="color:var(--text-faint);padding:40px;text-align:center;">Loading briefs...</div>
+  </div>
+
+  <!-- Empty State -->
+  <div id="briefEmpty" style="display:none; text-align:center; padding:60px 20px; color:var(--text-faint);">
+    <div style="font-size:48px; margin-bottom:16px;">📎</div>
+    <h3 style="font-size:18px; margin-bottom:8px;">No briefs uploaded yet</h3>
+    <p>When clients upload project briefs via WhatsApp, they'll appear here.</p>
+  </div>
+</div>
 
       <!-- ===== CLIENTS ===== -->
       <div class="view" id="view-clients" hidden>
@@ -888,22 +982,106 @@
   }
 
   // ============================================================
-  // UPDATE BRIEFS
-  // ============================================================
-  function updateBriefs() {
-    const briefs = cachedBriefs;
-    const briefHtml = briefs.slice(0, 8).map(b => `
-      <div class="brief-card">
-        <div class="fname">${b.brief_file_name || 'brief.pdf'}</div>
-        <div class="fmeta"><div>${b.name || 'Unknown'}</div><div>${b.phone || '—'}</div><div>${new Date(b.created_at).toLocaleDateString()}</div></div>
-        <div class="brief-actions">
-          <button onclick="window.open('${b.brief_file_url || '#'}','_blank')">View</button>
-          <button onclick="window.open('${b.brief_file_url || '#'}','_blank')">Download</button>
-        </div>
-      </div>
-    `).join('');
-    document.querySelector('.brief-grid').innerHTML = briefHtml || '<div style="color:var(--text-faint);padding:20px;">No briefs uploaded yet</div>';
+// UPDATE BRIEFS (FULLY FUNCTIONAL)
+// ============================================================
+function updateBriefs() {
+  const briefs = cachedBriefs || [];
+  const grid = document.getElementById('briefGrid');
+  const empty = document.getElementById('briefEmpty');
+  const countEl = document.getElementById('briefCount');
+
+  // Update count
+  if (countEl) countEl.textContent = briefs.length + ' brief' + (briefs.length !== 1 ? 's' : '');
+
+  if (briefs.length === 0) {
+    if (grid) grid.innerHTML = '';
+    if (empty) empty.style.display = 'block';
+    return;
   }
+  if (empty) empty.style.display = 'none';
+
+  // Status badge mapping
+  const statusMap = {
+    'new': 'badge-new',
+    'brief_received': 'badge-brief',
+    'quoted': 'badge-quoted',
+    'converted': 'badge-converted'
+  };
+  const statusDisplay = {
+    'new': 'New',
+    'brief_received': 'Brief Received',
+    'quoted': 'Quoted',
+    'converted': 'Converted'
+  };
+
+  // Service type icons
+  const serviceIcons = {
+    'CRM & automation': '📊',
+    'Custom web app': '🌐',
+    'AI-powered tools': '🤖',
+    'Data analytics & BI': '📈',
+    'Admin & client portal': '🏢',
+    'Process automation': '⚡',
+    'brief_upload': '📎'
+  };
+
+  // Build brief cards
+  const briefHtml = briefs.map(b => {
+    const fileName = b.brief_file_name || 'Untitled.pdf';
+    const clientName = b.name || 'Unknown';
+    const phone = b.phone || '—';
+    const serviceType = b.service_type || b.service || '—';
+    const serviceIcon = serviceIcons[serviceType] || '📄';
+    const status = b.status || 'new';
+    const badgeClass = statusMap[status] || 'badge-new';
+    const displayStatus = statusDisplay[status] || status.toUpperCase();
+    const budget = b.budget ? '₦' + Number(b.budget).toLocaleString() : '—';
+    const date = new Date(b.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const fileUrl = b.brief_file_url || '#';
+
+    return `<div class="brief-card" data-brief-id="${b.id}" data-status="${status}">
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px;">
+        <div class="fname" style="font-size:0.88rem; font-weight:600; margin-bottom:4px; word-break:break-word; flex:1;">
+          ${serviceIcon} ${fileName}
+        </div>
+        <span class="badge ${badgeClass}" style="flex-shrink:0;">${displayStatus}</span>
+      </div>
+      <div class="fmeta" style="font-size:0.76rem; color:var(--text-faint); margin-bottom:12px;">
+        <div><strong style="color:var(--text);">${clientName}</strong> · ${phone}</div>
+        <div style="margin-top:2px;">${serviceType} · ${budget}</div>
+        <div style="margin-top:2px;">📅 ${date}</div>
+      </div>
+      <div class="brief-actions" style="display:flex; gap:8px;">
+        <button onclick="window.open('${fileUrl}','_blank')" style="flex:1; padding:7px; border-radius:7px; border:1px solid var(--border-strong); background:transparent; color:var(--text-dim); font-size:0.76rem; cursor:pointer; transition:0.15s;">
+          👁️ View
+        </button>
+        <button onclick="window.open('${fileUrl}','_blank')" style="flex:1; padding:7px; border-radius:7px; border:1px solid var(--border-strong); background:transparent; color:var(--text-dim); font-size:0.76rem; cursor:pointer; transition:0.15s;">
+          ⬇️ Download
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+
+  if (grid) grid.innerHTML = briefHtml;
+
+  // Re-apply filters
+  applyBriefFilters();
+}
+
+// ============================================================
+// APPLY BRIEF FILTERS
+// ============================================================
+function applyBriefFilters() {
+  const searchVal = document.getElementById('briefSearch')?.value?.toLowerCase().trim() || '';
+  const statusVal = document.getElementById('briefStatusFilter')?.value || '';
+
+  document.querySelectorAll('#briefGrid .brief-card').forEach(card => {
+    const text = card.textContent.toLowerCase();
+    const matchSearch = !searchVal || text.includes(searchVal);
+    const matchStatus = !statusVal || card.dataset.status === statusVal;
+    card.style.display = (matchSearch && matchStatus) ? '' : 'none';
+  });
+}
 
   // ============================================================
   // UPDATE LEADS TABLE (FULLY FUNCTIONAL)
@@ -1354,6 +1532,26 @@
         showToast("❌ Error: " + err.message, true);
       }
     });
+
+      // ---- Brief Search & Filter ----
+const briefSearch = document.getElementById('briefSearch');
+if (briefSearch) {
+  briefSearch.addEventListener('input', applyBriefFilters);
+}
+
+const briefStatusFilter = document.getElementById('briefStatusFilter');
+if (briefStatusFilter) {
+  briefStatusFilter.addEventListener('change', applyBriefFilters);
+}
+
+// ---- Refresh Briefs Button ----
+const refreshBriefsBtn = document.getElementById('refreshBriefsBtn');
+if (refreshBriefsBtn) {
+  refreshBriefsBtn.addEventListener('click', function() {
+    loadDashboardData();
+    showToast('🔄 Briefs refreshed');
+  });
+}
 
     // Convert to Project (bulk from toolbar)
     document.getElementById("convertBtn").addEventListener("click", () => {
