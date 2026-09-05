@@ -256,6 +256,20 @@
   @media (max-width:800px){ .activity-grid{ grid-template-columns:1fr; } }
 
   .last-updated{ font-size:0.72rem; color:var(--text-faint); margin-top:12px; }
+
+  /* Status stats bar for projects tab */
+  .status-stats{ display:flex; gap:16px; flex-wrap:wrap; margin-bottom:16px; padding:12px 16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; }
+  .status-stat{ display:flex; align-items:center; gap:8px; font-size:0.8rem; color:var(--text-dim); }
+  .status-stat .dot{ width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+  .status-stat .num{ font-weight:700; color:var(--text); }
+  .status-stat .dot.new{ background:#7ea8ff; }
+  .status-stat .dot.brief{ background:var(--gold); }
+  .status-stat .dot.quoted{ background:var(--text); }
+  .status-stat .dot.converted{ background:var(--green-glow); }
+  .status-stat .dot.closed{ background:var(--text-faint); }
+
+  .status-select{ padding:4px 8px; border-radius:6px; background:rgba(232,245,232,0.05); border:1px solid var(--border-strong); color:var(--text); font-size:0.75rem; font-family:'Poppins',sans-serif; cursor:pointer; }
+  .status-select:focus{ outline:1px solid var(--green); }
 </style>
 </head>
 <body>
@@ -390,15 +404,51 @@
             <option value="Custom web app">Custom web app</option>
             <option value="AI-powered tools">AI-powered tools</option>
             <option value="Data analytics &amp; BI">Data analytics &amp; BI</option>
+            <option value="Admin &amp; client portal">Admin &amp; client portal</option>
+            <option value="Process automation">Process automation</option>
+          </select>
+          <select id="sourceFilter">
+            <option value="">All sources</option>
+            <option value="form">Website form</option>
+            <option value="whatsapp">WhatsApp</option>
+            <option value="brief_upload">Brief upload</option>
+            <option value="dashboard">Dashboard</option>
+            <option value="referral">Referral</option>
+            <option value="instagram">Instagram</option>
           </select>
           <div class="qa-group">
             <button class="btn btn-outline" id="exportCsv">Export CSV</button>
             <button class="btn btn-green" id="addProjectBtn">Add project</button>
           </div>
         </div>
+
+        <!-- Status Stats Bar -->
+        <div class="status-stats" id="projectStatusStats">
+          <span style="color:var(--text-faint);font-size:0.75rem;">📊 Status breakdown</span>
+          <div class="status-stat"><span class="dot new"></span>New: <span class="num" id="statNew">0</span></div>
+          <div class="status-stat"><span class="dot brief"></span>Brief received: <span class="num" id="statBrief">0</span></div>
+          <div class="status-stat"><span class="dot quoted"></span>Quoted: <span class="num" id="statQuoted">0</span></div>
+          <div class="status-stat"><span class="dot converted"></span>Converted: <span class="num" id="statConverted">0</span></div>
+          <div class="status-stat"><span class="dot closed"></span>Closed: <span class="num" id="statClosed">0</span></div>
+          <div class="status-stat" style="margin-left:auto;"><span style="color:var(--text-faint);">Total:</span> <span class="num" id="statTotalProjects">0</span></div>
+        </div>
+
         <table id="projectsTable">
-          <thead><tr><th>Name</th><th>Business</th><th>Service</th><th>Budget</th><th>Status</th><th>Source</th><th>Date</th><th>Brief</th></tr></thead>
-          <tbody><tr><td colspan="8" style="text-align:center;color:var(--text-faint);padding:30px;">Loading projects...</td></tr></tbody>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Business</th>
+              <th>Service</th>
+              <th>Budget</th>
+              <th>Status</th>
+              <th>Source</th>
+              <th>Date</th>
+              <th>Brief</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="8" style="text-align:center;color:var(--text-faint);padding:30px;">Loading projects...</td></tr>
+          </tbody>
         </table>
       </div>
 
@@ -489,7 +539,14 @@
       <label>Client name</label><input type="text" id="modalName" placeholder="e.g. Amaka Chukwu" />
       <label>Business name</label><input type="text" id="modalBiz" placeholder="e.g. Chukwu Foods" />
       <label>Service type</label>
-      <select id="modalService"><option>CRM &amp; automation</option><option>Custom web app</option><option>AI-powered tools</option><option>Data analytics &amp; BI</option><option>Admin &amp; client portal</option></select>
+      <select id="modalService">
+        <option>CRM &amp; automation</option>
+        <option>Custom web app</option>
+        <option>AI-powered tools</option>
+        <option>Data analytics &amp; BI</option>
+        <option>Admin &amp; client portal</option>
+        <option>Process automation</option>
+      </select>
       <label>Budget (₦)</label><input type="text" id="modalBudget" placeholder="e.g. 600000" />
       <div class="modal-actions">
         <button class="btn btn-outline" id="closeModal">Cancel</button>
@@ -547,13 +604,16 @@
   }
 
   // ============================================================
-  // LOAD DASHBOARD DATA
+  // DATA CACHE
   // ============================================================
   let cachedProjects = [];
   let cachedLeads = [];
   let cachedBriefs = [];
   let cachedStats = {};
 
+  // ============================================================
+  // LOAD DASHBOARD DATA
+  // ============================================================
   async function loadDashboardData() {
     try {
       const statsRes = await fetch(API_BASE + '/api/sb-stats');
@@ -575,9 +635,7 @@
       updateNotifications();
       updateCharts();
 
-      // Update last updated timestamp
       document.getElementById('lastUpdated').textContent = 'Last updated: ' + new Date().toLocaleString();
-
       showToast('Data refreshed successfully');
 
     } catch (err) {
@@ -602,7 +660,6 @@
     const newLeads = stats.new_leads_30d || 0;
     const converted = stats.converted || 0;
 
-    // Stats
     document.querySelectorAll('.stat-card .num').forEach(el => {
       const label = el.closest('.stat-card')?.querySelector('.lbl')?.textContent?.trim() || '';
       if (label.includes('Revenue pipeline')) {
@@ -624,7 +681,6 @@
       }
     });
 
-    // Goal card
     const target = 500000;
     const pct = Math.min((pipeline / target) * 100, 100);
     document.querySelector('.goal-top b').textContent = '₦' + pipeline.toLocaleString() + ' / ₦' + target.toLocaleString() + ' · ' + Math.round(pct) + '%';
@@ -696,7 +752,6 @@
       });
     });
 
-    // Sort by time (newest first)
     events.sort((a,b) => new Date(b.time) - new Date(a.time));
     const topEvents = events.slice(0, 5);
 
@@ -737,10 +792,11 @@
   }
 
   // ============================================================
-  // UPDATE PROJECTS TABLE
+  // UPDATE PROJECTS TABLE (FULLY ENHANCED)
   // ============================================================
   function updateProjectsTable() {
     const projects = cachedProjects;
+
     const statusMap = {
       'new': 'badge-new',
       'brief_received': 'badge-brief',
@@ -748,22 +804,101 @@
       'converted': 'badge-converted',
       'closed': 'badge-closed'
     };
-    const projectRows = projects.slice(0, 10).map(p => {
+
+    const statusDisplay = {
+      'new': 'New',
+      'brief_received': 'Brief Received',
+      'quoted': 'Quoted',
+      'converted': 'Converted',
+      'closed': 'Closed'
+    };
+
+    // ---- Update Status Stats Bar ----
+    const counts = { new: 0, brief_received: 0, quoted: 0, converted: 0, closed: 0 };
+    projects.forEach(p => {
+      const s = p.status || 'new';
+      if (counts.hasOwnProperty(s)) counts[s]++;
+    });
+
+    document.getElementById('statNew').textContent = counts.new;
+    document.getElementById('statBrief').textContent = counts.brief_received;
+    document.getElementById('statQuoted').textContent = counts.quoted;
+    document.getElementById('statConverted').textContent = counts.converted;
+    document.getElementById('statClosed').textContent = counts.closed;
+    document.getElementById('statTotalProjects').textContent = projects.length;
+
+    // ---- Build Table Rows ----
+    const projectRows = projects.slice(0, 20).map(p => {
       const statusLabel = p.status || 'new';
       const badgeClass = statusMap[statusLabel] || 'badge-new';
-      const displayStatus = statusLabel.replace('_', ' ').toUpperCase();
-      return `<tr data-name="${(p.name || '').toLowerCase()} ${(p.business_name || '').toLowerCase()}" data-status="${statusLabel}">
+      const displayStatus = statusDisplay[statusLabel] || statusLabel.replace('_', ' ').toUpperCase();
+
+      // Format budget with ₦
+      let budgetDisplay = '—';
+      if (p.budget) {
+        const num = Number(p.budget);
+        if (!isNaN(num) && num > 0) {
+          budgetDisplay = '₦' + num.toLocaleString();
+        }
+      }
+
+      // Get service type or fallback to '—'
+      const serviceType = p.service_type || p.service || '—';
+
+      // Get source with nice label
+      const sourceMap = {
+        'form': '📋 Form',
+        'whatsapp': '💬 WhatsApp',
+        'brief_upload': '📎 Brief Upload',
+        'dashboard': '⚡ Dashboard',
+        'referral': '🤝 Referral',
+        'instagram': '📸 Instagram',
+        'fiverr': '💼 Fiverr',
+        'upwork': '💼 Upwork'
+      };
+      const sourceLabel = sourceMap[p.source] || p.source || '—';
+
+      // Brief link
+      const briefLink = p.brief_file_url
+        ? `<span class="link-btn" onclick="window.open('${p.brief_file_url}','_blank')">📎 View</span>`
+        : '—';
+
+      return `<tr data-name="${(p.name || '').toLowerCase()} ${(p.business_name || '').toLowerCase()}" 
+                 data-status="${statusLabel}"
+                 data-service="${(p.service_type || p.service || '').toLowerCase()}"
+                 data-source="${(p.source || '').toLowerCase()}">
         <td class="cell-main">${p.name || 'Unknown'}</td>
         <td>${p.business_name || '—'}</td>
-        <td>${p.service_type || '—'}</td>
-        <td>${p.budget ? '₦' + Number(p.budget).toLocaleString() : '—'}</td>
+        <td>${serviceType}</td>
+        <td>${budgetDisplay}</td>
         <td><span class="badge ${badgeClass}">${displayStatus}</span></td>
-        <td>${p.source || '—'}</td>
-        <td>${new Date(p.created_at).toLocaleDateString()}</td>
-        <td>${p.brief_file_url ? '<span class="link-btn" onclick="window.open(\'' + p.brief_file_url + '\',\'_blank\')">View</span>' : '—'}</td>
+        <td>${sourceLabel}</td>
+        <td style="font-size:0.78rem; color:var(--text-faint);">${new Date(p.created_at).toLocaleDateString()}</td>
+        <td>${briefLink}</td>
       </tr>`;
     }).join('');
-    document.querySelector('#projectsTable tbody').innerHTML = projectRows || '<tr><td colspan="8" style="text-align:center;color:var(--text-faint);padding:30px;">No projects yet</td></tr>';
+
+    document.querySelector('#projectsTable tbody').innerHTML = projectRows ||
+      '<tr><td colspan="8" style="text-align:center;color:var(--text-faint);padding:30px;">No projects yet</td></tr>';
+
+    // Re-apply filters after render
+    applyFilters();
+  }
+
+  // ============================================================
+  // APPLY FILTERS (for Projects tab)
+  // ============================================================
+  function applyFilters() {
+    const statusVal = document.getElementById('statusFilter')?.value || '';
+    const serviceVal = document.getElementById('serviceFilter')?.value || '';
+    const sourceVal = document.getElementById('sourceFilter')?.value || '';
+
+    document.querySelectorAll('#projectsTable tbody tr').forEach(row => {
+      const matchStatus = !statusVal || row.dataset.status === statusVal;
+      const matchService = !serviceVal || (row.dataset.service || '').includes(serviceVal.toLowerCase());
+      const matchSource = !sourceVal || (row.dataset.source || '').includes(sourceVal.toLowerCase());
+      row.classList.toggle('hidden-row', !(matchStatus && matchService && matchSource));
+    });
   }
 
   // ============================================================
@@ -804,7 +939,7 @@
         <td>${l.status || 'New'}</td>
         <td><span class="badge ${tagClass}">${l.tag || '—'}</span></td>
         <td>${l.source || 'WhatsApp'}</td>
-        <td>${new Date(l.created_at).toLocaleDateString()}</td>
+        <td style="font-size:0.78rem; color:var(--text-faint);">${new Date(l.created_at).toLocaleDateString()}</td>
       </tr>`;
     }).join('');
     document.querySelector('#leadsTable tbody').innerHTML = leadRows || '<tr><td colspan="6" style="text-align:center;color:var(--text-faint);padding:30px;">No leads yet</td></tr>';
@@ -887,7 +1022,6 @@
     const projects = cachedProjects;
     const leads = cachedLeads;
 
-    // Projects per month
     const monthMap = {};
     projects.forEach(p => {
       const d = new Date(p.created_at);
@@ -907,7 +1041,6 @@
       chartProjects.update();
     }
 
-    // Lead sources
     const sourceMap = {};
     leads.forEach(l => {
       const src = l.source || 'WhatsApp';
@@ -923,7 +1056,6 @@
       chartSources.update();
     }
 
-    // Conversion rate
     const converted = projects.filter(p => p.status === 'converted').length;
     const total = projects.length || 1;
     const chartConversion = Chart.getChart('chartConversion');
@@ -946,6 +1078,7 @@
       navLinks.forEach(l => l.classList.remove("active"));
       link.classList.add("active");
       views.forEach(v => v.hidden = (v.id !== "view-" + target));
+      if (target === "projects") applyFilters();
       if (target === "reports" && !chartsInitialized) {
         initCharts();
       }
@@ -1038,7 +1171,7 @@
         const rows = data.map(p => [
           p.name || '',
           p.business_name || '',
-          p.service_type || '',
+          p.service_type || p.service || '',
           p.budget ? '₦' + Number(p.budget).toLocaleString() : '',
           p.status || '',
           p.source || '',
@@ -1056,27 +1189,17 @@
       }
     });
 
-    // Search & Filters
+    // ---- Filters ----
+    document.getElementById("statusFilter").addEventListener("change", applyFilters);
+    document.getElementById("serviceFilter").addEventListener("change", applyFilters);
+    document.getElementById("sourceFilter").addEventListener("change", applyFilters);
+
+    // ---- Global Search ----
     document.getElementById("globalSearch").addEventListener("input", (e) => {
       const q = e.target.value.toLowerCase().trim();
       document.querySelectorAll("#projectsTable tbody tr, #leadsTable tbody tr").forEach(row => {
         const hay = row.dataset.name || "";
         row.classList.toggle("hidden-row", q && !hay.includes(q));
-      });
-    });
-
-    document.getElementById("statusFilter").addEventListener("change", (e) => {
-      const val = e.target.value;
-      document.querySelectorAll("#projectsTable tbody tr").forEach(row => {
-        row.classList.toggle("hidden-row", val && row.dataset.status !== val);
-      });
-    });
-
-    document.getElementById("serviceFilter").addEventListener("change", (e) => {
-      const val = e.target.value.toLowerCase();
-      document.querySelectorAll("#projectsTable tbody tr").forEach(row => {
-        const service = row.children[2]?.textContent?.toLowerCase() || "";
-        row.classList.toggle("hidden-row", val && !service.includes(val));
       });
     });
 
