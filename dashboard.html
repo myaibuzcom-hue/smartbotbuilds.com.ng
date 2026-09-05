@@ -696,7 +696,7 @@
       const briefsRes = await fetch(API_BASE + '/api/sb-briefs');
       cachedBriefs = await briefsRes.json();
 
-      const leadsRes = await fetch(API_BASE + '/api/sb-leads');
+      const leadsRes = await fetch(API_BASE + '/api/sb-whatsapp-leads');
       cachedLeads = await leadsRes.json();
 
       updateOverview();
