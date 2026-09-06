@@ -773,57 +773,6 @@
   </div>
 
   <div id="toast"></div>
-// ============================================================
-// ADD LEAD (Manual Entry) – stores in project_requests
-// ============================================================
-async function addLead() {
-  const name = document.getElementById('leadNameInput').value.trim();
-  const phone = document.getElementById('leadPhoneInput').value.trim();
-  const business = document.getElementById('leadBusinessInput').value.trim();
-  const service = document.getElementById('leadServiceInput').value;
-  const budget = document.getElementById('leadBudgetInput').value.trim();
-
-  if (!name || !phone) {
-    showToast('Please enter Name and Phone', true);
-    return;
-  }
-
-  const payload = {
-    action: 'add-lead',
-    data: {
-      name: name,
-      phone: phone,
-      business: business || null,
-      service: service || null,
-      description: 'Manually added from dashboard',
-      budget: budget || null,
-      source: 'dashboard'
-    }
-  };
-
-  try {
-    const res = await fetch(API_BASE + '/api/sb-quick-action', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const result = await res.json();
-    if (result.success) {
-      showToast('✅ Lead added successfully!');
-      document.getElementById('leadNameInput').value = '';
-      document.getElementById('leadPhoneInput').value = '';
-      document.getElementById('leadBusinessInput').value = '';
-      document.getElementById('leadServiceInput').value = '';
-      document.getElementById('leadBudgetInput').value = '';
-      document.getElementById('addLeadModal').classList.remove('open');
-      loadDashboardData();
-    } else {
-      showToast('❌ Error: ' + (result.error || 'Unknown error'), true);
-    }
-  } catch (err) {
-    showToast('❌ Error: ' + err.message, true);
-  }
-}
 <script>
   // ============================================================
   // PIN LOCK
@@ -1089,6 +1038,58 @@ cachedClients = await clientsRes.json();
     });
   }
 
+// ============================================================
+// ADD LEAD (Manual Entry) – stores in project_requests
+// ============================================================
+async function addLead() {
+  const name = document.getElementById('leadNameInput').value.trim();
+  const phone = document.getElementById('leadPhoneInput').value.trim();
+  const business = document.getElementById('leadBusinessInput').value.trim();
+  const service = document.getElementById('leadServiceInput').value;
+  const budget = document.getElementById('leadBudgetInput').value.trim();
+
+  if (!name || !phone) {
+    showToast('Please enter Name and Phone', true);
+    return;
+  }
+
+  const payload = {
+    action: 'add-lead',
+    data: {
+      name: name,
+      phone: phone,
+      business: business || null,
+      service: service || null,
+      description: 'Manually added from dashboard',
+      budget: budget || null,
+      source: 'dashboard'
+    }
+  };
+
+  try {
+    const res = await fetch(API_BASE + '/api/sb-quick-action', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const result = await res.json();
+    if (result.success) {
+      showToast('✅ Lead added successfully!');
+      document.getElementById('leadNameInput').value = '';
+      document.getElementById('leadPhoneInput').value = '';
+      document.getElementById('leadBusinessInput').value = '';
+      document.getElementById('leadServiceInput').value = '';
+      document.getElementById('leadBudgetInput').value = '';
+      document.getElementById('addLeadModal').classList.remove('open');
+      loadDashboardData();
+    } else {
+      showToast('❌ Error: ' + (result.error || 'Unknown error'), true);
+    }
+  } catch (err) {
+    showToast('❌ Error: ' + err.message, true);
+  }
+}
+  
   // ============================================================
 // UPDATE BRIEFS (FULLY FUNCTIONAL)
 // ============================================================
