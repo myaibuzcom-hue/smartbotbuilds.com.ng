@@ -1564,52 +1564,69 @@ function applyClientFilters() {
     updateCharts();
   }
 
-  function updateCharts() {
-    const projects = cachedProjects;
-    const leads = cachedLeads;
+ // ============================================================
+// UPDATE CHARTS (UPDATED TO USE project_requests)
+// ============================================================
+function updateCharts() {
+  const projects = cachedProjects;
+  const leads = cachedLeads; // For backward compatibility, but we'll use projects for source
 
-    const monthMap = {};
-    projects.forEach(p => {
-      const d = new Date(p.created_at);
-      const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
-      monthMap[key] = (monthMap[key] || 0) + 1;
+  // Projects per month (already using projects ✅)
+  const monthMap = {};
+  projects.forEach(p => {
+    const d = new Date(p.created_at);
+    const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+    monthMap[key] = (monthMap[key] || 0) + 1;
+  });
+  const months = Object.keys(monthMap).sort().slice(-6);
+  const projectCounts = months.map(m => monthMap[m] || 0);
+
+  const chartProjects = Chart.getChart('chartProjects');
+  if (chartProjects) {
+    chartProjects.data.labels = months.map(m => {
+      const [y, mo] = m.split('-');
+      return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][parseInt(mo) - 1] + ' ' + y.slice(2);
     });
-    const months = Object.keys(monthMap).sort().slice(-6);
-    const projectCounts = months.map(m => monthMap[m] || 0);
-
-    const chartProjects = Chart.getChart('chartProjects');
-    if (chartProjects) {
-      chartProjects.data.labels = months.map(m => {
-        const [y, mo] = m.split('-');
-        return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][parseInt(mo) - 1] + ' ' + y.slice(2);
-      });
-      chartProjects.data.datasets[0].data = projectCounts.length ? projectCounts : [0];
-      chartProjects.update();
-    }
-
-    const sourceMap = {};
-    leads.forEach(l => {
-      const src = l.source || 'WhatsApp';
-      sourceMap[src] = (sourceMap[src] || 0) + 1;
-    });
-    const sourceLabels = Object.keys(sourceMap);
-    const sourceData = sourceLabels.map(s => sourceMap[s]);
-
-    const chartSources = Chart.getChart('chartSources');
-    if (chartSources && sourceLabels.length > 0) {
-      chartSources.data.labels = sourceLabels;
-      chartSources.data.datasets[0].data = sourceData;
-      chartSources.update();
-    }
-
-    const converted = projects.filter(p => p.status === 'converted').length;
-    const total = projects.length || 1;
-    const chartConversion = Chart.getChart('chartConversion');
-    if (chartConversion) {
-      chartConversion.data.datasets[0].data = [converted, Math.max(total - converted, 0)];
-      chartConversion.update();
-    }
+    chartProjects.data.datasets[0].data = projectCounts.length ? projectCounts : [0];
+    chartProjects.update();
   }
+
+  // Lead sources — now from project_requests
+  const sourceMap = {};
+  projects.forEach(p => {
+    const src = p.source || 'Other';
+    sourceMap[src] = (sourceMap[src] || 0) + 1;
+  });
+  const sourceLabels = Object.keys(sourceMap);
+  const sourceData = sourceLabels.map(s => sourceMap[s]);
+
+  const chartSources = Chart.getChart('chartSources');
+  if (chartSources && sourceLabels.length > 0) {
+    chartSources.data.labels = sourceLabels.map(s => {
+      const labelMap = {
+        'whatsapp_bot': '💬 WhatsApp Bot',
+        'brief_upload': '📎 Brief Upload',
+        'form': '📋 Website Form',
+        'dashboard': '⚡ Dashboard',
+        'referral': '🤝 Referral',
+        'instagram': '📸 Instagram',
+        'Other': '❓ Other'
+      };
+      return labelMap[s] || s;
+    });
+    chartSources.data.datasets[0].data = sourceData;
+    chartSources.update();
+  }
+
+  // Conversion rate — from projects
+  const converted = projects.filter(p => p.status === 'converted').length;
+  const total = projects.length || 1;
+  const chartConversion = Chart.getChart('chartConversion');
+  if (chartConversion) {
+    chartConversion.data.datasets[0].data = [converted, Math.max(total - converted, 0)];
+    chartConversion.update();
+  }
+}
 
   // ============================================================
   // NAVIGATION
