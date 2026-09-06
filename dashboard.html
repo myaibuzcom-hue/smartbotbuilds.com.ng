@@ -773,7 +773,57 @@
   </div>
 
   <div id="toast"></div>
+// ============================================================
+// ADD LEAD (Manual Entry) – stores in project_requests
+// ============================================================
+async function addLead() {
+  const name = document.getElementById('leadNameInput').value.trim();
+  const phone = document.getElementById('leadPhoneInput').value.trim();
+  const business = document.getElementById('leadBusinessInput').value.trim();
+  const service = document.getElementById('leadServiceInput').value;
+  const budget = document.getElementById('leadBudgetInput').value.trim();
 
+  if (!name || !phone) {
+    showToast('Please enter Name and Phone', true);
+    return;
+  }
+
+  const payload = {
+    action: 'add-lead',
+    data: {
+      name: name,
+      phone: phone,
+      business: business || null,
+      service: service || null,
+      description: 'Manually added from dashboard',
+      budget: budget || null,
+      source: 'dashboard'
+    }
+  };
+
+  try {
+    const res = await fetch(API_BASE + '/api/sb-quick-action', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const result = await res.json();
+    if (result.success) {
+      showToast('✅ Lead added successfully!');
+      document.getElementById('leadNameInput').value = '';
+      document.getElementById('leadPhoneInput').value = '';
+      document.getElementById('leadBusinessInput').value = '';
+      document.getElementById('leadServiceInput').value = '';
+      document.getElementById('leadBudgetInput').value = '';
+      document.getElementById('addLeadModal').classList.remove('open');
+      loadDashboardData();
+    } else {
+      showToast('❌ Error: ' + (result.error || 'Unknown error'), true);
+    }
+  } catch (err) {
+    showToast('❌ Error: ' + err.message, true);
+  }
+}
 <script>
   // ============================================================
   // PIN LOCK
@@ -1612,57 +1662,43 @@ function applyClientFilters() {
       document.getElementById("addLeadModal").classList.add("open");
     });
 
-    // Add Lead Modal
-    document.getElementById("addLeadBtn").addEventListener("click", () => {
-      document.getElementById("addLeadModal").classList.add("open");
-    });
-    document.getElementById("closeLeadModal").addEventListener("click", () => {
-      document.getElementById("addLeadModal").classList.remove("open");
-    });
-    document.getElementById("addLeadModal").addEventListener("click", (e) => {
-      if (e.target === e.currentTarget) document.getElementById("addLeadModal").classList.remove("open");
-    });
+    // ---- Add Lead Button (opens modal) ----
+const addLeadBtn = document.getElementById('addLeadBtn');
+if (addLeadBtn) {
+  addLeadBtn.addEventListener('click', function() {
+    document.getElementById('addLeadModal').classList.add('open');
+  });
+}
 
-    // Save Lead
-    document.getElementById("saveLeadBtn").addEventListener("click", async () => {
-      const name = document.getElementById("leadModalName").value.trim();
-      const phone = document.getElementById("leadModalPhone").value.trim();
-      const course = document.getElementById("leadModalCourse").value.trim();
-      const dest = document.getElementById("leadModalDest").value.trim();
-      const status = document.getElementById("leadModalStatus").value;
-      const tag = document.getElementById("leadModalTag").value;
+// ---- Overview Add Lead ----
+const overviewAddLead = document.getElementById('overviewAddLead');
+if (overviewAddLead) {
+  overviewAddLead.addEventListener('click', function() {
+    document.getElementById('addLeadModal').classList.add('open');
+  });
+}
 
-      if (!name || !phone) {
-        showToast("Please enter name and phone", true);
-        return;
-      }
+// ---- Close modal buttons ----
+const closeLeadModal = document.getElementById('closeLeadModal');
+if (closeLeadModal) {
+  closeLeadModal.addEventListener('click', function() {
+    document.getElementById('addLeadModal').classList.remove('open');
+  });
+}
 
-      try {
-        const res = await fetch(API_BASE + '/api/sb-quick-action', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'add-lead',
-            data: { name, phone, course, destination: dest, status, tag }
-          })
-        });
-        const result = await res.json();
-        if (result.success) {
-          showToast("✅ Lead added successfully!");
-          document.getElementById("addLeadModal").classList.remove("open");
-          document.getElementById("leadModalName").value = "";
-          document.getElementById("leadModalPhone").value = "";
-          document.getElementById("leadModalCourse").value = "";
-          document.getElementById("leadModalDest").value = "";
-          loadDashboardData();
-        } else {
-          showToast("❌ Error: " + (result.error || "Unknown"), true);
-        }
-      } catch (err) {
-        showToast("❌ Error: " + err.message, true);
-      }
-    });
+// ---- Click outside to close ----
+const addLeadModal = document.getElementById('addLeadModal');
+if (addLeadModal) {
+  addLeadModal.addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+}
 
+// ---- Save Lead (calls addLead function) ----
+const saveLeadBtn = document.getElementById('saveLeadBtn');
+if (saveLeadBtn) {
+  saveLeadBtn.addEventListener('click', addLead);
+}
 // ---- Client Search & Filter ----
 const clientSearch = document.getElementById('clientSearch');
 if (clientSearch) {
