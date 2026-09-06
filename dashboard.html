@@ -717,37 +717,34 @@
     </main>
   </div>
 
-  <!-- ===== MODAL: ADD LEAD ===== -->
-  <div class="modal-overlay" id="addLeadModal">
-    <div class="modal">
-      <h3 class="heading">➕ Add WhatsApp Lead</h3>
-      <label>Full Name *</label><input type="text" id="leadModalName" placeholder="e.g. Amaka Chukwu" />
-      <label>Phone Number *</label><input type="text" id="leadModalPhone" placeholder="e.g. 08031234567" />
-      <label>Course / Interest</label><input type="text" id="leadModalCourse" placeholder="e.g. MSc Data Science" />
-      <label>Destination</label><input type="text" id="leadModalDest" placeholder="e.g. UK, Canada" />
-      <label>Status</label>
-      <select id="leadModalStatus">
-        <option value="New">New</option>
-        <option value="Contacted">Contacted</option>
-        <option value="Qualified">Qualified</option>
-        <option value="Converted">Converted</option>
-        <option value="Lost">Lost</option>
-      </select>
-      <label>Tag</label>
-      <select id="leadModalTag">
-        <option value="High Priority">High Priority</option>
-        <option value="Warm Nurture">Warm Nurture</option>
-        <option value="Cold Nurture">Cold Nurture</option>
-        <option value="Finance Follow-up">Finance Follow-up</option>
-        <option value="Nurture (Long Term)">Nurture (Long Term)</option>
-        <option value="New Lead (Dashboard)">New Lead (Dashboard)</option>
-      </select>
-      <div class="modal-actions">
-        <button class="btn btn-outline" id="closeLeadModal">Cancel</button>
-        <button class="btn btn-green" id="saveLeadBtn">Save lead</button>
-      </div>
+  <!-- ===== MODAL: ADD LEAD (SmartBot Builds) ===== -->
+<div class="modal-overlay" id="addLeadModal">
+  <div class="modal">
+    <h3 class="heading">➕ Add WhatsApp Lead</h3>
+    <label>Full Name *</label>
+    <input type="text" id="leadNameInput" placeholder="e.g. Amaka Chukwu" />
+    <label>Phone Number *</label>
+    <input type="text" id="leadPhoneInput" placeholder="e.g. 08031234567" />
+    <label>Business Name</label>
+    <input type="text" id="leadBusinessInput" placeholder="e.g. Chukwu Foods" />
+    <label>Service Type</label>
+    <select id="leadServiceInput">
+      <option value="">Select a service</option>
+      <option value="CRM &amp; automation">CRM &amp; automation</option>
+      <option value="Custom web app">Custom web app</option>
+      <option value="AI-powered tools">AI-powered tools</option>
+      <option value="Data analytics &amp; BI">Data analytics &amp; BI</option>
+      <option value="Admin &amp; client portal">Admin &amp; client portal</option>
+      <option value="Process automation">Process automation</option>
+    </select>
+    <label>Budget (₦)</label>
+    <input type="text" id="leadBudgetInput" placeholder="e.g. 500000" />
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="closeLeadModal">Cancel</button>
+      <button class="btn btn-green" id="saveLeadBtn">Save lead</button>
     </div>
   </div>
+</div>
 
   <!-- ===== MODAL: ADD PROJECT ===== -->
   <div class="modal-overlay" id="modalOverlay">
