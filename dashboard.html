@@ -6,1864 +6,1583 @@
 <title>SmartBot Builds — Command Center</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
   :root{
-    --bg: #080c08;
-    --surface: #0a0f2c;
-    --surface-2: #0d1333;
-    --glass: rgba(10,15,44,0.55);
-    --border: rgba(232,245,232,0.09);
-    --border-strong: rgba(232,245,232,0.18);
-    --green: #00c853;
-    --green-glow: #00e676;
-    --wa: #25d366;
-    --gold: #ff9100;
-    --text: #e8f5e8;
-    --text-dim: rgba(232,245,232,0.64);
-    --text-faint: rgba(232,245,232,0.4);
+    --bg:#080c08;
+    --surface:#0d130d;
+    --surface-2:#121a12;
+    --glass:rgba(13,19,13,0.6);
+    --border:rgba(232,245,232,0.08);
+    --border-strong:rgba(232,245,232,0.18);
+    --green:#00c853;
+    --green-strong:#00e676;
+    --blue:#3b82f6;
+    --indigo:#818cf8;
+    --gold:#ff9100;
+    --text:#e8f5e8;
+    --text-dim:rgba(232,245,232,0.64);
+    --text-faint:rgba(232,245,232,0.42);
+    --radius:14px;
   }
   *{ margin:0; padding:0; box-sizing:border-box; }
+  html,body{ height:100%; }
   body{
-    font-family:'Poppins', sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    min-height:100vh;
-    -webkit-font-smoothing:antialiased;
+    font-family:'Inter', system-ui, -apple-system, sans-serif;
+    background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased;
   }
-  .num{ font-family:'Bebas Neue', sans-serif; letter-spacing:0.02em; }
-  .heading{ font-family:'Montserrat', sans-serif; font-weight:800; }
-  :focus-visible{ outline:2px solid var(--green-glow); outline-offset:2px; }
+  a{ color:inherit; text-decoration:none; }
+  button, select, input, textarea{ font-family:inherit; }
+  :focus-visible{ outline:2px solid var(--green-strong); outline-offset:2px; }
   @media (prefers-reduced-motion: reduce){ *{ animation-duration:.01ms !important; transition-duration:.01ms !important; } }
+  ::-webkit-scrollbar{ width:8px; height:8px; }
+  ::-webkit-scrollbar-thumb{ background:var(--border-strong); border-radius:8px; }
 
-  /* ================= PIN LOCK ================= */
-  #lock{
-    position:fixed; inset:0; z-index:200; background:radial-gradient(ellipse at 50% 30%, #0d1c10 0%, #080c08 70%);
-    display:flex; align-items:center; justify-content:center; flex-direction:column; gap:22px;
-  }
-  #lock.hidden{ display:none; }
-  .lock-badge{ width:56px; height:56px; border-radius:16px; background:linear-gradient(135deg, var(--green), var(--green-glow));
-    display:flex; align-items:center; justify-content:center; box-shadow:0 0 40px rgba(0,230,118,0.35); }
-  .lock-title{ font-size:1.7rem; letter-spacing:0.06em; }
-  .lock-sub{ color:var(--text-dim); font-size:0.9rem; margin-top:-10px; }
-  .pin-dots{ display:flex; gap:14px; margin:6px 0; }
+  /* ============ PIN LOCK ============ */
+  #lockScreen{ position:fixed; inset:0; z-index:300; background:radial-gradient(ellipse at 50% 25%, #0d1c10 0%, #080c08 70%);
+    display:flex; align-items:center; justify-content:center; flex-direction:column; gap:20px; padding:20px; text-align:center; }
+  #lockScreen.hidden{ display:none; }
+  .lock-badge{ width:56px; height:56px; border-radius:16px; background:linear-gradient(135deg,var(--green),var(--green-strong));
+    display:flex; align-items:center; justify-content:center; box-shadow:0 0 40px rgba(0,230,118,0.3); }
+  .lock-title{ font-size:1.4rem; font-weight:800; letter-spacing:0.02em; }
+  .lock-sub{ color:var(--text-dim); font-size:0.9rem; margin-top:-8px; }
+  .pin-dots{ display:flex; gap:14px; }
   .pin-dots span{ width:14px; height:14px; border-radius:50%; border:1px solid var(--border-strong); transition:.15s; }
-  .pin-dots span.filled{ background:var(--green-glow); border-color:var(--green-glow); box-shadow:0 0 10px var(--green-glow); }
-  #lock.shake .pin-dots{ animation:shake .35s; }
+  .pin-dots span.filled{ background:var(--green-strong); border-color:var(--green-strong); box-shadow:0 0 10px var(--green-strong); }
+  #lockScreen.shake .pin-dots{ animation:shake .35s; }
   @keyframes shake{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-8px);} 75%{transform:translateX(8px);} }
   .keypad{ display:grid; grid-template-columns:repeat(3,64px); gap:14px; }
-  .keypad button{
-    width:64px; height:64px; border-radius:50%; border:1px solid var(--border-strong);
-    background:rgba(232,245,232,0.03); color:var(--text); font-size:1.3rem; font-family:'Poppins',sans-serif; cursor:pointer; transition:.15s;
-  }
+  .keypad button{ width:64px; height:64px; border-radius:50%; border:1px solid var(--border-strong);
+    background:rgba(232,245,232,0.03); color:var(--text); font-size:1.25rem; cursor:pointer; transition:.15s; }
   .keypad button:hover{ background:rgba(0,200,83,0.15); border-color:var(--green); }
-  .keypad button.wide{ font-size:0.85rem; color:var(--text-faint); }
-  .lock-hint{ font-size:0.78rem; color:var(--text-faint); }
+  .keypad button.wide{ font-size:0.8rem; color:var(--text-faint); }
+  .lock-error{ color:var(--gold); font-size:0.8rem; min-height:1.2em; }
 
-  /* ================= APP SHELL ================= */
-  .shell{ display:grid; grid-template-columns:236px 1fr; min-height:100vh; }
+  /* ============ SHELL ============ */
+  #app{ display:none; }
+  #app.ready{ display:grid; grid-template-columns:240px 1fr; min-height:100vh; }
 
-  .sidebar{ background:var(--surface); border-right:1px solid var(--border); padding:26px 18px; display:flex; flex-direction:column; }
-  .brand{ display:flex; align-items:center; gap:10px; padding:0 8px 30px; }
-  .brand-mark{ width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg, var(--green), var(--green-glow)); flex-shrink:0; }
-  .brand-name{ font-family:'Montserrat',sans-serif; font-weight:800; font-size:0.95rem; line-height:1.15; }
-  .brand-name small{ display:block; font-family:'Poppins',sans-serif; font-weight:400; font-size:0.68rem; color:var(--text-faint); }
-  .side-nav{ display:flex; flex-direction:column; gap:2px; }
-  .side-nav a{
-    display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:9px; color:var(--text-dim);
-    font-size:0.9rem; text-decoration:none; transition:.15s; cursor:pointer;
-  }
-  .side-nav a svg{ opacity:0.8; flex-shrink:0; }
-  .side-nav a:hover{ background:rgba(232,245,232,0.04); color:var(--text); }
-  .side-nav a.active{ background:rgba(0,200,83,0.12); color:var(--green-glow); }
-  .side-nav a.active svg{ opacity:1; }
-  .side-foot{ margin-top:auto; padding:14px 12px; border-top:1px solid var(--border); font-size:0.75rem; color:var(--text-faint); }
+  .sidebar{ background:var(--surface); border-right:1px solid var(--border); padding:22px 16px; display:flex; flex-direction:column; position:sticky; top:0; height:100vh; }
+  .brand{ display:flex; align-items:center; gap:10px; padding:4px 6px 26px; }
+  .brand-mark{ width:32px; height:32px; border-radius:9px; background:linear-gradient(135deg,var(--green),var(--green-strong)); flex-shrink:0; }
+  .brand-name{ font-weight:800; font-size:0.92rem; line-height:1.2; }
+  .brand-name small{ display:block; font-weight:400; font-size:0.68rem; color:var(--text-faint); }
+  .side-nav{ display:flex; flex-direction:column; gap:2px; flex:1; overflow-y:auto; }
+  .side-nav button{ all:unset; display:flex; align-items:center; gap:11px; padding:10px 11px; border-radius:9px; color:var(--text-dim);
+    font-size:0.88rem; cursor:pointer; transition:.15s; }
+  .side-nav button:hover{ background:rgba(232,245,232,0.04); color:var(--text); }
+  .side-nav button.active{ background:rgba(0,200,83,0.13); color:var(--green-strong); }
+  .side-nav svg{ flex-shrink:0; opacity:0.85; }
+  .side-foot{ padding-top:14px; border-top:1px solid var(--border); font-size:0.74rem; color:var(--text-faint); display:flex; flex-direction:column; gap:6px; }
+  .side-foot .status-dot{ width:7px; height:7px; border-radius:50%; background:var(--green-strong); display:inline-block; margin-right:6px; box-shadow:0 0 6px var(--green-strong); }
+  .logout-link{ all:unset; cursor:pointer; color:var(--text-faint); font-size:0.76rem; }
+  .logout-link:hover{ color:var(--gold); }
 
-  .main{ padding:24px 32px 60px; overflow-x:hidden; }
+  .hamburger{ display:none; }
 
-  .topbar{ display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:28px; position:relative; }
-  .search-wrap{ flex:1; max-width:420px; position:relative; }
-  .search-wrap input{
-    width:100%; background:rgba(232,245,232,0.04); border:1px solid var(--border-strong); border-radius:10px;
-    padding:11px 14px 11px 38px; color:var(--text); font-family:'Poppins',sans-serif; font-size:0.88rem;
-  }
-  .search-wrap input::placeholder{ color:var(--text-faint); }
-  .search-wrap svg{ position:absolute; left:12px; top:50%; transform:translateY(-50%); opacity:0.5; }
-  .top-actions{ display:flex; align-items:center; gap:14px; }
-  .icon-btn{
-    position:relative; width:40px; height:40px; border-radius:10px; border:1px solid var(--border-strong);
-    background:rgba(232,245,232,0.03); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:.15s;
-  }
+  main.content{ padding:22px 30px 60px; min-width:0; }
+
+  .topbar{ display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:22px; flex-wrap:wrap; position:relative; }
+  .top-title h1{ font-size:1.35rem; font-weight:800; }
+  .top-title .meta{ color:var(--text-faint); font-size:0.8rem; margin-top:2px; }
+  .top-actions{ display:flex; align-items:center; gap:12px; }
+  .icon-btn{ position:relative; width:38px; height:38px; border-radius:10px; border:1px solid var(--border-strong);
+    background:rgba(232,245,232,0.03); display:flex; align-items:center; justify-content:center; cursor:pointer; }
   .icon-btn:hover{ background:rgba(232,245,232,0.07); }
-  .icon-btn .dot{ position:absolute; top:7px; right:7px; width:8px; height:8px; border-radius:50%; background:var(--gold); box-shadow:0 0 6px var(--gold); }
-  .notif-panel{
-    position:absolute; top:56px; right:0; width:300px; background:var(--surface-2); border:1px solid var(--border-strong);
-    border-radius:12px; padding:8px; display:none; z-index:60; box-shadow:0 20px 50px rgba(0,0,0,0.5);
-  }
+  .icon-btn .dot{ position:absolute; top:6px; right:6px; width:7px; height:7px; border-radius:50%; background:var(--gold); }
+  .last-updated{ font-size:0.76rem; color:var(--text-faint); }
+
+  .notif-panel{ position:absolute; top:48px; right:0; width:300px; background:var(--surface-2); border:1px solid var(--border-strong);
+    border-radius:12px; padding:8px; display:none; z-index:60; box-shadow:0 20px 50px rgba(0,0,0,0.5); }
   .notif-panel.open{ display:block; }
-  .notif-item{ display:flex; gap:10px; padding:12px 10px; border-radius:8px; }
+  .notif-item{ display:flex; gap:10px; padding:10px; border-radius:8px; font-size:0.82rem; }
   .notif-item:hover{ background:rgba(232,245,232,0.04); }
-  .notif-item .n-dot{ width:8px; height:8px; border-radius:50%; margin-top:6px; flex-shrink:0; }
-  .notif-item p{ font-size:0.83rem; color:var(--text-dim); }
-  .notif-item span{ font-size:0.72rem; color:var(--text-faint); }
+  .notif-empty{ padding:20px; text-align:center; color:var(--text-faint); font-size:0.82rem; }
 
-  .page-head{ display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:20px; margin-bottom:26px; }
-  .page-head h1{ font-size:1.6rem; margin-bottom:4px; }
-  .page-head p{ color:var(--text-dim); font-size:0.92rem; }
+  /* ============ CARDS / GLASS ============ */
+  .card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; }
+  .glass{ background:var(--glass); backdrop-filter:blur(10px); border:1px solid var(--border-strong); border-radius:var(--radius); }
 
-  .goal-card{
-    background:var(--glass); border:1px solid var(--border-strong); border-radius:14px; padding:18px 22px;
-    min-width:280px; backdrop-filter:blur(10px);
-  }
-  .goal-top{ display:flex; justify-content:space-between; font-size:0.8rem; color:var(--text-dim); margin-bottom:8px; }
+  /* ============ KPI GRID ============ */
+  .kpi-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px; }
+  .kpi{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px; }
+  .kpi .lbl{ font-size:0.76rem; color:var(--text-faint); margin-bottom:8px; }
+  .kpi .val{ font-size:1.7rem; font-weight:800; }
+  .kpi.feature{ background:linear-gradient(135deg, rgba(0,200,83,0.1), rgba(13,19,13,0.5)); border-color:rgba(0,200,83,0.28); }
+  .kpi.feature .val{ color:var(--green-strong); }
+  @media (max-width:1100px){ .kpi-grid{ grid-template-columns:1fr 1fr; } }
+
+  .goal-widget{ margin-bottom:20px; }
+  .goal-top{ display:flex; justify-content:space-between; font-size:0.84rem; color:var(--text-dim); margin-bottom:10px; flex-wrap:wrap; gap:6px; }
   .goal-top b{ color:var(--gold); }
-  .goal-bar{ height:8px; border-radius:20px; background:rgba(232,245,232,0.08); overflow:hidden; }
-  .goal-fill{ height:100%; width:70%; background:linear-gradient(90deg, var(--gold), var(--green-glow)); border-radius:20px; }
+  .goal-bar{ height:9px; border-radius:20px; background:rgba(232,245,232,0.08); overflow:hidden; }
+  .goal-fill{ height:100%; background:linear-gradient(90deg,var(--gold),var(--green-strong)); border-radius:20px; transition:width .4s; }
 
-  .stats-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:20px; }
-  .stat-card{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; }
-  .stat-card .lbl{ font-size:0.78rem; color:var(--text-faint); margin-bottom:10px; }
-  .stat-card .num{ font-size:2.1rem; line-height:1; color:var(--text); }
-  .stat-card.feature{ grid-column:span 2; background:linear-gradient(135deg, rgba(0,200,83,0.1), rgba(10,15,44,0.4)); border-color:rgba(0,200,83,0.28); }
-  .stat-card.feature .num{ font-size:2.35rem; color:var(--green-glow); }
-  .stat-card .delta{ font-size:0.76rem; color:var(--green-glow); margin-top:8px; }
-  @media (max-width:1100px){ .stats-grid{ grid-template-columns:1fr 1fr; } .stat-card.feature{ grid-column:span 2; } }
+  .section-row{ display:grid; grid-template-columns:1.4fr 1fr; gap:16px; margin-bottom:20px; align-items:start; }
+  @media (max-width:1000px){ .section-row{ grid-template-columns:1fr; } }
 
-  .charts-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-  .chart-panel{
-    background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px;
-    background-image:linear-gradient(rgba(232,245,232,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,245,232,0.025) 1px, transparent 1px);
-    background-size:22px 22px;
-  }
-  .chart-panel h3{ font-size:0.95rem; font-weight:600; margin-bottom:14px; color:var(--text); }
-  .chart-panel canvas{ max-height:220px; }
-  @media (max-width:1000px){ .charts-grid{ grid-template-columns:1fr; } }
+  /* ============ FUNNEL ============ */
+  .funnel-wrap{ display:flex; gap:0; overflow-x:auto; }
+  .funnel-stage{ flex:1; min-width:110px; text-align:center; position:relative; padding:6px 8px; cursor:pointer; border-radius:10px; transition:.15s; }
+  .funnel-stage:hover{ background:rgba(232,245,232,0.04); }
+  .funnel-stage:not(:last-child)::after{ content:'›'; position:absolute; right:-6px; top:14px; color:var(--text-faint); font-size:1.3rem; }
+  .funnel-bar{ height:5px; border-radius:6px; background:linear-gradient(90deg,var(--green),var(--green-strong)); margin:0 auto 10px; }
+  .funnel-num{ font-size:1.5rem; font-weight:800; }
+  .funnel-lbl{ font-size:0.72rem; color:var(--text-dim); margin-top:2px; }
+  .funnel-val{ font-size:0.68rem; color:var(--gold); margin-top:2px; }
 
-  .panel{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:24px; margin-top:20px; }
-  .panel-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
-  .panel-head h3{ font-size:1.02rem; font-weight:600; }
-  .funnel{ display:flex; align-items:stretch; gap:0; }
-  .funnel-stage{ flex:1; text-align:center; position:relative; padding:0 10px; }
-  .funnel-stage:not(:last-child)::after{ content:'›'; position:absolute; right:-4px; top:20px; color:var(--text-faint); font-size:1.4rem; }
-  .funnel-bar{ height:6px; border-radius:6px; background:linear-gradient(90deg, var(--green), var(--green-glow)); margin:0 auto 14px; width:100%; }
-  .funnel-stage .fnum{ font-size:1.7rem; }
-  .funnel-stage .flbl{ font-size:0.78rem; color:var(--text-dim); margin-top:2px; }
-  .funnel-stage .fpct{ font-size:0.72rem; color:var(--gold); margin-top:4px; }
-  @media (max-width:800px){ .funnel{ flex-direction:column; gap:20px; } .funnel-stage:not(:last-child)::after{ content:'⌄'; right:auto; left:50%; top:auto; bottom:-18px; } }
+  /* ============ ACTION CENTER / ACTIVITY ============ */
+  .attn-item{ display:flex; justify-content:space-between; align-items:center; gap:10px; padding:12px 0; border-top:1px solid var(--border); }
+  .attn-item:first-child{ border-top:none; }
+  .attn-item .info b{ display:block; font-size:0.9rem; }
+  .attn-item .info span{ font-size:0.76rem; color:var(--text-faint); }
+  .attn-cta{ font-size:0.78rem; padding:6px 12px; border-radius:7px; background:var(--green); color:#031b0d; font-weight:600; cursor:pointer; border:none; white-space:nowrap; }
+  .attn-cta:hover{ background:var(--green-strong); }
 
-  .toolbar{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:16px; }
-  .toolbar select, .toolbar select option{
-    background: #0d1333 !important;
-    color: #e8f5e8 !important;
-  }
-  .toolbar select{
-    border:1px solid var(--border-strong); border-radius:8px;
-    padding:9px 12px; font-family:'Poppins',sans-serif; font-size:0.82rem;
-  }
-  .qa-group{ display:flex; gap:10px; flex-wrap:wrap; margin-left:auto; }
-  .btn{ display:inline-flex; align-items:center; gap:6px; padding:9px 16px; border-radius:8px; font-size:0.83rem; font-weight:600; cursor:pointer; border:1px solid transparent; transition:.15s; }
-  .btn-green{ background:var(--green); color:#031b0d; }
-  .btn-green:hover{ background:var(--green-glow); }
-  .btn-outline{ border-color:var(--border-strong); color:var(--text-dim); background:transparent; }
-  .btn-outline:hover{ background:rgba(232,245,232,0.05); color:var(--text); }
-  .btn-gold{ background:var(--gold); color:#2b1400; }
-  .btn-gold:hover{ filter:brightness(1.08); }
-  .btn-sm{ padding:5px 12px; font-size:0.72rem; }
+  .activity-item{ display:flex; gap:10px; padding:11px 0; border-top:1px solid var(--border); font-size:0.84rem; }
+  .activity-item:first-child{ border-top:none; }
+  .activity-icon{ width:28px; height:28px; border-radius:8px; background:rgba(232,245,232,0.06); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .activity-time{ font-size:0.72rem; color:var(--text-faint); }
 
-  table{ width:100%; border-collapse:collapse; }
-  th{ text-align:left; font-size:0.74rem; color:var(--text-faint); font-weight:500; padding:0 12px 10px; border-bottom:1px solid var(--border); }
-  td{ padding:14px 12px; border-bottom:1px solid var(--border); font-size:0.86rem; vertical-align:middle; }
-  tbody tr:hover{ background:rgba(232,245,232,0.02); }
-  tbody tr.hidden-row{ display:none; }
+  /* ============ TOOLBAR / TABLE ============ */
+  .toolbar{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:14px; }
+  .toolbar select, .toolbar input{ background:rgba(232,245,232,0.04); border:1px solid var(--border-strong); border-radius:8px;
+    color:var(--text); font-size:0.82rem; padding:9px 12px; }
+  .toolbar input[type=text]{ min-width:200px; }
+  .qa-group{ display:flex; gap:8px; flex-wrap:wrap; margin-left:auto; }
+  .btn{ display:inline-flex; align-items:center; gap:6px; padding:9px 16px; border-radius:8px; font-size:0.83rem; font-weight:600;
+    cursor:pointer; border:1px solid transparent; transition:.15s; white-space:nowrap; }
+  .btn-green{ background:var(--green); color:#031b0d; } .btn-green:hover{ background:var(--green-strong); }
+  .btn-outline{ border-color:var(--border-strong); color:var(--text-dim); background:transparent; } .btn-outline:hover{ background:rgba(232,245,232,0.05); color:var(--text); }
+  .btn-gold{ background:var(--gold); color:#2b1400; } .btn-gold:hover{ filter:brightness(1.08); }
+  .btn-sm{ padding:6px 11px; font-size:0.76rem; }
+  .btn[disabled]{ opacity:0.5; cursor:not-allowed; }
+
+  .table-wrap{ overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius); }
+  table{ width:100%; border-collapse:collapse; min-width:760px; }
+  th{ text-align:left; font-size:0.72rem; color:var(--text-faint); font-weight:600; padding:12px 14px; border-bottom:1px solid var(--border); white-space:nowrap; background:var(--surface); position:sticky; top:0; }
+  td{ padding:13px 14px; border-bottom:1px solid var(--border); font-size:0.85rem; vertical-align:middle; }
+  tbody tr{ cursor:pointer; } tbody tr:hover{ background:rgba(232,245,232,0.02); }
   .cell-main{ font-weight:600; }
+  .cell-sub{ color:var(--text-faint); font-size:0.76rem; }
 
-  .badge{ display:inline-block; padding:4px 11px; border-radius:20px; font-size:0.72rem; font-weight:600; }
-  .badge-new{ background:rgba(79,141,253,0.15); color:#7ea8ff; }
-  .badge-contacted{ background:rgba(79,141,253,0.15); color:#7ea8ff; }
-  .badge-qualified{ background:rgba(255,145,0,0.14); color:var(--gold); }
-  .badge-converted{ background:rgba(0,200,83,0.16); color:var(--green-glow); }
-  .badge-lost{ background:rgba(232,245,232,0.08); color:var(--text-faint); }
-
-  .badge-brief{ background:rgba(255,145,0,0.14); color:var(--gold); }
-  .badge-quoted{ background:rgba(232,245,232,0.08); color:var(--text); border:1px solid var(--border-strong); }
-  .badge-paid{ background:rgba(0,200,83,0.16); color:var(--green-glow); }
-  .badge-partial{ background:rgba(255,145,0,0.14); color:var(--gold); }
-
-  .tag-high{ background:rgba(255,145,0,0.16); color:var(--gold); }
-  .tag-warm{ background:rgba(0,200,83,0.14); color:var(--green-glow); }
-  .tag-cold{ background:rgba(126,168,255,0.12); color:#7ea8ff; }
-  .tag-follow{ background:rgba(232,245,232,0.08); color:var(--text-dim); }
-  .tag-returning{ background:rgba(37,211,102,0.15); color:var(--wa); }
-
-  .link-btn{ font-size:0.78rem; color:var(--green-glow); cursor:pointer; }
+  .badge{ display:inline-block; padding:4px 10px; border-radius:20px; font-size:0.71rem; font-weight:600; white-space:nowrap; }
+  .badge-new{ background:rgba(59,130,246,0.16); color:#7ea8ff; }
+  .badge-brief_received{ background:rgba(129,140,248,0.16); color:#a5b4fc; }
+  .badge-quoted{ background:rgba(255,145,0,0.16); color:var(--gold); }
+  .badge-converted{ background:rgba(0,200,83,0.16); color:var(--green); }
+  .badge-paid{ background:rgba(0,230,118,0.2); color:var(--green-strong); }
+  .link-btn{ font-size:0.78rem; color:var(--green-strong); cursor:pointer; }
   .link-btn:hover{ text-decoration:underline; }
 
-  .brief-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:14px; }
+  /* skeleton */
+  .skel{ background:linear-gradient(90deg, rgba(232,245,232,0.05), rgba(232,245,232,0.1), rgba(232,245,232,0.05)); background-size:200% 100%;
+    animation:shimmer 1.4s infinite; border-radius:6px; }
+  @keyframes shimmer{ 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
+  .skel-row td{ padding:14px; } .skel-line{ height:12px; width:70%; }
+
+  .empty-state{ text-align:center; padding:50px 20px; color:var(--text-faint); }
+  .empty-state h4{ color:var(--text); font-size:0.98rem; margin-bottom:6px; }
+  .empty-state p{ font-size:0.85rem; margin-bottom:16px; max-width:34ch; margin-left:auto; margin-right:auto; }
+
+  .view{ display:none; } .view.active{ display:block; }
+  .view h2{ font-size:1.1rem; font-weight:700; margin-bottom:14px; }
+  .mini-stats{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+  .mini-stat{ background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px 16px; font-size:0.8rem; }
+  .mini-stat b{ display:block; font-size:1.15rem; }
+
+  /* ============ BRIEF CARDS ============ */
+  .brief-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:14px; }
   .brief-card{ background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:16px; }
-  .brief-card .fname{ font-size:0.88rem; font-weight:600; margin-bottom:4px; word-break:break-word; }
-  .brief-card .fmeta{ font-size:0.76rem; color:var(--text-faint); margin-bottom:12px; }
+  .brief-card .fname{ font-weight:600; font-size:0.88rem; margin-bottom:4px; word-break:break-word; }
+  .brief-card .fmeta{ font-size:0.75rem; color:var(--text-faint); margin-bottom:10px; }
   .brief-card .fmeta div{ margin-bottom:2px; }
   .brief-actions{ display:flex; gap:8px; }
-  .brief-actions button{
-    flex:1; padding:7px; border-radius:7px; border:1px solid var(--border-strong); background:transparent;
-    color:var(--text-dim); font-size:0.76rem; font-family:'Poppins',sans-serif; cursor:pointer;
-  }
+  .brief-actions button{ flex:1; padding:7px; border-radius:7px; border:1px solid var(--border-strong); background:transparent; color:var(--text-dim); font-size:0.76rem; cursor:pointer; }
   .brief-actions button:hover{ background:rgba(232,245,232,0.05); color:var(--text); }
 
-  .modal-overlay{ position:fixed; inset:0; background:rgba(3,6,3,0.7); backdrop-filter:blur(3px); display:none; align-items:center; justify-content:center; z-index:100; }
-  .modal-overlay.open{ display:flex; }
-  .modal{ width:420px; max-width:92vw; background:var(--surface-2); border:1px solid var(--border-strong); border-radius:16px; padding:26px; }
+  /* ============ CHARTS ============ */
+  .charts-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .chart-panel{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px; }
+  .chart-panel h3{ font-size:0.9rem; font-weight:600; margin-bottom:10px; }
+  .chart-panel canvas{ max-height:220px; }
+  .insight{ font-size:0.82rem; color:var(--text-dim); padding:9px 0; border-top:1px solid var(--border); }
+  .insight:first-child{ border-top:none; }
+  @media (max-width:1000px){ .charts-grid{ grid-template-columns:1fr; } }
+
+  /* ============ MODAL / DRAWER ============ */
+  .overlay{ position:fixed; inset:0; background:rgba(3,6,3,0.7); backdrop-filter:blur(3px); display:none; align-items:center; justify-content:center; z-index:150; }
+  .overlay.open{ display:flex; }
+  .modal{ width:440px; max-width:92vw; max-height:88vh; overflow-y:auto; background:var(--surface-2); border:1px solid var(--border-strong); border-radius:16px; padding:24px; }
   .modal h3{ font-size:1.05rem; margin-bottom:16px; }
   .modal label{ display:block; font-size:0.78rem; color:var(--text-dim); margin:12px 0 6px; }
-  .modal input, .modal select{
-    width:100%; background:#0d1333; border:1px solid var(--border-strong); border-radius:8px;
-    padding:10px 12px; color:#e8f5e8; font-family:'Poppins',sans-serif; font-size:0.86rem;
+  .modal input, .modal select, .modal textarea{ width:100%; background:rgba(232,245,232,0.04); border:1px solid var(--border-strong); border-radius:8px; padding:10px 12px; color:var(--text); font-size:0.86rem; }
+  .modal textarea{ resize:vertical; min-height:70px; }
+  .modal-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:20px; }
+  .field-error{ color:var(--gold); font-size:0.74rem; margin-top:4px; display:none; }
+  .field-error.show{ display:block; }
+  .drawer-grid{ display:grid; grid-template-columns:1fr 1fr; gap:4px 16px; font-size:0.85rem; }
+  .drawer-grid dt{ color:var(--text-faint); font-size:0.72rem; margin-top:10px; }
+  .drawer-grid dd{ margin-top:2px; }
+  @media (max-width:700px){
+    .modal{ width:100vw; max-width:100vw; height:100vh; max-height:100vh; border-radius:0; }
+    .drawer-grid{ grid-template-columns:1fr; }
   }
-  .modal select option{ background:#0d1333; color:#e8f5e8; }
-  .modal-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:22px; }
 
-  .view h2{ font-size:1.15rem; margin-bottom:14px; }
+  /* ============ AI CHAT ============ */
+  .ai-shell{ display:grid; grid-template-columns:200px 1fr; gap:16px; height:calc(100vh - 160px); min-height:420px; }
+  .agent-list{ display:flex; flex-direction:column; gap:6px; }
+  .agent-btn{ all:unset; cursor:pointer; padding:11px 12px; border-radius:10px; font-size:0.85rem; color:var(--text-dim); border:1px solid var(--border); }
+  .agent-btn:hover{ background:rgba(232,245,232,0.04); }
+  .agent-btn.active{ background:rgba(0,200,83,0.13); color:var(--green-strong); border-color:rgba(0,200,83,0.3); }
+  .chat-panel{ display:flex; flex-direction:column; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+  .chat-log{ flex:1; overflow-y:auto; padding:18px; display:flex; flex-direction:column; gap:12px; }
+  .msg{ max-width:78%; padding:10px 14px; border-radius:12px; font-size:0.87rem; line-height:1.5; white-space:pre-wrap; }
+  .msg.user{ align-self:flex-end; background:var(--green); color:#031b0d; border-bottom-right-radius:3px; }
+  .msg.ai{ align-self:flex-start; background:var(--surface-2); border:1px solid var(--border); border-bottom-left-radius:3px; }
+  .msg.typing{ align-self:flex-start; color:var(--text-faint); font-style:italic; }
+  .suggested-prompts{ display:flex; flex-wrap:wrap; gap:8px; padding:0 18px 12px; }
+  .suggested-prompts button{ all:unset; cursor:pointer; font-size:0.78rem; padding:6px 12px; border:1px solid var(--border-strong); border-radius:20px; color:var(--text-dim); }
+  .suggested-prompts button:hover{ background:rgba(232,245,232,0.05); color:var(--text); }
+  .chat-input-row{ display:flex; gap:10px; padding:14px; border-top:1px solid var(--border); }
+  .chat-input-row input{ flex:1; background:rgba(232,245,232,0.04); border:1px solid var(--border-strong); border-radius:10px; padding:11px 14px; color:var(--text); font-size:0.87rem; }
+  .action-card{ align-self:flex-start; background:rgba(255,145,0,0.08); border:1px solid rgba(255,145,0,0.3); border-radius:12px; padding:12px 14px; font-size:0.85rem; max-width:78%; }
+  .action-card .aq{ display:flex; gap:8px; margin-top:10px; }
+  @media (max-width:800px){ .ai-shell{ grid-template-columns:1fr; height:auto; } .agent-list{ flex-direction:row; overflow-x:auto; } }
 
-  /* settings */
-  .settings-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-  .settings-card{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:22px; }
-  .settings-card h3{ font-size:0.98rem; margin-bottom:16px; }
-  .pin-inputs{ display:flex; gap:10px; margin-bottom:16px; }
-  .pin-inputs input{ width:44px; height:50px; text-align:center; font-size:1.1rem; background:rgba(232,245,232,0.04); border:1px solid var(--border-strong); border-radius:8px; color:var(--text); }
-  .settings-row{ display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-top:1px solid var(--border); }
+  /* ============ SETTINGS ============ */
+  .settings-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .settings-row{ display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-top:1px solid var(--border); gap:10px; }
   .settings-row:first-child{ border-top:none; }
-  .settings-row span{ font-size:0.88rem; color:var(--text-dim); }
+  .settings-row span{ font-size:0.86rem; color:var(--text-dim); }
   .switch{ position:relative; display:inline-block; width:40px; height:22px; flex-shrink:0; }
   .switch input{ opacity:0; width:0; height:0; }
   .slider{ position:absolute; inset:0; background:rgba(232,245,232,0.12); border-radius:20px; cursor:pointer; transition:.2s; }
   .slider::before{ content:''; position:absolute; width:16px; height:16px; left:3px; top:3px; background:var(--text); border-radius:50%; transition:.2s; }
   .switch input:checked + .slider{ background:var(--green); }
   .switch input:checked + .slider::before{ transform:translateX(18px); background:#031b0d; }
+  .pin-inputs{ display:flex; gap:9px; margin-bottom:14px; }
+  .pin-inputs input{ width:42px; height:48px; text-align:center; font-size:1.05rem; background:rgba(232,245,232,0.04); border:1px solid var(--border-strong); border-radius:8px; color:var(--text); }
   @media (max-width:800px){ .settings-grid{ grid-template-columns:1fr; } }
 
-  /* toast */
-  #toast{
-    position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px); opacity:0;
-    background:var(--surface-2); border:1px solid var(--border-strong); color:var(--text);
-    padding:12px 20px; border-radius:10px; font-size:0.85rem; z-index:300; transition:.25s; pointer-events:none;
-    box-shadow:0 12px 30px rgba(0,0,0,0.4);
+  /* ============ TOAST ============ */
+  #toastHost{ position:fixed; bottom:22px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; gap:8px; z-index:400; align-items:center; }
+  .toast{ background:var(--surface-2); border:1px solid var(--border-strong); padding:11px 18px; border-radius:10px; font-size:0.83rem;
+    box-shadow:0 12px 30px rgba(0,0,0,0.4); opacity:0; transform:translateY(10px); transition:.25s; max-width:80vw; }
+  .toast.show{ opacity:1; transform:translateY(0); }
+  .toast.success{ border-color:rgba(0,200,83,0.4); }
+  .toast.error{ border-color:rgba(255,90,90,0.4); }
+  .toast.warn{ border-color:rgba(255,145,0,0.4); }
+
+  /* ============ MOBILE SHELL ============ */
+  @media (max-width:900px){
+    #app.ready{ grid-template-columns:1fr; }
+    .sidebar{ position:fixed; left:0; top:0; height:100vh; width:240px; z-index:120; transform:translateX(-100%); transition:transform .25s; }
+    .sidebar.open{ transform:translateX(0); box-shadow:20px 0 50px rgba(0,0,0,0.5); }
+    .hamburger{ display:flex; width:38px; height:38px; border-radius:10px; border:1px solid var(--border-strong); background:rgba(232,245,232,0.03); align-items:center; justify-content:center; cursor:pointer; }
+    main.content{ padding:16px; }
+    .kpi-grid{ grid-template-columns:1fr 1fr; }
+    #sidebarScrim{ position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:110; display:none; }
+    #sidebarScrim.open{ display:block; }
+    .table-wrap{ -webkit-overflow-scrolling:touch; }
   }
-  #toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
-
-  /* ---- recent activity ---- */
-  .activity-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px; }
-  .activity-feed{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; }
-  .activity-feed h4{ font-size:0.85rem; font-weight:600; margin-bottom:14px; color:var(--text-dim); }
-  .act-item{ display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); }
-  .act-item:last-child{ border-bottom:none; }
-  .act-icon{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:rgba(0,200,83,0.08); }
-  .act-icon.lead{ background:rgba(255,145,0,0.12); color:var(--gold); }
-  .act-icon.brief{ background:rgba(0,200,83,0.12); color:var(--green-glow); }
-  .act-icon.project{ background:rgba(79,141,253,0.12); color:#7ea8ff; }
-  .act-icon.convert{ background:rgba(0,200,83,0.16); color:var(--green-glow); }
-  .act-text{ flex:1; font-size:0.83rem; color:var(--text-dim); }
-  .act-text strong{ color:var(--text); }
-  .act-time{ font-size:0.7rem; color:var(--text-faint); }
-  .quick-actions-overview{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
-  @media (max-width:800px){ .activity-grid{ grid-template-columns:1fr; } }
-
-  .last-updated{ font-size:0.72rem; color:var(--text-faint); margin-top:12px; }
-
-  /* Status stats bar */
-  .status-stats{ display:flex; gap:16px; flex-wrap:wrap; margin-bottom:16px; padding:12px 16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; }
-  .status-stat{ display:flex; align-items:center; gap:8px; font-size:0.8rem; color:var(--text-dim); }
-  .status-stat .dot{ width:10px; height:10px; border-radius:50%; flex-shrink:0; }
-  .status-stat .num{ font-weight:700; color:var(--text); }
-  .status-stat .dot.new{ background:#7ea8ff; }
-  .status-stat .dot.contacted{ background:#5b9eff; }
-  .status-stat .dot.qualified{ background:var(--gold); }
-  .status-stat .dot.converted{ background:var(--green-glow); }
-  .status-stat .dot.lost{ background:var(--text-faint); }
-  .status-stat .dot.brief{ background:var(--gold); }
-  .status-stat .dot.quoted{ background:var(--text); }
-  .status-stat .dot.closed{ background:var(--text-faint); }
-
-  .status-select{ padding:4px 8px; border-radius:6px; background:#0d1333; border:1px solid var(--border-strong); color:var(--text); font-size:0.75rem; font-family:'Poppins',sans-serif; cursor:pointer; }
-  .status-select option{ background:#0d1333; color:var(--text); }
-  .status-select:focus{ outline:1px solid var(--green); }
-
-  .inline-select{ padding:3px 6px; border-radius:4px; background:#0d1333; border:1px solid var(--border-strong); color:var(--text); font-size:0.7rem; font-family:'Poppins',sans-serif; cursor:pointer; }
-  .inline-select option{ background:#0d1333; color:var(--text); }
-
-  select, select option, .status-select, .status-select option, .inline-select, .inline-select option {
-    background: #0d1333 !important;
-    color: #e8f5e8 !important;
-  }
-
-  .brief-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 14px;
-}
-
-.brief-card {
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px;
-  transition: 0.2s;
-}
-
-.brief-card:hover {
-  border-color: var(--border-strong);
-  transform: translateY(-2px);
-}
-
-.brief-card .fname {
-  font-size: 0.88rem;
-  font-weight: 600;
-  margin-bottom: 4px;
-  word-break: break-word;
-}
-
-.brief-card .fmeta {
-  font-size: 0.76rem;
-  color: var(--text-faint);
-  margin-bottom: 12px;
-}
-
-.brief-card .fmeta div {
-  margin-bottom: 2px;
-}
-
-.brief-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.brief-actions button {
-  flex: 1;
-  padding: 7px;
-  border-radius: 7px;
-  border: 1px solid var(--border-strong);
-  background: transparent;
-  color: var(--text-dim);
-  font-size: 0.76rem;
-  font-family: 'Poppins', sans-serif;
-  cursor: pointer;
-  transition: 0.15s;
-}
-
-.brief-actions button:hover {
-  background: rgba(232,245,232,0.05);
-  color: var(--text);
-}
 </style>
 </head>
 <body>
 
-  <div id="lock">
+  <!-- ============ PIN LOCK ============ -->
+  <div id="lockScreen">
     <div class="lock-badge">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 2 4 5v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V5l-8-3Z" stroke="#031b0d" stroke-width="2" fill="#031b0d"/></svg>
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="#031b0d"><path d="M12 2 4 5v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V5l-8-3Z"/></svg>
     </div>
-    <div class="lock-title heading">COMMAND CENTER</div>
+    <div class="lock-title">COMMAND CENTER</div>
     <div class="lock-sub">Enter PIN to continue</div>
     <div class="pin-dots" id="pinDots"><span></span><span></span><span></span><span></span></div>
+    <div class="lock-error" id="lockError">&nbsp;</div>
     <div class="keypad" id="keypad">
       <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
       <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button>
       <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button>
       <button class="wide" id="clearBtn">Clear</button><button data-k="0">0</button><button class="wide" id="delBtn">⌫</button>
     </div>
-    <div class="lock-hint">PIN: 1925</div>
   </div>
 
-  <div class="shell">
-    <aside class="sidebar">
+  <div id="sidebarScrim"></div>
+
+  <!-- ============ APP SHELL ============ -->
+  <div id="app">
+    <aside class="sidebar" id="sidebar">
       <div class="brand">
         <div class="brand-mark"></div>
         <div class="brand-name">SmartBot Builds<small>Command Center</small></div>
       </div>
       <nav class="side-nav" id="sideNav">
-        <a class="active" data-view="overview"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Overview</a>
-        <a data-view="projects"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Project requests</a>
-        <a data-view="leads"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M4 20c1.5-4 5-5 8-5s6.5 1 8 5"/></svg>WhatsApp leads</a>
-        <a data-view="briefs"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/></svg>Briefs</a>
-        <a data-view="clients"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-8h6v8"/></svg>Clients</a>
-        <a data-view="reports"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Reports</a>
-        <a data-view="settings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.36.62 1 .97 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1Z"/></svg>Settings</a>
+        <button data-view="overview" class="active"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Overview</button>
+        <button data-view="projects"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Project requests</button>
+        <button data-view="leads"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M4 20c1.5-4 5-5 8-5s6.5 1 8 5"/></svg>WhatsApp leads</button>
+        <button data-view="briefs"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/></svg>Briefs</button>
+        <button data-view="clients"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-8h6v8"/></svg>Clients</button>
+        <button data-view="ai"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/><circle cx="12" cy="12" r="3.2"/></svg>AI Assistant</button>
+        <button data-view="reports"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Reports</button>
+        <button data-view="settings"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87 2 2 0 1 1-2.83 2.83 1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34 2 2 0 1 1-2.83-2.83A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87 2 2 0 1 1 2.83-2.83A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34 2 2 0 1 1 2.83 2.83A1.7 1.7 0 0 0 19.4 9c.36.62 1 .97 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1Z"/></svg>Settings</button>
       </nav>
-      <div class="side-foot">Segun Jegede<br>Lagos, Nigeria</div>
+      <div class="side-foot">
+        <div><span class="status-dot"></span>All systems operational</div>
+        <div>Segun Jegede · Lagos, Nigeria</div>
+        <button class="logout-link" id="logoutBtn">Log out</button>
+      </div>
     </aside>
 
-    <main class="main">
+    <main class="content">
       <div class="topbar">
-        <div class="search-wrap">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-          <input id="globalSearch" type="text" placeholder="Search a name, business, or phone…" />
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="hamburger" id="hamburgerBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div>
+          <div class="top-title">
+            <h1 id="pageTitle">Good day, Segun</h1>
+            <div class="meta" id="pageMeta"></div>
+          </div>
         </div>
         <div class="top-actions">
-          <div class="icon-btn" id="notifBtn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
-            <span class="dot"></span>
+          <span class="last-updated" id="lastUpdated"></span>
+          <div class="icon-btn" id="notifBtn" title="Notifications">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+            <span class="dot" id="notifDot" style="display:none;"></span>
           </div>
-          <div class="icon-btn" title="Refresh data" id="refreshBtn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 4v5h-5"/></svg>
+          <div class="icon-btn" id="refreshBtn" title="Refresh data">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 4v5h-5"/></svg>
           </div>
-          <div class="notif-panel" id="notifPanel">
-            <div class="notif-item"><div class="n-dot" style="background:var(--green-glow)"></div><div><p><b>Loading...</b></p><span>Just a moment</span></div></div>
-            <div class="notif-item"><div class="n-dot" style="background:var(--gold)"></div><div><p><b>Loading...</b></p><span>Just a moment</span></div></div>
-            <div class="notif-item"><div class="n-dot" style="background:#7ea8ff"></div><div><p><b>Loading...</b></p><span>Just a moment</span></div></div>
-            <div class="notif-item"><div class="n-dot" style="background:var(--wa)"></div><div><p><b>Loading...</b></p><span>Just a moment</span></div></div>
-          </div>
+          <div class="notif-panel" id="notifPanel"><div class="notif-empty">No notifications yet.</div></div>
         </div>
       </div>
 
       <!-- ===== OVERVIEW ===== -->
-      <div class="view" id="view-overview">
-        <div class="page-head">
-          <div><h1 class="heading">Overview</h1><p>Everything moving through SmartBot Builds right now.</p></div>
-          <div class="goal-card">
-            <div class="goal-top"><span>Monthly goal</span><b>₦0 / ₦500,000 · 0%</b></div>
-            <div class="goal-bar"><div class="goal-fill" style="width:0%"></div></div>
+      <div class="view active" id="view-overview">
+        <div class="kpi-grid" id="kpiGrid"></div>
+        <div class="card goal-widget">
+          <div class="goal-top"><span>Monthly revenue goal</span><b id="goalText">Loading…</b></div>
+          <div class="goal-bar"><div class="goal-fill" id="goalFill" style="width:0%"></div></div>
+        </div>
+        <div class="card" style="margin-bottom:20px;">
+          <h3 style="font-size:0.95rem; margin-bottom:14px;">Sales pipeline</h3>
+          <div class="funnel-wrap" id="funnelWrap"></div>
+        </div>
+        <div class="section-row">
+          <div class="card">
+            <h3 style="font-size:0.95rem; margin-bottom:6px;">Needs your attention</h3>
+            <div id="attentionList"></div>
+          </div>
+          <div class="card">
+            <h3 style="font-size:0.95rem; margin-bottom:6px;">Recent activity</h3>
+            <div id="activityList"></div>
           </div>
         </div>
-
-        <div class="stats-grid">
-          <div class="stat-card feature"><div class="lbl">Revenue pipeline</div><div class="num">₦0</div><div class="delta">Loading...</div></div>
-          <div class="stat-card feature"><div class="lbl">Converted revenue</div><div class="num">₦0</div><div class="delta">Loading...</div></div>
-          <div class="stat-card"><div class="lbl">Total projects</div><div class="num">0</div></div>
-          <div class="stat-card"><div class="lbl">Briefs uploaded</div><div class="num">0</div></div>
-          <div class="stat-card"><div class="lbl">New leads (30d)</div><div class="num">0</div></div>
-          <div class="stat-card"><div class="lbl">Converted clients</div><div class="num">0</div></div>
-        </div>
-
-        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
-          <button class="btn btn-green" id="overviewAddProject">➕ Add project</button>
-          <button class="btn btn-outline" id="overviewAddLead">➕ Add lead</button>
-          <span class="last-updated" id="lastUpdated">Last updated: —</span>
-        </div>
-
-        <div class="panel">
-          <div class="panel-head"><h3>Client conversion pipeline</h3></div>
-          <div class="funnel">
-            <div class="funnel-stage"><div class="funnel-bar"></div><div class="fnum num">0</div><div class="flbl">Lead</div><div class="fpct">0%</div></div>
-            <div class="funnel-stage"><div class="funnel-bar"></div><div class="fnum num">0</div><div class="flbl">Project request</div><div class="fpct">0%</div></div>
-            <div class="funnel-stage"><div class="funnel-bar"></div><div class="fnum num">0</div><div class="flbl">Brief received</div><div class="fpct">0%</div></div>
-            <div class="funnel-stage"><div class="funnel-bar"></div><div class="fnum num">0</div><div class="flbl">Quote sent</div><div class="fpct">0%</div></div>
-            <div class="funnel-stage"><div class="funnel-bar"></div><div class="fnum num">0</div><div class="flbl">Paid client</div><div class="fpct">0%</div></div>
-          </div>
-        </div>
-
-        <div class="activity-grid">
-          <div class="activity-feed">
-            <h4>📋 Recent activity</h4>
-            <div id="recentActivity"><div style="color:var(--text-faint);padding:12px 0;">Loading...</div></div>
-          </div>
-          <div class="activity-feed">
-            <h4>📊 Quick stats</h4>
-            <div id="quickStats"><div style="color:var(--text-faint);padding:12px 0;">Loading...</div></div>
+        <div class="toolbar">
+          <div class="qa-group" style="margin-left:0;">
+            <button class="btn btn-green" id="qaAddProject">+ Add project</button>
+            <button class="btn btn-outline" id="qaAddLead">+ Add lead</button>
+            <button class="btn btn-outline" id="qaUploadBrief">Upload brief</button>
+            <button class="btn btn-outline" id="qaAskAI">Ask AI</button>
           </div>
         </div>
       </div>
 
       <!-- ===== PROJECT REQUESTS ===== -->
-      <div class="view" id="view-projects" hidden>
-        <h2 class="heading">Recent project requests</h2>
+      <div class="view" id="view-projects">
+        <h2>Project requests</h2>
+        <div class="mini-stats" id="projectMiniStats"></div>
         <div class="toolbar">
-          <select id="statusFilter">
-            <option value="">All statuses</option>
-            <option value="new">New</option>
-            <option value="brief_received">Brief received</option>
-            <option value="quoted">Quoted</option>
-            <option value="converted">Converted</option>
-            <option value="closed">Closed</option>
-          </select>
-          <select id="serviceFilter">
-            <option value="">All services</option>
-            <option value="CRM &amp; automation">CRM &amp; automation</option>
-            <option value="Custom web app">Custom web app</option>
-            <option value="AI-powered tools">AI-powered tools</option>
-            <option value="Data analytics &amp; BI">Data analytics &amp; BI</option>
-            <option value="Admin &amp; client portal">Admin &amp; client portal</option>
-            <option value="Process automation">Process automation</option>
-          </select>
-          <select id="sourceFilter">
-            <option value="">All sources</option>
-            <option value="form">Website form</option>
-            <option value="whatsapp">WhatsApp</option>
-            <option value="brief_upload">Brief upload</option>
-            <option value="dashboard">Dashboard</option>
-            <option value="referral">Referral</option>
-            <option value="instagram">Instagram</option>
+          <input type="text" id="projSearch" placeholder="Search name, business, phone, email…" />
+          <select id="projStatusFilter"><option value="">All statuses</option><option value="new">New</option><option value="brief_received">Brief received</option><option value="quoted">Quoted</option><option value="converted">Converted</option><option value="paid">Paid</option></select>
+          <select id="projServiceFilter"><option value="">All services</option></select>
+          <select id="projSourceFilter"><option value="">All sources</option></select>
+          <select id="projSort">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="budget_high">Highest budget</option>
+            <option value="budget_low">Lowest budget</option>
+            <option value="updated">Recently updated</option>
           </select>
           <div class="qa-group">
-            <button class="btn btn-outline" id="exportCsv">Export CSV</button>
-            <button class="btn btn-green" id="addProjectBtn">Add project</button>
+            <button class="btn btn-outline btn-sm" id="projExportCsv">Export CSV</button>
+            <button class="btn btn-green btn-sm" id="projAddBtn">+ Add project</button>
           </div>
         </div>
-
-        <div class="status-stats">
-          <span style="color:var(--text-faint);font-size:0.75rem;">📊 Status breakdown</span>
-          <div class="status-stat"><span class="dot new"></span>New: <span class="num" id="statNew">0</span></div>
-          <div class="status-stat"><span class="dot brief"></span>Brief received: <span class="num" id="statBrief">0</span></div>
-          <div class="status-stat"><span class="dot quoted"></span>Quoted: <span class="num" id="statQuoted">0</span></div>
-          <div class="status-stat"><span class="dot converted"></span>Converted: <span class="num" id="statConverted">0</span></div>
-          <div class="status-stat"><span class="dot closed"></span>Closed: <span class="num" id="statClosed">0</span></div>
-          <div class="status-stat" style="margin-left:auto;"><span style="color:var(--text-faint);">Total:</span> <span class="num" id="statTotalProjects">0</span></div>
-        </div>
-
-        <table id="projectsTable">
-          <thead><tr><th>Name</th><th>Business</th><th>Service</th><th>Budget</th><th>Status</th><th>Source</th><th>Date</th><th>Brief</th></tr></thead>
-          <tbody><tr><td colspan="8" style="text-align:center;color:var(--text-faint);padding:30px;">Loading projects...</td></tr></tbody>
-        </table>
+        <div class="table-wrap"><table id="projectsTable">
+          <thead><tr><th>Client</th><th>Business</th><th>Service</th><th>Budget</th><th>Status</th><th>Source</th><th>Date</th><th>Brief</th><th>Actions</th></tr></thead>
+          <tbody id="projectsTbody"></tbody>
+        </table></div>
       </div>
 
       <!-- ===== WHATSAPP LEADS ===== -->
-      <div class="view" id="view-leads" hidden>
-        <div class="page-head">
-          <div><h1 class="heading">WhatsApp leads</h1><p>All leads captured from WhatsApp conversations.</p></div>
-        </div>
-
+      <div class="view" id="view-leads">
+        <h2>WhatsApp leads</h2>
         <div class="toolbar">
-          <select id="leadStatusFilter">
-            <option value="">All statuses</option>
-            <option value="New">New</option>
-            <option value="Contacted">Contacted</option>
-            <option value="Qualified">Qualified</option>
-            <option value="Converted">Converted</option>
-            <option value="Lost">Lost</option>
-          </select>
-          <select id="leadTagFilter">
-            <option value="">All tags</option>
-            <option value="High Priority">High Priority</option>
-            <option value="Warm Nurture">Warm Nurture</option>
-            <option value="Cold Nurture">Cold Nurture</option>
-            <option value="Finance Follow-up">Finance Follow-up</option>
-            <option value="Nurture (Long Term)">Nurture (Long Term)</option>
-          </select>
-          <div class="qa-group">
-            <button class="btn btn-green" id="addLeadBtn">➕ Add lead</button>
-            <button class="btn btn-gold" id="convertBtn">🔄 Convert to project</button>
-          </div>
+          <input type="text" id="leadSearch" placeholder="Search name, business, phone…" />
+          <select id="leadStatusFilter"><option value="">All statuses</option><option value="new">New</option><option value="brief_received">Brief received</option><option value="quoted">Quoted</option><option value="converted">Converted</option><option value="paid">Paid</option></select>
         </div>
-
-        <!-- Lead Stats Bar -->
-        <div class="status-stats">
-          <span style="color:var(--text-faint);font-size:0.75rem;">📊 Lead breakdown</span>
-          <div class="status-stat"><span class="dot new"></span>New: <span class="num" id="leadStatNew">0</span></div>
-          <div class="status-stat"><span class="dot contacted"></span>Contacted: <span class="num" id="leadStatContacted">0</span></div>
-          <div class="status-stat"><span class="dot qualified"></span>Qualified: <span class="num" id="leadStatQualified">0</span></div>
-          <div class="status-stat"><span class="dot converted"></span>Converted: <span class="num" id="leadStatConverted">0</span></div>
-          <div class="status-stat"><span class="dot lost"></span>Lost: <span class="num" id="leadStatLost">0</span></div>
-          <div class="status-stat" style="margin-left:auto;"><span style="color:var(--text-faint);">Total:</span> <span class="num" id="statTotalLeads">0</span></div>
-        </div>
-
-        <table id="leadsTable">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Phone</th>
-              <th>Status</th>
-              <th>Tag</th>
-              <th>Source</th>
-              <th>Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td colspan="7" style="text-align:center;color:var(--text-faint);padding:30px;">Loading leads...</td></tr>
-          </tbody>
-        </table>
+        <div class="table-wrap"><table id="leadsTable">
+          <thead><tr><th>Name</th><th>Phone</th><th>Business</th><th>Service</th><th>Budget</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+          <tbody id="leadsTbody"></tbody>
+        </table></div>
       </div>
 
       <!-- ===== BRIEFS ===== -->
-<div class="view" id="view-briefs" hidden>
-  <div class="page-head">
-    <div>
-      <h1 class="heading">📎 Brief uploads</h1>
-      <p>All project briefs uploaded via WhatsApp or the website form.</p>
-    </div>
-    <div style="display:flex; gap:10px; align-items:center;">
-      <span id="briefCount" style="font-size:0.85rem; color:var(--text-dim);">0 briefs</span>
-      <button class="btn btn-outline" id="refreshBriefsBtn" style="padding:6px 14px; font-size:12px;">🔄 Refresh</button>
-    </div>
-  </div>
-
-  <!-- Search Bar -->
-  <div class="toolbar" style="margin-bottom:16px;">
-    <div class="search-wrap" style="flex:1; max-width:400px; position:relative;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); opacity:0.5;"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      <input type="text" id="briefSearch" placeholder="Search by file name, client name, or phone..." style="width:100%; padding:10px 14px 10px 38px; background:rgba(255,255,255,0.05); border:1px solid var(--border-strong); border-radius:10px; color:var(--text); font-size:0.88rem; outline:none;">
-    </div>
-    <select id="briefStatusFilter" style="padding:8px 14px; border-radius:8px; background:#0d1333; border:1px solid var(--border-strong); color:var(--text); font-size:0.82rem;">
-      <option value="">All statuses</option>
-      <option value="new">New</option>
-      <option value="brief_received">Brief Received</option>
-      <option value="quoted">Quoted</option>
-      <option value="converted">Converted</option>
-    </select>
-  </div>
-
-  <!-- Brief Grid -->
-  <div class="brief-grid" id="briefGrid">
-    <div style="color:var(--text-faint);padding:40px;text-align:center;">Loading briefs...</div>
-  </div>
-
-  <!-- Empty State -->
-  <div id="briefEmpty" style="display:none; text-align:center; padding:60px 20px; color:var(--text-faint);">
-    <div style="font-size:48px; margin-bottom:16px;">📎</div>
-    <h3 style="font-size:18px; margin-bottom:8px;">No briefs uploaded yet</h3>
-    <p>When clients upload project briefs via WhatsApp, they'll appear here.</p>
-  </div>
-</div>
+      <div class="view" id="view-briefs">
+        <h2>Brief uploads</h2>
+        <div class="brief-grid" id="briefsGrid"></div>
+      </div>
 
       <!-- ===== CLIENTS ===== -->
-<div class="view" id="view-clients" hidden>
-  <div class="page-head">
-    <div>
-      <h1 class="heading">🏢 Clients</h1>
-      <p>All converted clients and their project details.</p>
-    </div>
-    <div style="display:flex; gap:10px; align-items:center;">
-      <span id="clientCount" style="font-size:0.85rem; color:var(--text-dim);">0 clients</span>
-      <button class="btn btn-outline" id="refreshClientsBtn" style="padding:6px 14px; font-size:12px;">🔄 Refresh</button>
-    </div>
-  </div>
+      <div class="view" id="view-clients">
+        <h2>Clients</h2>
+        <div class="mini-stats" id="clientMiniStats"></div>
+        <div class="table-wrap"><table id="clientsTable">
+          <thead><tr><th>Business</th><th>Client</th><th>Service</th><th>Amount</th><th>Status</th><th>Client since</th></tr></thead>
+          <tbody id="clientsTbody"></tbody>
+        </table></div>
+      </div>
 
-  <!-- Stats Bar -->
-  <div class="status-stats" style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:16px; padding:12px 16px; background:var(--surface); border:1px solid var(--border); border-radius:12px;">
-    <span style="color:var(--text-faint);font-size:0.75rem;">📊 Client stats</span>
-    <div class="status-stat"><span class="dot converted" style="background:var(--green-glow);"></span>Active: <span class="num" id="clientStatActive">0</span></div>
-    <div class="status-stat"><span class="dot" style="background:var(--gold);"></span>Total Revenue: <span class="num" id="clientStatRevenue">₦0</span></div>
-    <div class="status-stat" style="margin-left:auto;"><span style="color:var(--text-faint);">Total:</span> <span class="num" id="clientStatTotal">0</span></div>
-  </div>
-
-  <!-- Search Bar -->
-  <div class="toolbar" style="margin-bottom:16px;">
-    <div class="search-wrap" style="flex:1; max-width:400px; position:relative;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); opacity:0.5;"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      <input type="text" id="clientSearch" placeholder="Search by client name, business, or service..." style="width:100%; padding:10px 14px 10px 38px; background:rgba(255,255,255,0.05); border:1px solid var(--border-strong); border-radius:10px; color:var(--text); font-size:0.88rem; outline:none;">
-    </div>
-    <select id="clientServiceFilter" style="padding:8px 14px; border-radius:8px; background:#0d1333; border:1px solid var(--border-strong); color:var(--text); font-size:0.82rem;">
-      <option value="">All services</option>
-      <option value="CRM &amp; automation">CRM &amp; automation</option>
-      <option value="Custom web app">Custom web app</option>
-      <option value="AI-powered tools">AI-powered tools</option>
-      <option value="Data analytics &amp; BI">Data analytics &amp; BI</option>
-      <option value="Admin &amp; client portal">Admin &amp; client portal</option>
-      <option value="Process automation">Process automation</option>
-    </select>
-  </div>
-
-  <!-- Clients Table -->
-  <div class="table-wrap">
-    <table id="clientsTable">
-      <thead>
-        <tr>
-          <th>Business</th>
-          <th>Owner</th>
-          <th>Service</th>
-          <th>Amount</th>
-          <th>Status</th>
-          <th>Client Since</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="clientsTableBody">
-        <tr><td colspan="7" style="text-align:center;color:var(--text-faint);padding:30px;">Loading clients...</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Empty State -->
-  <div id="clientEmpty" style="display:none; text-align:center; padding:60px 20px; color:var(--text-faint);">
-    <div style="font-size:48px; margin-bottom:16px;">🏢</div>
-    <h3 style="font-size:18px; margin-bottom:8px;">No clients yet</h3>
-    <p>When a project is marked as "converted" or "paid", clients will appear here.</p>
-  </div>
-</div>
+      <!-- ===== AI ASSISTANT ===== -->
+      <div class="view" id="view-ai">
+        <h2>AI Assistant</h2>
+        <div class="ai-shell">
+          <div class="agent-list" id="agentList">
+            <button class="agent-btn active" data-agent="general">General Assistant</button>
+            <button class="agent-btn" data-agent="sales">Sales Agent</button>
+            <button class="agent-btn" data-agent="onboarding">Onboarding Agent</button>
+            <button class="agent-btn" data-agent="support">Support Agent</button>
+            <button class="btn btn-outline btn-sm" id="clearChatBtn" style="margin-top:10px;">Clear conversation</button>
+          </div>
+          <div class="chat-panel">
+            <div class="chat-log" id="chatLog"></div>
+            <div class="suggested-prompts" id="suggestedPrompts"></div>
+            <div class="chat-input-row">
+              <input type="text" id="chatInput" placeholder="Ask about your pipeline, leads, or revenue…" />
+              <button class="btn btn-green" id="chatSendBtn">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- ===== REPORTS ===== -->
-      <div class="view" id="view-reports" hidden>
-        <h2 class="heading">Reports</h2>
+      <div class="view" id="view-reports">
+        <h2>Reports &amp; analytics</h2>
+        <div class="toolbar">
+          <select id="reportRange">
+            <option value="7">Last 7 days</option>
+            <option value="30" selected>Last 30 days</option>
+            <option value="thismonth">This month</option>
+            <option value="lastmonth">Last month</option>
+            <option value="all">All time</option>
+          </select>
+        </div>
         <div class="charts-grid">
-          <div class="chart-panel"><h3>Projects per month</h3><canvas id="chartProjects"></canvas></div>
+          <div class="chart-panel"><h3>Projects over time</h3><canvas id="chartProjects"></canvas></div>
           <div class="chart-panel"><h3>Revenue trend</h3><canvas id="chartRevenue"></canvas></div>
           <div class="chart-panel"><h3>Lead sources</h3><canvas id="chartSources"></canvas></div>
-          <div class="chart-panel"><h3>Conversion rate</h3><canvas id="chartConversion"></canvas></div>
+          <div class="chart-panel"><h3>Conversion funnel</h3><canvas id="chartFunnel"></canvas></div>
+        </div>
+        <div class="card" style="margin-top:14px;">
+          <h3 style="font-size:0.95rem; margin-bottom:6px;">Insights</h3>
+          <div id="insightsList"></div>
         </div>
       </div>
 
       <!-- ===== SETTINGS ===== -->
-      <div class="view" id="view-settings" hidden>
-        <h2 class="heading">Settings</h2>
+      <div class="view" id="view-settings">
+        <h2>Settings</h2>
         <div class="settings-grid">
-          <div class="settings-card">
-            <h3>Change PIN</h3>
-            <div class="pin-inputs"><input maxlength="1" inputmode="numeric" /><input maxlength="1" inputmode="numeric" /><input maxlength="1" inputmode="numeric" /><input maxlength="1" inputmode="numeric" /></div>
-            <button class="btn btn-green" id="savePinBtn">Save PIN</button>
+          <div class="card">
+            <h3 style="font-size:0.95rem; margin-bottom:14px;">Security</h3>
+            <label style="font-size:0.78rem; color:var(--text-dim); display:block; margin-bottom:8px;">Change PIN (stored on this device only)</label>
+            <div class="pin-inputs">
+              <input maxlength="1" inputmode="numeric" class="newpin" /><input maxlength="1" inputmode="numeric" class="newpin" />
+              <input maxlength="1" inputmode="numeric" class="newpin" /><input maxlength="1" inputmode="numeric" class="newpin" />
+            </div>
+            <button class="btn btn-green btn-sm" id="savePinBtn">Save PIN</button>
+            <div class="settings-row"><span>Require PIN every visit</span><label class="switch"><input type="checkbox" id="requirePinToggle" checked><span class="slider"></span></label></div>
           </div>
-          <div class="settings-card">
-            <h3>Session</h3>
-            <div class="settings-row"><span>Auto-logout after</span><select><option>15 minutes</option><option selected>30 minutes</option><option>60 minutes</option></select></div>
-            <div class="settings-row"><span>Require PIN on every visit</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+          <div class="card">
+            <h3 style="font-size:0.95rem; margin-bottom:14px;">Session</h3>
+            <div class="settings-row"><span>Auto-logout after</span>
+              <select id="sessionTimeoutSelect"><option value="15">15 minutes</option><option value="30" selected>30 minutes</option><option value="60">60 minutes</option></select>
+            </div>
+            <div class="settings-row"><span>Current session</span><span id="sessionStartedAt" style="color:var(--text-faint); font-size:0.8rem;"></span></div>
           </div>
-          <div class="settings-card" style="grid-column:span 2;">
-            <h3>Notifications</h3>
-            <div class="settings-row"><span>New WhatsApp lead</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-            <div class="settings-row"><span>New brief uploaded</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-            <div class="settings-row"><span>New project request</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-            <div class="settings-row"><span>Client converted</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+          <div class="card" style="grid-column:span 2;">
+            <h3 style="font-size:0.95rem; margin-bottom:6px;">Notifications</h3>
+            <div class="settings-row"><span>New lead alerts</span><label class="switch"><input type="checkbox" id="notifLead" checked><span class="slider"></span></label></div>
+            <div class="settings-row"><span>Brief upload alerts</span><label class="switch"><input type="checkbox" id="notifBrief" checked><span class="slider"></span></label></div>
+            <div class="settings-row"><span>Daily summary</span><label class="switch"><input type="checkbox" id="notifDaily"><span class="slider"></span></label></div>
           </div>
         </div>
       </div>
     </main>
   </div>
 
-  <!-- ===== MODAL: ADD LEAD (SmartBot Builds) ===== -->
-<div class="modal-overlay" id="addLeadModal">
-  <div class="modal">
-    <h3 class="heading">➕ Add WhatsApp Lead</h3>
-    <label>Full Name *</label>
-    <input type="text" id="leadNameInput" placeholder="e.g. Amaka Chukwu" />
-    <label>Phone Number *</label>
-    <input type="text" id="leadPhoneInput" placeholder="e.g. 08031234567" />
-    <label>Business Name</label>
-    <input type="text" id="leadBusinessInput" placeholder="e.g. Chukwu Foods" />
-    <label>Service Type</label>
-    <select id="leadServiceInput">
-      <option value="">Select a service</option>
-      <option value="CRM &amp; automation">CRM &amp; automation</option>
-      <option value="Custom web app">Custom web app</option>
-      <option value="AI-powered tools">AI-powered tools</option>
-      <option value="Data analytics &amp; BI">Data analytics &amp; BI</option>
-      <option value="Admin &amp; client portal">Admin &amp; client portal</option>
-      <option value="Process automation">Process automation</option>
-    </select>
-    <label>Budget (₦)</label>
-    <input type="text" id="leadBudgetInput" placeholder="e.g. 500000" />
-    <div class="modal-actions">
-      <button class="btn btn-outline" id="closeLeadModal">Cancel</button>
-      <button class="btn btn-green" id="saveLeadBtn">Save lead</button>
-    </div>
-  </div>
-</div>
+  <!-- ===== PROJECT DETAIL DRAWER ===== -->
+  <div class="overlay" id="detailOverlay"><div class="modal" id="detailModal"></div></div>
 
-  <!-- ===== MODAL: ADD PROJECT ===== -->
-  <div class="modal-overlay" id="modalOverlay">
+  <!-- ===== ADD PROJECT / LEAD MODAL ===== -->
+  <div class="overlay" id="formOverlay">
     <div class="modal">
-      <h3 class="heading">Add project request</h3>
-      <label>Client name</label><input type="text" id="modalName" placeholder="e.g. Amaka Chukwu" />
-      <label>Business name</label><input type="text" id="modalBiz" placeholder="e.g. Chukwu Foods" />
+      <h3 id="formModalTitle">Add project request</h3>
+      <label>Client name *</label><input type="text" id="fName" />
+      <div class="field-error" id="errName">Name is required.</div>
+      <label>Phone *</label><input type="text" id="fPhone" placeholder="080…" />
+      <div class="field-error" id="errPhone">A valid phone number is required.</div>
+      <label>Business name</label><input type="text" id="fBusiness" />
       <label>Service type</label>
-      <select id="modalService">
-        <option>CRM &amp; automation</option>
-        <option>Custom web app</option>
-        <option>AI-powered tools</option>
-        <option>Data analytics &amp; BI</option>
-        <option>Admin &amp; client portal</option>
-        <option>Process automation</option>
-      </select>
-      <label>Budget (₦)</label><input type="text" id="modalBudget" placeholder="e.g. 600000" />
+      <select id="fService"><option>CRM &amp; automation</option><option>Process automation</option><option>Custom web application</option><option>Data analytics &amp; BI</option><option>AI-powered tools</option><option>Admin &amp; client portal</option></select>
+      <label>Budget (₦)</label><input type="text" id="fBudget" placeholder="e.g. 600000" inputmode="numeric" />
+      <div class="field-error" id="errBudget">Budget must be a number.</div>
       <div class="modal-actions">
-        <button class="btn btn-outline" id="closeModal">Cancel</button>
-        <button class="btn btn-green" id="saveProjectBtn">Save project</button>
+        <button class="btn btn-outline" id="formCancelBtn">Cancel</button>
+        <button class="btn btn-green" id="formSaveBtn">Save</button>
       </div>
     </div>
   </div>
 
-  <div id="toast"></div>
+  <!-- ===== AI ACTION CONFIRM MODAL ===== -->
+  <div class="overlay" id="confirmOverlay">
+    <div class="modal" style="width:380px;">
+      <h3>Confirm action</h3>
+      <p id="confirmMessage" style="font-size:0.9rem; color:var(--text-dim);"></p>
+      <div class="modal-actions">
+        <button class="btn btn-outline" id="confirmCancelBtn">Cancel</button>
+        <button class="btn btn-green" id="confirmYesBtn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastHost"></div>
+
 <script>
-  // ============================================================
-  // PIN LOCK
-  // ============================================================
-  const CORRECT_PIN = "1925";
-  let entered = "";
-  const dots = document.querySelectorAll("#pinDots span");
-  const lock = document.getElementById("lock");
-  function renderDots(){ dots.forEach((d,i)=> d.classList.toggle("filled", i < entered.length)); }
-  document.querySelectorAll("#keypad button[data-k]").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      if(entered.length >= 4) return;
-      entered += btn.dataset.k;
-      renderDots();
-      if(entered.length === 4){
-        if(entered === CORRECT_PIN){
-          setTimeout(()=> lock.classList.add("hidden"), 200);
-          loadDashboardData();
-        } else {
-          lock.classList.add("shake");
-          setTimeout(()=>{ lock.classList.remove("shake"); entered=""; renderDots(); }, 400);
-        }
-      }
-    });
-  });
-  document.getElementById("clearBtn").addEventListener("click", ()=>{ entered=""; renderDots(); });
-  document.getElementById("delBtn").addEventListener("click", ()=>{ entered = entered.slice(0,-1); renderDots(); });
+(function(){
+  "use strict";
 
   // ============================================================
-  // API BASE
+  // CONFIG
   // ============================================================
-  const API_BASE = 'https://smartbot-genius-bot.myaibuzcom-hue.deno.net';
+  const CONFIG = {
+    API_BASE: "https://smartbot-genius-bot.myaibuzcom-hue.deno.net",
+    DEFAULT_PIN: "1925",
+    PIN_STORAGE_KEY: "sb_pin",
+    SESSION_KEY: "sb_auth",
+    SESSION_STARTED_KEY: "sb_session_started",
+    TIMEOUT_KEY: "sb_session_timeout_min",
+    STATUS_LABELS: { new: "New", brief_received: "Brief received", quoted: "Quoted", converted: "Converted", paid: "Paid" },
+    STATUS_ORDER: ["new", "brief_received", "quoted", "converted", "paid"]
+  };
+
+  // ============================================================
+  // UTILS
+  // ============================================================
+  const Utils = {
+    naira(n){ return "₦" + (Number(n) || 0).toLocaleString(); },
+    dateStr(d){ if(!d) return "—"; try { return new Date(d).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"}); } catch { return "—"; } },
+    relTime(d){
+      if(!d) return "—";
+      const diff = Date.now() - new Date(d).getTime();
+      const mins = Math.floor(diff/60000);
+      if(mins < 1) return "just now";
+      if(mins < 60) return mins + "m ago";
+      const hrs = Math.floor(mins/60);
+      if(hrs < 24) return hrs + "h ago";
+      const days = Math.floor(hrs/24);
+      if(days < 30) return days + "d ago";
+      return Utils.dateStr(d);
+    },
+    escapeHtml(str){
+      const div = document.createElement("div");
+      div.textContent = String(str == null ? "" : str);
+      return div.innerHTML;
+    },
+    debounce(fn, ms){ let t; return (...args)=>{ clearTimeout(t); t = setTimeout(()=>fn(...args), ms); }; },
+    formatPhone(raw){
+      let c = String(raw||"").replace(/\D/g,"");
+      if(c.startsWith("0")) c = "234" + c.slice(1);
+      if(!c.startsWith("234")) c = "234" + c;
+      return c;
+    },
+    td(text, cls){ const td = document.createElement("td"); if(cls) td.className = cls; td.textContent = (text === null || text === undefined || text === "") ? "—" : text; return td; },
+    statusBadge(status){
+      const span = document.createElement("span");
+      span.className = "badge badge-" + (status || "new");
+      span.textContent = CONFIG.STATUS_LABELS[status] || status || "New";
+      return span;
+    }
+  };
 
   // ============================================================
   // TOAST
   // ============================================================
-  const toast = document.getElementById("toast");
-  let toastTimer;
-  function showToast(msg, isError){
-    toast.textContent = msg;
-    toast.style.borderColor = isError ? 'var(--gold)' : 'var(--border-strong)';
-    toast.classList.add("show");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(()=> toast.classList.remove("show"), 3000);
-  }
-
-  // ============================================================
-  // DATA CACHE
-  // ============================================================
-  let cachedProjects = [];
-  let cachedLeads = [];
-  let cachedBriefs = [];
-  let cachedClients = [];
-  let cachedStats = {};
-
-  // ============================================================
-  // LOAD DASHBOARD DATA
-  // ============================================================
-  async function loadDashboardData() {
-    try {
-      const statsRes = await fetch(API_BASE + '/api/sb-stats');
-      cachedStats = await statsRes.json();
-
-      const projectsRes = await fetch(API_BASE + '/api/sb-projects');
-      cachedProjects = await projectsRes.json();
-
-      const briefsRes = await fetch(API_BASE + '/api/sb-briefs');
-      cachedBriefs = await briefsRes.json();
-
-      const leadsRes = await fetch(API_BASE + '/api/sb-whatsapp-leads');
-      cachedLeads = await leadsRes.json();
-
-      // Inside loadDashboardData, add this line after the briefs fetch:
-const clientsRes = await fetch(API_BASE + '/api/sb-clients');
-cachedClients = await clientsRes.json();
-
-      updateOverview();
-      updateProjectsTable();
-      updateBriefs();
-      updateClientsTable();
-      updateLeadsTable();
-      updateNotifications();
-      updateCharts();
-
-      document.getElementById('lastUpdated').textContent = 'Last updated: ' + new Date().toLocaleString();
-      showToast('Data refreshed successfully');
-
-    } catch (err) {
-      console.error('Error loading dashboard data:', err);
-      showToast('Error loading data: ' + err.message, true);
-    }
-  }
-
-  // ============================================================
-  // UPDATE OVERVIEW
-  // ============================================================
-  function updateOverview() {
-    const stats = cachedStats;
-    const projects = cachedProjects;
-    const leads = cachedLeads;
-    const briefs = cachedBriefs;
-
-    const pipeline = stats.pipeline_value || 0;
-    const convertedValue = stats.converted_value || 0;
-    const totalProjects = stats.total_projects || 0;
-    const briefCount = stats.briefs_uploaded || 0;
-    const newLeads = stats.new_leads_30d || 0;
-    const converted = stats.converted || 0;
-
-    document.querySelectorAll('.stat-card .num').forEach(el => {
-      const label = el.closest('.stat-card')?.querySelector('.lbl')?.textContent?.trim() || '';
-      if (label.includes('Revenue pipeline')) {
-        el.textContent = '₦' + pipeline.toLocaleString();
-        const delta = el.closest('.stat-card')?.querySelector('.delta');
-        if (delta) delta.textContent = 'Across ' + totalProjects + ' requests';
-      } else if (label.includes('Converted revenue')) {
-        el.textContent = '₦' + convertedValue.toLocaleString();
-        const delta = el.closest('.stat-card')?.querySelector('.delta');
-        if (delta) delta.textContent = converted + ' clients closed';
-      } else if (label.includes('Total projects')) {
-        el.textContent = totalProjects;
-      } else if (label.includes('Briefs uploaded')) {
-        el.textContent = briefCount;
-      } else if (label.includes('New leads (30d)')) {
-        el.textContent = newLeads;
-      } else if (label.includes('Converted clients')) {
-        el.textContent = converted;
-      }
-    });
-
-    const target = 500000;
-    const pct = Math.min((pipeline / target) * 100, 100);
-    document.querySelector('.goal-top b').textContent = '₦' + pipeline.toLocaleString() + ' / ₦' + target.toLocaleString() + ' · ' + Math.round(pct) + '%';
-    document.querySelector('.goal-fill').style.width = Math.min(pct, 100) + '%';
-
-    const quotedCount = projects.filter(p => p.status === 'quoted').length || 0;
-    const totalLeads = newLeads + totalProjects + briefCount + quotedCount + converted || 1;
-
-    const funnelStages = [
-      { label: 'Lead', count: Math.max(totalLeads, 1) },
-      { label: 'Project request', count: Math.max(totalProjects, 1) },
-      { label: 'Brief received', count: Math.max(briefCount, 1) },
-      { label: 'Quote sent', count: Math.max(quotedCount, 1) },
-      { label: 'Paid client', count: Math.max(converted, 1) }
-    ];
-
-    const maxFunnel = Math.max(...funnelStages.map(s => s.count), 1);
-    document.querySelectorAll('.funnel-stage').forEach((stage, i) => {
-      if (i < funnelStages.length) {
-        const s = funnelStages[i];
-        stage.querySelector('.fnum').textContent = s.count;
-        stage.querySelector('.flbl').textContent = s.label;
-        const pctStage = Math.round((s.count / funnelStages[0].count) * 100);
-        stage.querySelector('.fpct').textContent = pctStage + '%';
-        const bar = stage.querySelector('.funnel-bar');
-        if (bar) bar.style.width = Math.max((s.count / maxFunnel) * 100, 8) + '%';
-      }
-    });
-
-    updateRecentActivity(projects, leads, briefs);
-    updateQuickStats(stats);
-  }
-
-  // ============================================================
-  // RECENT ACTIVITY
-  // ============================================================
-  function updateRecentActivity(projects, leads, briefs) {
-    const container = document.getElementById('recentActivity');
-    const events = [];
-
-    projects.slice(0, 3).forEach(p => {
-      events.push({ type: 'project', icon: 'project', text: `<strong>${p.name || 'Unknown'}</strong> submitted a project request`, time: new Date(p.created_at).toLocaleDateString() });
-    });
-    leads.slice(0, 3).forEach(l => {
-      events.push({ type: 'lead', icon: 'lead', text: `<strong>${l.full_name || 'Unknown'}</strong> — new WhatsApp lead`, time: new Date(l.created_at).toLocaleDateString() });
-    });
-    briefs.slice(0, 2).forEach(b => {
-      events.push({ type: 'brief', icon: 'brief', text: `<strong>${b.name || 'Unknown'}</strong> uploaded a brief`, time: new Date(b.created_at).toLocaleDateString() });
-    });
-
-    events.sort((a,b) => new Date(b.time) - new Date(a.time));
-    const topEvents = events.slice(0, 5);
-
-    if (topEvents.length === 0) {
-      container.innerHTML = '<div style="color:var(--text-faint);padding:12px 0;">No recent activity</div>';
-    } else {
-      container.innerHTML = topEvents.map(e => `
-        <div class="act-item">
-          <div class="act-icon ${e.icon}">${e.icon === 'project' ? '📋' : e.icon === 'lead' ? '💬' : '📎'}</div>
-          <div><div class="act-text">${e.text}</div><div class="act-time">${e.time}</div></div>
-        </div>
-      `).join('');
-    }
-  }
-
-  // ============================================================
-  // QUICK STATS
-  // ============================================================
-  function updateQuickStats(stats) {
-    const container = document.getElementById('quickStats');
-    const total = stats.total_projects || 0;
-    const converted = stats.converted || 0;
-    const rate = total > 0 ? Math.round((converted / total) * 100) : 0;
-
-    container.innerHTML = `
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-        <div><div style="font-size:1.4rem; font-weight:700; color:var(--green-glow);">${stats.new_leads_30d || 0}</div><div style="font-size:0.75rem; color:var(--text-faint);">New leads (30d)</div></div>
-        <div><div style="font-size:1.4rem; font-weight:700; color:var(--gold);">${converted}</div><div style="font-size:0.75rem; color:var(--text-faint);">Converted clients</div></div>
-        <div><div style="font-size:1.4rem; font-weight:700; color:#7ea8ff;">${total}</div><div style="font-size:0.75rem; color:var(--text-faint);">Total projects</div></div>
-        <div><div style="font-size:1.4rem; font-weight:700; color:var(--green-glow);">${rate}%</div><div style="font-size:0.75rem; color:var(--text-faint);">Conversion rate</div></div>
-      </div>
-    `;
-  }
-
-  // ============================================================
-  // UPDATE PROJECTS TABLE
-  // ============================================================
-  function updateProjectsTable() {
-    const projects = cachedProjects;
-    const statusMap = { 'new': 'badge-new', 'brief_received': 'badge-brief', 'quoted': 'badge-quoted', 'converted': 'badge-converted', 'closed': 'badge-closed' };
-    const statusDisplay = { 'new': 'New', 'brief_received': 'Brief Received', 'quoted': 'Quoted', 'converted': 'Converted', 'closed': 'Closed' };
-
-    const counts = { new: 0, brief_received: 0, quoted: 0, converted: 0, closed: 0 };
-    projects.forEach(p => { const s = p.status || 'new'; if (counts.hasOwnProperty(s)) counts[s]++; });
-
-    document.getElementById('statNew').textContent = counts.new;
-    document.getElementById('statBrief').textContent = counts.brief_received;
-    document.getElementById('statQuoted').textContent = counts.quoted;
-    document.getElementById('statConverted').textContent = counts.converted;
-    document.getElementById('statClosed').textContent = counts.closed;
-    document.getElementById('statTotalProjects').textContent = projects.length;
-
-    const sourceMap = { 'form': '📋 Form', 'whatsapp': '💬 WhatsApp', 'brief_upload': '📎 Brief Upload', 'dashboard': '⚡ Dashboard', 'referral': '🤝 Referral', 'instagram': '📸 Instagram' };
-
-    const projectRows = projects.slice(0, 20).map(p => {
-      const statusLabel = p.status || 'new';
-      const badgeClass = statusMap[statusLabel] || 'badge-new';
-      const displayStatus = statusDisplay[statusLabel] || statusLabel.replace('_', ' ').toUpperCase();
-      let budgetDisplay = '—';
-      if (p.budget) { const num = Number(p.budget); if (!isNaN(num) && num > 0) budgetDisplay = '₦' + num.toLocaleString(); }
-      const serviceType = p.service_type || p.service || '—';
-      const sourceLabel = sourceMap[p.source] || p.source || '—';
-      const briefLink = p.brief_file_url ? `<span class="link-btn" onclick="window.open('${p.brief_file_url}','_blank')">📎 View</span>` : '—';
-      return `<tr data-name="${(p.name || '').toLowerCase()} ${(p.business_name || '').toLowerCase()}" data-status="${statusLabel}" data-service="${(p.service_type || p.service || '').toLowerCase()}" data-source="${(p.source || '').toLowerCase()}">
-        <td class="cell-main">${p.name || 'Unknown'}</td><td>${p.business_name || '—'}</td><td>${serviceType}</td><td>${budgetDisplay}</td>
-        <td><span class="badge ${badgeClass}">${displayStatus}</span></td><td>${sourceLabel}</td>
-        <td style="font-size:0.78rem; color:var(--text-faint);">${new Date(p.created_at).toLocaleDateString()}</td><td>${briefLink}</td>
-      </tr>`;
-    }).join('');
-    document.querySelector('#projectsTable tbody').innerHTML = projectRows || '<tr><td colspan="8" style="text-align:center;color:var(--text-faint);padding:30px;">No projects yet</td></tr>';
-    applyProjectFilters();
-  }
-
-  function applyProjectFilters() {
-    const statusVal = document.getElementById('statusFilter')?.value || '';
-    const serviceVal = document.getElementById('serviceFilter')?.value || '';
-    const sourceVal = document.getElementById('sourceFilter')?.value || '';
-    document.querySelectorAll('#projectsTable tbody tr').forEach(row => {
-      const matchStatus = !statusVal || row.dataset.status === statusVal;
-      const matchService = !serviceVal || (row.dataset.service || '').includes(serviceVal.toLowerCase());
-      const matchSource = !sourceVal || (row.dataset.source || '').includes(sourceVal.toLowerCase());
-      row.classList.toggle('hidden-row', !(matchStatus && matchService && matchSource));
-    });
-  }
-
-// ============================================================
-// ADD LEAD (Manual Entry) – stores in project_requests
-// ============================================================
-async function addLead() {
-  const name = document.getElementById('leadNameInput').value.trim();
-  const phone = document.getElementById('leadPhoneInput').value.trim();
-  const business = document.getElementById('leadBusinessInput').value.trim();
-  const service = document.getElementById('leadServiceInput').value;
-  const budget = document.getElementById('leadBudgetInput').value.trim();
-
-  if (!name || !phone) {
-    showToast('Please enter Name and Phone', true);
-    return;
-  }
-
-  const payload = {
-    action: 'add-lead',
-    data: {
-      name: name,
-      phone: phone,
-      business: business || null,
-      service: service || null,
-      description: 'Manually added from dashboard',
-      budget: budget || null,
-      source: 'dashboard'
+  const Toast = {
+    show(msg, type){
+      const host = document.getElementById("toastHost");
+      const el = document.createElement("div");
+      el.className = "toast " + (type || "");
+      el.textContent = msg;
+      host.appendChild(el);
+      requestAnimationFrame(()=> el.classList.add("show"));
+      setTimeout(()=>{ el.classList.remove("show"); setTimeout(()=> el.remove(), 300); }, 3800);
     }
   };
 
-  try {
-    const res = await fetch(API_BASE + '/api/sb-quick-action', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const result = await res.json();
-    if (result.success) {
-      showToast('✅ Lead added successfully!');
-      document.getElementById('leadNameInput').value = '';
-      document.getElementById('leadPhoneInput').value = '';
-      document.getElementById('leadBusinessInput').value = '';
-      document.getElementById('leadServiceInput').value = '';
-      document.getElementById('leadBudgetInput').value = '';
-      document.getElementById('addLeadModal').classList.remove('open');
-      loadDashboardData();
-    } else {
-      showToast('❌ Error: ' + (result.error || 'Unknown error'), true);
-    }
-  } catch (err) {
-    showToast('❌ Error: ' + err.message, true);
-  }
-}
-  
   // ============================================================
-// UPDATE BRIEFS (FULLY FUNCTIONAL)
-// ============================================================
-function updateBriefs() {
-  const briefs = cachedBriefs || [];
-  const grid = document.getElementById('briefGrid');
-  const empty = document.getElementById('briefEmpty');
-  const countEl = document.getElementById('briefCount');
-
-  // Update count
-  if (countEl) countEl.textContent = briefs.length + ' brief' + (briefs.length !== 1 ? 's' : '');
-
-  if (briefs.length === 0) {
-    if (grid) grid.innerHTML = '';
-    if (empty) empty.style.display = 'block';
-    return;
-  }
-  if (empty) empty.style.display = 'none';
-
-  // Status badge mapping
-  const statusMap = {
-    'new': 'badge-new',
-    'brief_received': 'badge-brief',
-    'quoted': 'badge-quoted',
-    'converted': 'badge-converted'
-  };
-  const statusDisplay = {
-    'new': 'New',
-    'brief_received': 'Brief Received',
-    'quoted': 'Quoted',
-    'converted': 'Converted'
-  };
-
-  // Service type icons
-  const serviceIcons = {
-    'CRM & automation': '📊',
-    'Custom web app': '🌐',
-    'AI-powered tools': '🤖',
-    'Data analytics & BI': '📈',
-    'Admin & client portal': '🏢',
-    'Process automation': '⚡',
-    'brief_upload': '📎'
-  };
-
-  // Build brief cards
-  const briefHtml = briefs.map(b => {
-    const fileName = b.brief_file_name || 'Untitled.pdf';
-    const clientName = b.name || 'Unknown';
-    const phone = b.phone || '—';
-    const serviceType = b.service_type || b.service || '—';
-    const serviceIcon = serviceIcons[serviceType] || '📄';
-    const status = b.status || 'new';
-    const badgeClass = statusMap[status] || 'badge-new';
-    const displayStatus = statusDisplay[status] || status.toUpperCase();
-    const budget = b.budget ? '₦' + Number(b.budget).toLocaleString() : '—';
-    const date = new Date(b.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    const fileUrl = b.brief_file_url || '#';
-
-    return `<div class="brief-card" data-brief-id="${b.id}" data-status="${status}">
-      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px;">
-        <div class="fname" style="font-size:0.88rem; font-weight:600; margin-bottom:4px; word-break:break-word; flex:1;">
-          ${serviceIcon} ${fileName}
-        </div>
-        <span class="badge ${badgeClass}" style="flex-shrink:0;">${displayStatus}</span>
-      </div>
-      <div class="fmeta" style="font-size:0.76rem; color:var(--text-faint); margin-bottom:12px;">
-        <div><strong style="color:var(--text);">${clientName}</strong> · ${phone}</div>
-        <div style="margin-top:2px;">${serviceType} · ${budget}</div>
-        <div style="margin-top:2px;">📅 ${date}</div>
-      </div>
-      <div class="brief-actions" style="display:flex; gap:8px;">
-        <button onclick="window.open('${fileUrl}','_blank')" style="flex:1; padding:7px; border-radius:7px; border:1px solid var(--border-strong); background:transparent; color:var(--text-dim); font-size:0.76rem; cursor:pointer; transition:0.15s;">
-          👁️ View
-        </button>
-        <button onclick="window.open('${fileUrl}','_blank')" style="flex:1; padding:7px; border-radius:7px; border:1px solid var(--border-strong); background:transparent; color:var(--text-dim); font-size:0.76rem; cursor:pointer; transition:0.15s;">
-          ⬇️ Download
-        </button>
-      </div>
-    </div>`;
-  }).join('');
-
-  if (grid) grid.innerHTML = briefHtml;
-
-  // Re-apply filters
-  applyBriefFilters();
-}
-
+  // API HELPER
   // ============================================================
-// UPDATE CLIENTS TABLE
-// ============================================================
-function updateClientsTable() {
-  const clients = cachedClients || [];
-  const tbody = document.getElementById('clientsTableBody');
-  const empty = document.getElementById('clientEmpty');
-  const countEl = document.getElementById('clientCount');
-  const statActive = document.getElementById('clientStatActive');
-  const statRevenue = document.getElementById('clientStatRevenue');
-  const statTotal = document.getElementById('clientStatTotal');
-
-  // Update stats
-  const total = clients.length;
-  let totalRevenue = 0;
-  clients.forEach(c => { if (c.budget) totalRevenue += Number(c.budget); });
-
-  if (statTotal) statTotal.textContent = total;
-  if (statActive) statActive.textContent = total;
-  if (statRevenue) statRevenue.textContent = '₦' + totalRevenue.toLocaleString();
-  if (countEl) countEl.textContent = total + ' client' + (total !== 1 ? 's' : '');
-
-  if (clients.length === 0) {
-    if (tbody) tbody.innerHTML = '';
-    if (empty) empty.style.display = 'block';
-    return;
-  }
-  if (empty) empty.style.display = 'none';
-
-  const statusMap = {
-    'converted': 'badge-converted',
-    'paid': 'badge-paid'
-  };
-  const statusDisplay = {
-    'converted': '✅ Converted',
-    'paid': '💰 Paid'
-  };
-
-  const rows = clients.map(c => {
-    const status = c.status || 'converted';
-    const badgeClass = statusMap[status] || 'badge-converted';
-    const displayStatus = statusDisplay[status] || 'Converted';
-    const budget = c.budget ? '₦' + Number(c.budget).toLocaleString() : '—';
-    const serviceType = c.service_type || '—';
-    const clientName = c.name || 'Unknown';
-    const businessName = c.business_name || '—';
-    const date = new Date(c.updated_at || c.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-
-    return `<tr data-name="${(clientName + ' ' + businessName).toLowerCase()}" data-service="${(serviceType || '').toLowerCase()}">
-      <td><strong>${businessName}</strong></td>
-      <td>${clientName}</td>
-      <td>${serviceType}</td>
-      <td>${budget}</td>
-      <td><span class="badge ${badgeClass}">${displayStatus}</span></td>
-      <td style="font-size:0.78rem; color:var(--text-faint);">${date}</td>
-      <td>
-        <button class="btn btn-outline btn-sm" style="padding:4px 12px; font-size:11px;" onclick="viewClientProject('${c.id}')">📋 View</button>
-      </td>
-    </tr>`;
-  }).join('');
-
-  if (tbody) tbody.innerHTML = rows;
-}
-
-// ============================================================
-// VIEW CLIENT PROJECT (opens drawer or modal)
-// ============================================================
-function viewClientProject(projectId) {
-  // Find the project in cachedProjects or cachedClients
-  const project = cachedProjects.find(p => p.id == projectId) || cachedClients.find(c => c.id == projectId);
-  if (!project) {
-    showToast('Project details not found', true);
-    return;
-  }
-
-  // Build a simple modal with project details
-  const modalHtml = `
-    <div style="position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; z-index:200; padding:20px;" onclick="if(event.target===this) this.remove()">
-      <div style="background:var(--surface-2); border:1px solid var(--border-strong); border-radius:16px; padding:30px; max-width:500px; width:100%; max-height:80vh; overflow-y:auto;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-          <h3 style="font-size:1.1rem;">📋 Project Details</h3>
-          <button onclick="this.closest('div[style]').remove()" style="background:transparent; border:none; color:var(--text-faint); font-size:20px; cursor:pointer;">✕</button>
-        </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-          <div><div style="font-size:0.7rem; color:var(--text-faint);">Client</div><div style="font-weight:600;">${project.name || 'Unknown'}</div></div>
-          <div><div style="font-size:0.7rem; color:var(--text-faint);">Business</div><div>${project.business_name || '—'}</div></div>
-          <div><div style="font-size:0.7rem; color:var(--text-faint);">Service</div><div>${project.service_type || '—'}</div></div>
-          <div><div style="font-size:0.7rem; color:var(--text-faint);">Budget</div><div style="color:var(--green-glow);">${project.budget ? '₦' + Number(project.budget).toLocaleString() : '—'}</div></div>
-          <div style="grid-column:span 2;"><div style="font-size:0.7rem; color:var(--text-faint);">Description</div><div style="font-size:0.85rem;">${project.description || 'No description'}</div></div>
-          <div style="grid-column:span 2;"><div style="font-size:0.7rem; color:var(--text-faint);">Status</div><div><span class="badge badge-converted">${project.status || 'Converted'}</span></div></div>
-          <div style="grid-column:span 2; margin-top:8px;">
-            <button onclick="this.closest('div[style]').remove()" class="btn btn-green" style="width:100%;">Close</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-  document.body.insertAdjacentHTML('beforeend', modalHtml);
-}
-
-// ============================================================
-// APPLY BRIEF FILTERS
-// ============================================================
-function applyBriefFilters() {
-  const searchVal = document.getElementById('briefSearch')?.value?.toLowerCase().trim() || '';
-  const statusVal = document.getElementById('briefStatusFilter')?.value || '';
-
-  document.querySelectorAll('#briefGrid .brief-card').forEach(card => {
-    const text = card.textContent.toLowerCase();
-    const matchSearch = !searchVal || text.includes(searchVal);
-    const matchStatus = !statusVal || card.dataset.status === statusVal;
-    card.style.display = (matchSearch && matchStatus) ? '' : 'none';
-  });
-}
-
-// ============================================================
-// APPLY CLIENT FILTERS
-// ============================================================
-function applyClientFilters() {
-  const searchVal = document.getElementById('clientSearch')?.value?.toLowerCase().trim() || '';
-  const serviceVal = document.getElementById('clientServiceFilter')?.value?.toLowerCase() || '';
-
-  document.querySelectorAll('#clientsTableBody tr').forEach(row => {
-    const text = row.textContent.toLowerCase();
-    const matchSearch = !searchVal || text.includes(searchVal);
-    const matchService = !serviceVal || row.dataset.service === serviceVal;
-    row.style.display = (matchSearch && matchService) ? '' : 'none';
-  });
-}
-  
-  // ============================================================
-  // UPDATE LEADS TABLE (FULLY FUNCTIONAL)
-  // ============================================================
-  function updateLeadsTable() {
-    const leads = cachedLeads;
-
-    // Status stats
-    const statusCounts = { New: 0, Contacted: 0, Qualified: 0, Converted: 0, Lost: 0 };
-    leads.forEach(l => {
-      const s = l.status || 'New';
-      if (statusCounts.hasOwnProperty(s)) statusCounts[s]++;
-    });
-    document.getElementById('leadStatNew').textContent = statusCounts.New;
-    document.getElementById('leadStatContacted').textContent = statusCounts.Contacted;
-    document.getElementById('leadStatQualified').textContent = statusCounts.Qualified;
-    document.getElementById('leadStatConverted').textContent = statusCounts.Converted;
-    document.getElementById('leadStatLost').textContent = statusCounts.Lost;
-    document.getElementById('statTotalLeads').textContent = leads.length;
-
-    // Status badge mapping
-    const statusBadgeMap = {
-      'New': 'badge-new',
-      'Contacted': 'badge-contacted',
-      'Qualified': 'badge-qualified',
-      'Converted': 'badge-converted',
-      'Lost': 'badge-lost'
-    };
-
-    const tagClassMap = {
-      'High Priority': 'tag-high',
-      'Warm Nurture': 'tag-warm',
-      'Cold Nurture': 'tag-cold',
-      'Finance Follow-up': 'tag-follow',
-      'Nurture (Long Term)': 'tag-follow',
-      'New Lead (Dashboard)': 'tag-follow'
-    };
-
-    const leadRows = leads.slice(0, 20).map(l => {
-      const status = l.status || 'New';
-      const badgeClass = statusBadgeMap[status] || 'badge-new';
-      const tag = l.tag || '—';
-      const tagClass = tagClassMap[tag] || 'tag-follow';
-
-      return `<tr data-name="${(l.full_name || '').toLowerCase()}" data-status="${status}" data-tag="${tag}">
-        <td class="cell-main">${l.full_name || 'Unknown'}</td>
-        <td style="font-family:monospace; font-size:0.8rem;">${l.lead_phone || '—'}</td>
-        <td>
-          <select class="status-select lead-status-select" data-lead-id="${l.id}" data-current="${status}">
-            <option value="New" ${status === 'New' ? 'selected' : ''}>New</option>
-            <option value="Contacted" ${status === 'Contacted' ? 'selected' : ''}>Contacted</option>
-            <option value="Qualified" ${status === 'Qualified' ? 'selected' : ''}>Qualified</option>
-            <option value="Converted" ${status === 'Converted' ? 'selected' : ''}>Converted</option>
-            <option value="Lost" ${status === 'Lost' ? 'selected' : ''}>Lost</option>
-          </select>
-        </td>
-        <td>
-          <select class="inline-select lead-tag-select" data-lead-id="${l.id}" data-current="${tag}">
-            <option value="High Priority" ${tag === 'High Priority' ? 'selected' : ''}>🔴 High Priority</option>
-            <option value="Warm Nurture" ${tag === 'Warm Nurture' ? 'selected' : ''}>🟢 Warm Nurture</option>
-            <option value="Cold Nurture" ${tag === 'Cold Nurture' ? 'selected' : ''}>🔵 Cold Nurture</option>
-            <option value="Finance Follow-up" ${tag === 'Finance Follow-up' ? 'selected' : ''}>💰 Finance Follow-up</option>
-            <option value="Nurture (Long Term)" ${tag === 'Nurture (Long Term)' ? 'selected' : ''}>📅 Nurture (Long Term)</option>
-            <option value="New Lead (Dashboard)" ${tag === 'New Lead (Dashboard)' ? 'selected' : ''}>📋 New Lead (Dashboard)</option>
-          </select>
-        </td>
-        <td>${l.source || 'WhatsApp'}</td>
-        <td style="font-size:0.78rem; color:var(--text-faint);">${new Date(l.created_at).toLocaleDateString()}</td>
-        <td>
-          <button class="btn btn-gold btn-sm convert-lead-btn" data-lead-id="${l.id}" data-lead-name="${l.full_name || 'Unknown'}" data-lead-phone="${l.lead_phone || ''}">
-            🔄 Convert
-          </button>
-        </td>
-      </tr>`;
-    }).join('');
-
-    document.querySelector('#leadsTable tbody').innerHTML = leadRows || '<tr><td colspan="7" style="text-align:center;color:var(--text-faint);padding:30px;">No leads yet</td></tr>';
-
-    // Attach event listeners for status change
-    document.querySelectorAll('.lead-status-select').forEach(sel => {
-      sel.addEventListener('change', async function() {
-        const leadId = this.dataset.leadId;
-        const newStatus = this.value;
-        try {
-          const res = await fetch(API_BASE + '/api/crm-update-lead', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: leadId, status: newStatus })
-          });
-          const data = await res.json();
-          if (data.success) {
-            showToast('✅ Status updated to ' + newStatus);
-            loadDashboardData();
-          } else {
-            showToast('❌ Error: ' + (data.error || 'Unknown'), true);
-          }
-        } catch (err) {
-          showToast('❌ Error: ' + err.message, true);
+  const API = {
+    async _fetch(path, opts, timeoutMs){
+      const controller = new AbortController();
+      const t = setTimeout(()=> controller.abort(), timeoutMs || 15000);
+      try {
+        const res = await fetch(CONFIG.API_BASE + path, { ...opts, signal: controller.signal });
+        clearTimeout(t);
+        let body;
+        try { body = await res.json(); } catch { body = null; }
+        if(!res.ok){
+          const msg = (body && (body.error || body.message)) || ("Request failed (" + res.status + ")");
+          throw new Error(msg);
         }
-      });
-    });
-
-    // Attach event listeners for tag change
-    document.querySelectorAll('.lead-tag-select').forEach(sel => {
-      sel.addEventListener('change', async function() {
-        const leadId = this.dataset.leadId;
-        const newTag = this.value;
-        try {
-          const res = await fetch(API_BASE + '/api/crm-update-lead-tag', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: leadId, tag: newTag })
-          });
-          const data = await res.json();
-          if (data.success) {
-            showToast('✅ Tag updated to ' + newTag);
-            loadDashboardData();
-          } else {
-            showToast('❌ Error: ' + (data.error || 'Unknown'), true);
-          }
-        } catch (err) {
-          showToast('❌ Error: ' + err.message, true);
-        }
-      });
-    });
-
-    // Attach event listeners for convert button
-    document.querySelectorAll('.convert-lead-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const leadId = this.dataset.leadId;
-        const leadName = this.dataset.leadName;
-        const leadPhone = this.dataset.leadPhone;
-        convertLeadToProject(leadId, leadName, leadPhone);
-      });
-    });
-
-    applyLeadFilters();
-  }
+        if(body && body.error) throw new Error(body.error);
+        return body;
+      } catch(err){
+        clearTimeout(t);
+        if(err.name === "AbortError") throw new Error("The server took too long to respond. Please try again.");
+        throw new Error(err.message || "Network error — check your connection.");
+      }
+    },
+    get(path){ return this._fetch(path, { method: "GET" }); },
+    post(path, data){ return this._fetch(path, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(data||{}) }); }
+  };
 
   // ============================================================
-  // CONVERT LEAD TO PROJECT
+  // STATE
   // ============================================================
-  async function convertLeadToProject(leadId, leadName, leadPhone) {
-    if (!confirm(`Convert "${leadName}" to a project request?`)) return;
+  const State = {
+    projects: [], leads: [], clients: [], stats: null,
+    aiAgent: "general", aiHistory: {}, // per-agent history arrays
+    lastUpdated: null,
+    loading: {}
+  };
 
-    try {
-      const res = await fetch(API_BASE + '/api/sb-quick-action', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'add-project',
-          data: {
-            name: leadName,
-            phone: leadPhone || 'Manual entry',
-            business: leadName + '\'s Project',
-            service: 'Lead Conversion',
-            description: 'Converted from WhatsApp lead (ID: ' + leadId + ')',
-            budget: ''
-          }
-        })
-      });
-      const result = await res.json();
-      if (result.success) {
-        showToast('✅ Converted to project successfully!');
-        loadDashboardData();
+  // ============================================================
+  // AUTH
+  // ============================================================
+  const Auth = {
+    getPin(){ return localStorage.getItem(CONFIG.PIN_STORAGE_KEY) || CONFIG.DEFAULT_PIN; },
+    setPin(p){ localStorage.setItem(CONFIG.PIN_STORAGE_KEY, p); },
+    isLoggedIn(){ return sessionStorage.getItem(CONFIG.SESSION_KEY) === "true"; },
+    login(){
+      sessionStorage.setItem(CONFIG.SESSION_KEY, "true");
+      sessionStorage.setItem(CONFIG.SESSION_STARTED_KEY, new Date().toISOString());
+      this.resetTimer();
+    },
+    logout(){
+      sessionStorage.removeItem(CONFIG.SESSION_KEY);
+      location.reload();
+    },
+    _timer: null,
+    resetTimer(){
+      clearTimeout(this._timer);
+      const mins = parseInt(localStorage.getItem(CONFIG.TIMEOUT_KEY) || "30", 10);
+      this._timer = setTimeout(()=>{ Toast.show("Session timed out — please re-enter your PIN.", "warn"); Auth.logout(); }, mins * 60000);
+    }
+  };
+  ["click","keydown","mousemove","touchstart"].forEach(evt=> document.addEventListener(evt, ()=>{ if(Auth.isLoggedIn()) Auth.resetTimer(); }, {passive:true}));
+
+  // ---- PIN screen wiring ----
+  (function initLock(){
+    let entered = "";
+    const dots = ()=> document.querySelectorAll("#pinDots span");
+    const lockEl = document.getElementById("lockScreen");
+    const errEl = document.getElementById("lockError");
+    function render(){ dots().forEach((d,i)=> d.classList.toggle("filled", i < entered.length)); }
+    function tryUnlock(){
+      if(entered === Auth.getPin()){
+        errEl.textContent = "";
+        Auth.login();
+        lockEl.classList.add("hidden");
+        App.init();
       } else {
-        showToast('❌ Error: ' + (result.error || 'Unknown'), true);
-      }
-    } catch (err) {
-      showToast('❌ Error: ' + err.message, true);
-    }
-  }
-
-  // ============================================================
-  // APPLY LEAD FILTERS
-  // ============================================================
-  function applyLeadFilters() {
-    const statusVal = document.getElementById('leadStatusFilter')?.value || '';
-    const tagVal = document.getElementById('leadTagFilter')?.value || '';
-    document.querySelectorAll('#leadsTable tbody tr').forEach(row => {
-      const matchStatus = !statusVal || row.dataset.status === statusVal;
-      const matchTag = !tagVal || row.dataset.tag === tagVal;
-      row.classList.toggle('hidden-row', !(matchStatus && matchTag));
-    });
-  }
-
-  // ============================================================
-  // UPDATE NOTIFICATIONS
-  // ============================================================
-  function updateNotifications() {
-    const projects = cachedProjects;
-    const leads = cachedLeads;
-    const briefs = cachedBriefs;
-    const notifItems = document.querySelectorAll('.notif-item');
-
-    if (notifItems.length > 0) {
-      if (projects.length > 0) {
-        const latest = projects[0];
-        notifItems[0].querySelector('p').innerHTML = `<b>New project request</b> — ${latest.name || 'Unknown'}`;
-        notifItems[0].querySelector('span').textContent = new Date(latest.created_at).toLocaleDateString();
-      }
-      if (leads.length > 0) {
-        const latestLead = leads[0];
-        notifItems[1].querySelector('p').innerHTML = `<b>New WhatsApp lead</b> — ${latestLead.full_name || 'Unknown'}`;
-        notifItems[1].querySelector('span').textContent = new Date(latestLead.created_at).toLocaleDateString();
-      }
-      if (briefs.length > 0) {
-        const latestBrief = briefs[0];
-        notifItems[2].querySelector('p').innerHTML = `<b>New brief uploaded</b> — ${latestBrief.name || 'Unknown'}`;
-        notifItems[2].querySelector('span').textContent = new Date(latestBrief.created_at).toLocaleDateString();
-      }
-      const converted = projects.filter(p => p.status === 'converted');
-      if (converted.length > 0) {
-        const latestConverted = converted[0];
-        notifItems[3].querySelector('p').innerHTML = `<b>Client converted</b> — ${latestConverted.name || 'Unknown'}`;
-        notifItems[3].querySelector('span').textContent = new Date(latestConverted.created_at).toLocaleDateString();
+        errEl.textContent = "Incorrect PIN";
+        lockEl.classList.add("shake");
+        setTimeout(()=>{ lockEl.classList.remove("shake"); entered=""; render(); }, 400);
       }
     }
-  }
-
-  // ============================================================
-  // CHARTS
-  // ============================================================
-  let chartsInitialized = false;
-
-  function initCharts() {
-    const gridColor = "rgba(232,245,232,0.06)";
-    const textColor = "rgba(232,245,232,0.55)";
-    Chart.defaults.color = textColor;
-    Chart.defaults.font.family = "Poppins";
-
-    new Chart(document.getElementById("chartProjects"), {
-      type: "bar",
-      data: { labels: [], datasets: [{ data: [], backgroundColor: "#00c853", borderRadius: 5, maxBarThickness: 28 }] },
-      options: { plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: gridColor }, beginAtZero: true } } }
+    document.querySelectorAll("#keypad button[data-k]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        if(entered.length >= 4) return;
+        entered += btn.dataset.k;
+        render();
+        if(entered.length === 4) setTimeout(tryUnlock, 120);
+      });
     });
+    document.getElementById("clearBtn").addEventListener("click", ()=>{ entered=""; render(); errEl.textContent=""; });
+    document.getElementById("delBtn").addEventListener("click", ()=>{ entered = entered.slice(0,-1); render(); });
 
-    new Chart(document.getElementById("chartRevenue"), {
-      type: "line",
-      data: { labels: [], datasets: [{ data: [], borderColor: "#00e676", backgroundColor: "rgba(0,230,118,0.12)", fill: true, tension: 0.35, pointBackgroundColor: "#00e676" }] },
-      options: { plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: gridColor }, ticks: { callback: (v) => "₦" + (v / 1000) + "k" } } } }
-    });
-
-    new Chart(document.getElementById("chartSources"), {
-      type: "pie",
-      data: { labels: [], datasets: [{ data: [], backgroundColor: ["#25d366", "#00c853", "#ff9100", "#7ea8ff", "#5b6b8c"], borderColor: "#0a0f2c", borderWidth: 2 }] },
-      options: { plugins: { legend: { position: "bottom", labels: { boxWidth: 10, font: { size: 11 } } } } }
-    });
-
-    new Chart(document.getElementById("chartConversion"), {
-      type: "doughnut",
-      data: { labels: ["Converted", "Not yet converted"], datasets: [{ data: [0, 1], backgroundColor: ["#00e676", "rgba(232,245,232,0.08)"], borderColor: "#0a0f2c", borderWidth: 2 }] },
-      options: { cutout: "72%", plugins: { legend: { position: "bottom", labels: { boxWidth: 10, font: { size: 11 } } } } }
-    });
-
-    chartsInitialized = true;
-    updateCharts();
-  }
-
- // ============================================================
-// UPDATE CHARTS (UPDATED TO USE project_requests)
-// ============================================================
-function updateCharts() {
-  const projects = cachedProjects;
-  const leads = cachedLeads; // For backward compatibility, but we'll use projects for source
-
-  // Projects per month (already using projects ✅)
-  const monthMap = {};
-  projects.forEach(p => {
-    const d = new Date(p.created_at);
-    const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
-    monthMap[key] = (monthMap[key] || 0) + 1;
-  });
-  const months = Object.keys(monthMap).sort().slice(-6);
-  const projectCounts = months.map(m => monthMap[m] || 0);
-
-  const chartProjects = Chart.getChart('chartProjects');
-  if (chartProjects) {
-    chartProjects.data.labels = months.map(m => {
-      const [y, mo] = m.split('-');
-      return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][parseInt(mo) - 1] + ' ' + y.slice(2);
-    });
-    chartProjects.data.datasets[0].data = projectCounts.length ? projectCounts : [0];
-    chartProjects.update();
-  }
-
-  // Lead sources — now from project_requests
-  const sourceMap = {};
-  projects.forEach(p => {
-    const src = p.source || 'Other';
-    sourceMap[src] = (sourceMap[src] || 0) + 1;
-  });
-  const sourceLabels = Object.keys(sourceMap);
-  const sourceData = sourceLabels.map(s => sourceMap[s]);
-
-  const chartSources = Chart.getChart('chartSources');
-  if (chartSources && sourceLabels.length > 0) {
-    chartSources.data.labels = sourceLabels.map(s => {
-      const labelMap = {
-        'whatsapp_bot': '💬 WhatsApp Bot',
-        'brief_upload': '📎 Brief Upload',
-        'form': '📋 Website Form',
-        'dashboard': '⚡ Dashboard',
-        'referral': '🤝 Referral',
-        'instagram': '📸 Instagram',
-        'Other': '❓ Other'
-      };
-      return labelMap[s] || s;
-    });
-    chartSources.data.datasets[0].data = sourceData;
-    chartSources.update();
-  }
-
-  // Conversion rate — from projects
-  const converted = projects.filter(p => p.status === 'converted').length;
-  const total = projects.length || 1;
-  const chartConversion = Chart.getChart('chartConversion');
-  if (chartConversion) {
-    chartConversion.data.datasets[0].data = [converted, Math.max(total - converted, 0)];
-    chartConversion.update();
-  }
-}
+    if(Auth.isLoggedIn()){
+      lockEl.classList.add("hidden");
+      Auth.resetTimer();
+    }
+  })();
 
   // ============================================================
   // NAVIGATION
   // ============================================================
-  const navLinks = document.querySelectorAll("#sideNav a[data-view]");
-  const views = document.querySelectorAll(".view");
-
-  navLinks.forEach(link => {
-    link.addEventListener("click", (e) => {
-      e.preventDefault();
-      const target = link.dataset.view;
-      navLinks.forEach(l => l.classList.remove("active"));
-      link.classList.add("active");
-      views.forEach(v => v.hidden = (v.id !== "view-" + target));
-      if (target === "projects") applyProjectFilters();
-      if (target === "leads") applyLeadFilters();
-      if (target === "reports" && !chartsInitialized) {
-        initCharts();
-      }
-    });
-  });
-
-  // ============================================================
-  // EVENT LISTENERS
-  // ============================================================
-  document.addEventListener('DOMContentLoaded', function() {
-    // Notifications
-    const notifBtn = document.getElementById("notifBtn");
-    const notifPanel = document.getElementById("notifPanel");
-    if (notifBtn && notifPanel) {
-      notifBtn.addEventListener("click", (e) => { e.stopPropagation(); notifPanel.classList.toggle("open"); });
-      document.addEventListener("click", () => notifPanel.classList.remove("open"));
+  const Nav = {
+    current: "overview",
+    titles: {
+      overview: "Good day, Segun", projects: "Project requests", leads: "WhatsApp leads",
+      briefs: "Brief uploads", clients: "Clients", ai: "AI Assistant", reports: "Reports & analytics", settings: "Settings"
+    },
+    go(view){
+      this.current = view;
+      document.querySelectorAll(".side-nav button").forEach(b=> b.classList.toggle("active", b.dataset.view === view));
+      document.querySelectorAll(".view").forEach(v=> v.classList.toggle("active", v.id === "view-" + view));
+      document.getElementById("pageTitle").textContent = this.titles[view] || view;
+      document.getElementById("pageMeta").textContent = view === "overview" ? new Date().toLocaleDateString(undefined,{weekday:"long", year:"numeric", month:"long", day:"numeric"}) : "";
+      document.getElementById("sidebar").classList.remove("open");
+      document.getElementById("sidebarScrim").classList.remove("open");
+      if(view === "reports") Reports.render();
+      if(view === "ai") AIChat.renderLog();
     }
-
-    // Refresh
-    document.getElementById("refreshBtn").addEventListener("click", (e) => {
-      e.currentTarget.style.transform = "rotate(360deg)";
-      e.currentTarget.style.transition = "transform .5s";
-      loadDashboardData();
-      setTimeout(() => { e.currentTarget.style.transform = ""; }, 500);
-    });
-
-    // Overview Add Project
-    document.getElementById("overviewAddProject").addEventListener("click", () => {
-      document.getElementById("modalOverlay").classList.add("open");
-    });
-
-    // Overview Add Lead
-    document.getElementById("overviewAddLead").addEventListener("click", () => {
-      document.getElementById("addLeadModal").classList.add("open");
-    });
-
-    // ---- Add Lead Button (opens modal) ----
-const addLeadBtn = document.getElementById('addLeadBtn');
-if (addLeadBtn) {
-  addLeadBtn.addEventListener('click', function() {
-    document.getElementById('addLeadModal').classList.add('open');
+  };
+  document.getElementById("sideNav").addEventListener("click", (e)=>{
+    const btn = e.target.closest("button[data-view]");
+    if(btn) Nav.go(btn.dataset.view);
   });
-}
-
-// ---- Overview Add Lead ----
-const overviewAddLead = document.getElementById('overviewAddLead');
-if (overviewAddLead) {
-  overviewAddLead.addEventListener('click', function() {
-    document.getElementById('addLeadModal').classList.add('open');
+  document.getElementById("hamburgerBtn").addEventListener("click", ()=>{
+    document.getElementById("sidebar").classList.add("open");
+    document.getElementById("sidebarScrim").classList.add("open");
   });
-}
-
-// ---- Close modal buttons ----
-const closeLeadModal = document.getElementById('closeLeadModal');
-if (closeLeadModal) {
-  closeLeadModal.addEventListener('click', function() {
-    document.getElementById('addLeadModal').classList.remove('open');
+  document.getElementById("sidebarScrim").addEventListener("click", ()=>{
+    document.getElementById("sidebar").classList.remove("open");
+    document.getElementById("sidebarScrim").classList.remove("open");
   });
-}
+  document.getElementById("logoutBtn").addEventListener("click", ()=> Auth.logout());
 
-// ---- Click outside to close ----
-const addLeadModal = document.getElementById('addLeadModal');
-if (addLeadModal) {
-  addLeadModal.addEventListener('click', function(e) {
-    if (e.target === this) this.classList.remove('open');
+  // ============================================================
+  // NOTIFICATIONS PANEL (client-side derived, not a stored feed)
+  // ============================================================
+  const NotifPanel = {
+    render(items){
+      const panel = document.getElementById("notifPanel");
+      panel.innerHTML = "";
+      if(!items.length){ panel.innerHTML = '<div class="notif-empty">No notifications yet.</div>'; document.getElementById("notifDot").style.display="none"; return; }
+      document.getElementById("notifDot").style.display = "block";
+      items.slice(0,8).forEach(it=>{
+        const div = document.createElement("div"); div.className = "notif-item";
+        const b = document.createElement("b"); b.textContent = it.title;
+        const span = document.createElement("span"); span.style.display="block"; span.style.color="var(--text-faint)"; span.textContent = it.time;
+        const wrap = document.createElement("div"); wrap.appendChild(b); wrap.appendChild(span);
+        div.appendChild(wrap);
+        panel.appendChild(div);
+      });
+    }
+  };
+  document.getElementById("notifBtn").addEventListener("click", (e)=>{
+    e.stopPropagation();
+    document.getElementById("notifPanel").classList.toggle("open");
   });
-}
-
-// ---- Save Lead (calls addLead function) ----
-const saveLeadBtn = document.getElementById('saveLeadBtn');
-if (saveLeadBtn) {
-  saveLeadBtn.addEventListener('click', addLead);
-}
-// ---- Client Search & Filter ----
-const clientSearch = document.getElementById('clientSearch');
-if (clientSearch) {
-  clientSearch.addEventListener('input', applyClientFilters);
-}
-
-const clientServiceFilter = document.getElementById('clientServiceFilter');
-if (clientServiceFilter) {
-  clientServiceFilter.addEventListener('change', applyClientFilters);
-}
-
-// ---- Refresh Clients Button ----
-const refreshClientsBtn = document.getElementById('refreshClientsBtn');
-if (refreshClientsBtn) {
-  refreshClientsBtn.addEventListener('click', function() {
-    loadDashboardData();
-    showToast('🔄 Clients refreshed');
+  document.addEventListener("click", ()=> document.getElementById("notifPanel").classList.remove("open"));
+  document.getElementById("refreshBtn").addEventListener("click", (e)=>{
+    e.currentTarget.style.transition = "transform .5s"; e.currentTarget.style.transform = "rotate(360deg)";
+    setTimeout(()=> e.currentTarget.style.transform = "", 500);
+    App.loadAll(true);
   });
-}
-    
-    // Project Modal
-    const modalOverlay = document.getElementById("modalOverlay");
-    document.getElementById("addProjectBtn").addEventListener("click", () => modalOverlay.classList.add("open"));
-    document.getElementById("closeModal").addEventListener("click", () => modalOverlay.classList.remove("open"));
-    modalOverlay.addEventListener("click", (e) => { if (e.target === modalOverlay) modalOverlay.classList.remove("open"); });
 
-    // Save Project
-    document.getElementById("saveProjectBtn").addEventListener("click", async () => {
-      const name = document.getElementById("modalName").value.trim();
-      const business = document.getElementById("modalBiz").value.trim();
-      const service = document.getElementById("modalService").value;
-      const budget = document.getElementById("modalBudget").value.trim();
+  // ============================================================
+  // SKELETON / EMPTY HELPERS
+  // ============================================================
+  function skeletonRows(tbody, cols, rows){
+    tbody.innerHTML = "";
+    for(let i=0;i<(rows||5);i++){
+      const tr = document.createElement("tr"); tr.className = "skel-row";
+      for(let c=0;c<cols;c++){ const td = document.createElement("td"); const s = document.createElement("div"); s.className="skel skel-line"; td.appendChild(s); tr.appendChild(td); }
+      tbody.appendChild(tr);
+    }
+  }
+  function emptyRow(tbody, cols, title, sub){
+    tbody.innerHTML = "";
+    const tr = document.createElement("tr"); const td = document.createElement("td"); td.colSpan = cols;
+    td.innerHTML = ""; 
+    const wrap = document.createElement("div"); wrap.className = "empty-state";
+    const h4 = document.createElement("h4"); h4.textContent = title;
+    const p = document.createElement("p"); p.textContent = sub;
+    wrap.appendChild(h4); wrap.appendChild(p);
+    td.appendChild(wrap); tr.appendChild(td); tbody.appendChild(tr);
+  }
+  function errorRow(tbody, cols, message){
+    tbody.innerHTML = "";
+    const tr = document.createElement("tr"); const td = document.createElement("td"); td.colSpan = cols;
+    const wrap = document.createElement("div"); wrap.className = "empty-state";
+    const h4 = document.createElement("h4"); h4.textContent = "Couldn't load this data";
+    const p = document.createElement("p"); p.textContent = message;
+    wrap.appendChild(h4); wrap.appendChild(p); td.appendChild(wrap); tr.appendChild(td); tbody.appendChild(tr);
+  }
 
-      if (!name) {
-        showToast("Please enter a client name", true);
+  // ============================================================
+  // OVERVIEW
+  // ============================================================
+  const Overview = {
+    async load(){
+      const grid = document.getElementById("kpiGrid");
+      grid.innerHTML = "";
+      for(let i=0;i<6;i++){ const d = document.createElement("div"); d.className="kpi"; d.innerHTML='<div class="skel skel-line" style="width:50%;margin-bottom:10px;"></div><div class="skel skel-line" style="width:70%;height:22px;"></div>'; grid.appendChild(d); }
+
+      try {
+        const stats = await API.get("/api/sb-stats?days=30");
+        State.stats = stats;
+        this.renderKpis(stats);
+        this.renderGoal(stats);
+        this.renderFunnel(stats);
+      } catch(err){
+        grid.innerHTML = "";
+        const d = document.createElement("div"); d.className="kpi"; d.style.gridColumn = "span 4";
+        const wrap = document.createElement("div"); wrap.className="empty-state";
+        wrap.innerHTML = ""; const h4=document.createElement("h4"); h4.textContent="Couldn't load stats"; const p=document.createElement("p"); p.textContent=err.message;
+        wrap.appendChild(h4); wrap.appendChild(p); d.appendChild(wrap); grid.appendChild(d);
+        Toast.show("Failed to load overview stats: " + err.message, "error");
+      }
+
+      this.renderAttention();
+      this.renderActivity();
+    },
+    renderKpis(s){
+      const grid = document.getElementById("kpiGrid");
+      grid.innerHTML = "";
+      const items = [
+        { lbl: "Total projects", val: s.total_projects ?? 0 },
+        { lbl: "New leads (30d)", val: s.new_leads_period ?? s.new_leads_30d ?? 0 },
+        { lbl: "Briefs received", val: s.briefs_uploaded ?? 0 },
+        { lbl: "Converted clients", val: s.converted_clients ?? s.converted ?? 0 },
+        { lbl: "Pipeline value", val: Utils.naira(s.pipeline_value), feature:true },
+        { lbl: "Revenue (won)", val: Utils.naira(s.revenue ?? s.converted_value), feature:true },
+      ];
+      items.forEach(it=>{
+        const d = document.createElement("div"); d.className = "kpi" + (it.feature ? " feature" : "");
+        const l = document.createElement("div"); l.className="lbl"; l.textContent = it.lbl;
+        const v = document.createElement("div"); v.className="val"; v.textContent = it.val;
+        d.appendChild(l); d.appendChild(v); grid.appendChild(d);
+      });
+      const convRateCard = document.createElement("div"); convRateCard.className="kpi";
+      convRateCard.innerHTML = '<div class="lbl">Conversion rate</div>';
+      const v = document.createElement("div"); v.className="val"; v.textContent = (s.conversion_rate ?? 0) + "%";
+      convRateCard.appendChild(v);
+      grid.appendChild(convRateCard);
+    },
+    renderGoal(s){
+      const GOAL = 500000;
+      const current = s.revenue ?? s.converted_value ?? 0;
+      const pct = Math.min(100, Math.round((current / GOAL) * 100));
+      document.getElementById("goalFill").style.width = pct + "%";
+      document.getElementById("goalText").textContent = `${Utils.naira(current)} / ${Utils.naira(GOAL)} · ${pct}% (₦${Math.max(0, GOAL-current).toLocaleString()} remaining)`;
+    },
+    renderFunnel(s){
+      const stages = [
+        { key:"new", label:"New", count: s.new_count ?? 0 },
+        { key:"brief_received", label:"Brief received", count: s.brief_received_count ?? 0 },
+        { key:"quoted", label:"Quoted", count: s.quoted_count ?? 0 },
+        { key:"converted", label:"Converted", count: s.converted_count ?? 0 },
+        { key:"paid", label:"Paid", count: s.paid_count ?? 0 },
+      ];
+      const total = stages.reduce((a,b)=>a+b.count,0) || 1;
+      const wrap = document.getElementById("funnelWrap");
+      wrap.innerHTML = "";
+      stages.forEach(st=>{
+        const div = document.createElement("div"); div.className = "funnel-stage";
+        div.innerHTML = `<div class="funnel-bar"></div><div class="funnel-num">${st.count}</div><div class="funnel-lbl">${st.label}</div><div class="funnel-val">${Math.round(st.count/total*100)}%</div>`;
+        div.addEventListener("click", ()=>{ Nav.go("projects"); document.getElementById("projStatusFilter").value = st.key; Projects.applyFilters(); });
+        wrap.appendChild(div);
+      });
+    },
+    renderAttention(){
+      const list = document.getElementById("attentionList");
+      list.innerHTML = '<div class="skel skel-line" style="margin:10px 0;"></div>'.repeat(3);
+      const rows = State.projects.length ? State.projects : [];
+      if(!rows.length){ list.innerHTML = '<div class="empty-state"><p>Nothing needs attention right now.</p></div>'; return; }
+      const now = Date.now();
+      const items = [];
+      rows.filter(r=>r.status==="new").slice(0,3).forEach(r=> items.push({title:r.name, sub:`New lead — ${Utils.relTime(r.created_at)}`, cta:"Review", row:r}));
+      rows.filter(r=>r.status==="brief_received").slice(0,2).forEach(r=> items.push({title:r.name, sub:"Brief awaiting review", cta:"Review", row:r}));
+      rows.filter(r=>r.status==="quoted").slice(0,2).forEach(r=> items.push({title:r.name, sub:"Quote awaiting response", cta:"Follow up", row:r}));
+      rows.filter(r=> (r.status==="new"||r.status==="brief_received"||r.status==="quoted") && (r.budget||0) >= 500000).slice(0,2).forEach(r=> items.push({title:r.name, sub:`${Utils.naira(r.budget)} high-value prospect`, cta:"Review", row:r}));
+
+      list.innerHTML = "";
+      if(!items.length){ list.innerHTML = '<div class="empty-state"><p>Nothing needs attention right now.</p></div>'; return; }
+      items.slice(0,6).forEach(it=>{
+        const div = document.createElement("div"); div.className = "attn-item";
+        const info = document.createElement("div"); info.className="info";
+        const b = document.createElement("b"); b.textContent = it.title;
+        const span = document.createElement("span"); span.textContent = it.sub;
+        info.appendChild(b); info.appendChild(span);
+        const btn = document.createElement("button"); btn.className="attn-cta"; btn.textContent = it.cta;
+        btn.addEventListener("click", ()=> ProjectDetail.open(it.row));
+        div.appendChild(info); div.appendChild(btn);
+        list.appendChild(div);
+      });
+    },
+    renderActivity(){
+      const list = document.getElementById("activityList");
+      const rows = [...State.projects].sort((a,b)=> new Date(b.updated_at||b.created_at) - new Date(a.updated_at||a.created_at)).slice(0,8);
+      list.innerHTML = "";
+      if(!rows.length){ list.innerHTML = '<div class="empty-state"><p>No activity yet.</p></div>'; return; }
+      rows.forEach(r=>{
+        const div = document.createElement("div"); div.className="activity-item";
+        const icon = document.createElement("div"); icon.className="activity-icon"; icon.textContent = "•";
+        const info = document.createElement("div");
+        const line = document.createElement("div");
+        line.textContent = `${r.name}${r.business_name ? " ("+r.business_name+")" : ""} — ${CONFIG.STATUS_LABELS[r.status]||r.status}`;
+        const time = document.createElement("div"); time.className="activity-time"; time.textContent = Utils.relTime(r.updated_at||r.created_at);
+        info.appendChild(line); info.appendChild(time);
+        div.appendChild(icon); div.appendChild(info);
+        list.appendChild(div);
+      });
+    }
+  };
+  document.getElementById("qaAddProject").addEventListener("click", ()=> FormModal.open("project"));
+  document.getElementById("qaAddLead").addEventListener("click", ()=> FormModal.open("lead"));
+  document.getElementById("qaAskAI").addEventListener("click", ()=> Nav.go("ai"));
+  document.getElementById("qaUploadBrief").addEventListener("click", ()=>{
+    Toast.show("Brief uploads come in automatically via the WhatsApp bot. A secure direct-upload endpoint isn't in the current API yet — see the note in chat for what that would need on the backend.", "warn");
+  });
+
+  // ============================================================
+  // PROJECTS
+  // ============================================================
+  const Projects = {
+    filtered: [],
+    async load(){
+      const tbody = document.getElementById("projectsTbody");
+      skeletonRows(tbody, 9, 6);
+      try {
+        const data = await API.get("/api/sb-projects");
+        State.projects = Array.isArray(data) ? data : (data.data || []);
+        this.populateFilterOptions();
+        this.applyFilters();
+        this.renderMiniStats();
+      } catch(err){
+        errorRow(tbody, 9, err.message);
+        Toast.show("Failed to load projects: " + err.message, "error");
+      }
+    },
+    populateFilterOptions(){
+      const services = [...new Set(State.projects.map(p=>p.service_type).filter(Boolean))];
+      const sources = [...new Set(State.projects.map(p=>p.source).filter(Boolean))];
+      const svcSel = document.getElementById("projServiceFilter");
+      const srcSel = document.getElementById("projSourceFilter");
+      svcSel.querySelectorAll("option:not(:first-child)").forEach(o=>o.remove());
+      srcSel.querySelectorAll("option:not(:first-child)").forEach(o=>o.remove());
+      services.forEach(s=>{ const o = document.createElement("option"); o.value=s; o.textContent=s; svcSel.appendChild(o); });
+      sources.forEach(s=>{ const o = document.createElement("option"); o.value=s; o.textContent=s; srcSel.appendChild(o); });
+    },
+    renderMiniStats(){
+      const counts = { new:0, brief_received:0, quoted:0, converted:0, paid:0 };
+      State.projects.forEach(p=>{ if(counts[p.status] !== undefined) counts[p.status]++; });
+      const wrap = document.getElementById("projectMiniStats"); wrap.innerHTML="";
+      Object.entries(counts).forEach(([k,v])=>{
+        const d = document.createElement("div"); d.className="mini-stat";
+        d.innerHTML = `<b>${v}</b>${CONFIG.STATUS_LABELS[k]}`;
+        wrap.appendChild(d);
+      });
+    },
+    applyFilters(){
+      const q = document.getElementById("projSearch").value.toLowerCase().trim();
+      const status = document.getElementById("projStatusFilter").value;
+      const service = document.getElementById("projServiceFilter").value;
+      const source = document.getElementById("projSourceFilter").value;
+      const sort = document.getElementById("projSort").value;
+
+      let rows = State.projects.filter(p=>{
+        if(status && p.status !== status) return false;
+        if(service && p.service_type !== service) return false;
+        if(source && p.source !== source) return false;
+        if(q){
+          const hay = [p.name,p.business_name,p.phone,p.email].filter(Boolean).join(" ").toLowerCase();
+          if(!hay.includes(q)) return false;
+        }
+        return true;
+      });
+
+      rows.sort((a,b)=>{
+        if(sort === "newest") return new Date(b.created_at) - new Date(a.created_at);
+        if(sort === "oldest") return new Date(a.created_at) - new Date(b.created_at);
+        if(sort === "budget_high") return (b.budget||0) - (a.budget||0);
+        if(sort === "budget_low") return (a.budget||0) - (b.budget||0);
+        if(sort === "updated") return new Date(b.updated_at||b.created_at) - new Date(a.updated_at||a.created_at);
+        return 0;
+      });
+
+      this.filtered = rows;
+      this.render(rows);
+    },
+    render(rows){
+      const tbody = document.getElementById("projectsTbody");
+      tbody.innerHTML = "";
+      if(!rows.length){ emptyRow(tbody, 9, "No project requests yet", "New project requests from your WhatsApp bot and website form will appear here."); return; }
+      rows.forEach(p=>{
+        const tr = document.createElement("tr");
+        tr.appendChild(Utils.td(p.name, "cell-main"));
+        tr.appendChild(Utils.td(p.business_name));
+        tr.appendChild(Utils.td(p.service_type));
+        tr.appendChild(Utils.td(p.budget ? Utils.naira(p.budget) : "—"));
+        const statusTd = document.createElement("td"); statusTd.appendChild(Utils.statusBadge(p.status)); tr.appendChild(statusTd);
+        tr.appendChild(Utils.td(p.source));
+        tr.appendChild(Utils.td(Utils.dateStr(p.created_at)));
+        const briefTd = document.createElement("td");
+        if(p.brief_file_url){ const a = document.createElement("span"); a.className="link-btn"; a.textContent="View"; a.addEventListener("click",(e)=>{ e.stopPropagation(); window.open(p.brief_file_url,"_blank"); }); briefTd.appendChild(a); }
+        else briefTd.textContent = "—";
+        tr.appendChild(briefTd);
+        const actionsTd = document.createElement("td");
+        const waBtn = document.createElement("button"); waBtn.className="btn btn-outline btn-sm"; waBtn.textContent="WhatsApp";
+        waBtn.addEventListener("click",(e)=>{ e.stopPropagation(); window.open(`https://wa.me/${Utils.formatPhone(p.phone)}`, "_blank"); });
+        actionsTd.appendChild(waBtn);
+        tr.appendChild(actionsTd);
+        tr.addEventListener("click", ()=> ProjectDetail.open(p));
+        tbody.appendChild(tr);
+      });
+    },
+    exportCsv(){
+      const rows = this.filtered.length ? this.filtered : State.projects;
+      if(!rows.length){ Toast.show("Nothing to export.", "warn"); return; }
+      const headers = ["Name","Business","Service","Budget","Status","Source","Date","Phone","Email"];
+      const lines = [headers.join(",")];
+      rows.forEach(p=>{
+        const line = [p.name,p.business_name,p.service_type,p.budget,p.status,p.source,p.created_at,p.phone,p.email]
+          .map(v=> '"' + String(v==null?"":v).replace(/"/g,'""') + '"').join(",");
+        lines.push(line);
+      });
+      const blob = new Blob([lines.join("\n")], {type:"text/csv"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a"); a.href=url; a.download="smartbot-project-requests.csv"; a.click();
+      URL.revokeObjectURL(url);
+      Toast.show("CSV exported.", "success");
+    }
+  };
+  document.getElementById("projSearch").addEventListener("input", Utils.debounce(()=>Projects.applyFilters(), 200));
+  ["projStatusFilter","projServiceFilter","projSourceFilter","projSort"].forEach(id=> document.getElementById(id).addEventListener("change", ()=>Projects.applyFilters()));
+  document.getElementById("projExportCsv").addEventListener("click", ()=> Projects.exportCsv());
+  document.getElementById("projAddBtn").addEventListener("click", ()=> FormModal.open("project"));
+
+  // ============================================================
+  // LEADS (WhatsApp)
+  // ============================================================
+  const Leads = {
+    all: [],
+    async load(){
+      const tbody = document.getElementById("leadsTbody");
+      skeletonRows(tbody, 8, 5);
+      try {
+        const data = await API.get("/api/sb-whatsapp-leads");
+        this.all = Array.isArray(data) ? data : (data.data || []);
+        this.applyFilters();
+      } catch(err){
+        errorRow(tbody, 8, err.message);
+        Toast.show("Failed to load WhatsApp leads: " + err.message, "error");
+      }
+    },
+    applyFilters(){
+      const q = document.getElementById("leadSearch").value.toLowerCase().trim();
+      const status = document.getElementById("leadStatusFilter").value;
+      let rows = this.all.filter(l=>{
+        if(status && l.status !== status) return false;
+        if(q){ const hay=[l.name,l.business_name,l.phone].filter(Boolean).join(" ").toLowerCase(); if(!hay.includes(q)) return false; }
+        return true;
+      });
+      this.render(rows);
+    },
+    render(rows){
+      const tbody = document.getElementById("leadsTbody");
+      tbody.innerHTML = "";
+      if(!rows.length){ emptyRow(tbody, 8, "No WhatsApp leads yet", "Leads collected by your WhatsApp bot or brief uploads will appear here."); return; }
+      rows.forEach(l=>{
+        const tr = document.createElement("tr");
+        tr.appendChild(Utils.td(l.name, "cell-main"));
+        tr.appendChild(Utils.td(l.phone));
+        tr.appendChild(Utils.td(l.business_name));
+        tr.appendChild(Utils.td(l.service_type));
+        tr.appendChild(Utils.td(l.budget ? Utils.naira(l.budget) : "—"));
+        const statusTd = document.createElement("td"); statusTd.appendChild(Utils.statusBadge(l.status)); tr.appendChild(statusTd);
+        tr.appendChild(Utils.td(Utils.dateStr(l.created_at)));
+        const actionsTd = document.createElement("td");
+        const waBtn = document.createElement("button"); waBtn.className="btn btn-outline btn-sm"; waBtn.textContent="WhatsApp";
+        waBtn.addEventListener("click",(e)=>{ e.stopPropagation(); window.open(`https://wa.me/${Utils.formatPhone(l.phone)}`,"_blank"); });
+        actionsTd.appendChild(waBtn);
+        tr.appendChild(actionsTd);
+        tr.addEventListener("click", ()=> ProjectDetail.open(l));
+        tbody.appendChild(tr);
+      });
+    }
+  };
+  document.getElementById("leadSearch").addEventListener("input", Utils.debounce(()=>Leads.applyFilters(),200));
+  document.getElementById("leadStatusFilter").addEventListener("change", ()=>Leads.applyFilters());
+
+  // ============================================================
+  // BRIEFS
+  // ============================================================
+  const Briefs = {
+    async load(){
+      const grid = document.getElementById("briefsGrid");
+      grid.innerHTML = '<div class="skel" style="height:120px; grid-column:span 4;"></div>';
+      try {
+        const data = await API.get("/api/sb-briefs");
+        const rows = Array.isArray(data) ? data : (data.data || []);
+        this.render(rows);
+      } catch(err){
+        grid.innerHTML = "";
+        const wrap = document.createElement("div"); wrap.className="empty-state"; wrap.style.gridColumn="1/-1";
+        wrap.innerHTML = `<h4>Couldn't load briefs</h4><p>${Utils.escapeHtml(err.message)}</p>`;
+        grid.appendChild(wrap);
+        Toast.show("Failed to load briefs: " + err.message, "error");
+      }
+    },
+    render(rows){
+      const grid = document.getElementById("briefsGrid");
+      grid.innerHTML = "";
+      if(!rows.length){
+        grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><h4>No briefs yet</h4><p>Project briefs uploaded through the WhatsApp bot will appear here.</p></div>';
         return;
       }
-
-      try {
-        const res = await fetch(API_BASE + '/api/sb-quick-action', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'add-project',
-            data: { name, phone: 'Manual entry', business, service, description: 'Added from dashboard', budget }
-          })
+      rows.forEach(b=>{
+        const card = document.createElement("div"); card.className="brief-card";
+        const fname = document.createElement("div"); fname.className="fname"; fname.textContent = b.brief_file_name || "brief file";
+        const meta = document.createElement("div"); meta.className="fmeta";
+        meta.innerHTML = "";
+        [["Client", b.name],["Business", b.business_name],["Phone", b.phone],["Uploaded", Utils.dateStr(b.created_at)]].forEach(([k,v])=>{
+          const d = document.createElement("div"); d.textContent = `${k}: ${v || "—"}`; meta.appendChild(d);
         });
-        const result = await res.json();
-        if (result.success) {
-          showToast("✅ Project added successfully!");
-          modalOverlay.classList.remove("open");
-          document.getElementById("modalName").value = "";
-          document.getElementById("modalBiz").value = "";
-          document.getElementById("modalBudget").value = "";
-          loadDashboardData();
-        } else {
-          showToast("❌ Error: " + (result.error || "Unknown"), true);
-        }
-      } catch (err) {
-        showToast("❌ Error: " + err.message, true);
-      }
-    });
-
-      // ---- Brief Search & Filter ----
-const briefSearch = document.getElementById('briefSearch');
-if (briefSearch) {
-  briefSearch.addEventListener('input', applyBriefFilters);
-}
-
-const briefStatusFilter = document.getElementById('briefStatusFilter');
-if (briefStatusFilter) {
-  briefStatusFilter.addEventListener('change', applyBriefFilters);
-}
-
-// ---- Refresh Briefs Button ----
-const refreshBriefsBtn = document.getElementById('refreshBriefsBtn');
-if (refreshBriefsBtn) {
-  refreshBriefsBtn.addEventListener('click', function() {
-    loadDashboardData();
-    showToast('🔄 Briefs refreshed');
-  });
-}
-
-    // Convert to Project (bulk from toolbar)
-    document.getElementById("convertBtn").addEventListener("click", () => {
-      showToast("Select a lead and click 'Convert' on the row, or use the 'Convert to project' button on each lead.");
-    });
-
-    // Export CSV
-    document.getElementById("exportCsv").addEventListener("click", async () => {
-      try {
-        const res = await fetch(API_BASE + '/api/sb-projects');
-        const data = await res.json();
-        if (!data || data.length === 0) {
-          showToast("No data to export", true);
-          return;
-        }
-        const headers = ['Name', 'Business', 'Service', 'Budget', 'Status', 'Source', 'Date'];
-        const rows = data.map(p => [
-          p.name || '',
-          p.business_name || '',
-          p.service_type || p.service || '',
-          p.budget ? '₦' + Number(p.budget).toLocaleString() : '',
-          p.status || '',
-          p.source || '',
-          new Date(p.created_at).toLocaleDateString()
-        ]);
-        const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = 'projects_export_' + new Date().toISOString().slice(0, 10) + '.csv';
-        link.click();
-        showToast("✅ CSV exported!");
-      } catch (err) {
-        showToast("❌ Export error: " + err.message, true);
-      }
-    });
-
-    // Filters
-    document.getElementById("statusFilter").addEventListener("change", applyProjectFilters);
-    document.getElementById("serviceFilter").addEventListener("change", applyProjectFilters);
-    document.getElementById("sourceFilter").addEventListener("change", applyProjectFilters);
-    document.getElementById("leadStatusFilter").addEventListener("change", applyLeadFilters);
-    document.getElementById("leadTagFilter").addEventListener("change", applyLeadFilters);
-
-    // Global Search
-    document.getElementById("globalSearch").addEventListener("input", (e) => {
-      const q = e.target.value.toLowerCase().trim();
-      document.querySelectorAll("#projectsTable tbody tr, #leadsTable tbody tr").forEach(row => {
-        const hay = row.dataset.name || "";
-        row.classList.toggle("hidden-row", q && !hay.includes(q));
+        const actions = document.createElement("div"); actions.className="brief-actions";
+        const viewBtn = document.createElement("button"); viewBtn.textContent="View";
+        viewBtn.addEventListener("click", ()=> b.brief_file_url ? window.open(b.brief_file_url,"_blank") : Toast.show("No file URL on this record.","warn"));
+        const dlBtn = document.createElement("button"); dlBtn.textContent="Download";
+        dlBtn.addEventListener("click", ()=> b.brief_file_url ? window.open(b.brief_file_url,"_blank") : Toast.show("No file URL on this record.","warn"));
+        actions.appendChild(viewBtn); actions.appendChild(dlBtn);
+        card.appendChild(fname); card.appendChild(meta); card.appendChild(actions);
+        grid.appendChild(card);
       });
-    });
+    }
+  };
 
-    // Save PIN (placeholder)
-    document.getElementById("savePinBtn").addEventListener("click", () => {
-      const inputs = document.querySelectorAll('.pin-inputs input');
-      const pin = Array.from(inputs).map(i => i.value).join('');
-      if (pin.length === 4 && /^\d{4}$/.test(pin)) {
-        showToast("✅ PIN updated successfully!");
-      } else {
-        showToast("❌ Please enter a valid 4-digit PIN", true);
+  // ============================================================
+  // CLIENTS
+  // ============================================================
+  const Clients = {
+    async load(){
+      const tbody = document.getElementById("clientsTbody");
+      skeletonRows(tbody, 6, 4);
+      try {
+        const data = await API.get("/api/sb-clients");
+        const rows = Array.isArray(data) ? data : (data.data || []);
+        State.clients = rows;
+        this.renderStats(rows);
+        this.render(rows);
+      } catch(err){
+        errorRow(tbody, 6, err.message);
+        Toast.show("Failed to load clients: " + err.message, "error");
       }
-    });
-  });
+    },
+    renderStats(rows){
+      const total = rows.reduce((s,c)=> s + (c.budget||0), 0);
+      const avg = rows.length ? Math.round(total/rows.length) : 0;
+      const wrap = document.getElementById("clientMiniStats"); wrap.innerHTML = "";
+      [["Active clients", rows.length], ["Total revenue", Utils.naira(total)], ["Avg. project value", Utils.naira(avg)]].forEach(([l,v])=>{
+        const d = document.createElement("div"); d.className="mini-stat"; d.innerHTML = `<b>${v}</b>${l}`; wrap.appendChild(d);
+      });
+    },
+    render(rows){
+      const tbody = document.getElementById("clientsTbody");
+      tbody.innerHTML = "";
+      if(!rows.length){ emptyRow(tbody, 6, "No clients yet", "Projects marked converted or paid will show up here."); return; }
+      rows.forEach(c=>{
+        const tr = document.createElement("tr");
+        tr.appendChild(Utils.td(c.business_name, "cell-main"));
+        tr.appendChild(Utils.td(c.name));
+        tr.appendChild(Utils.td(c.service_type));
+        tr.appendChild(Utils.td(Utils.naira(c.budget)));
+        const statusTd = document.createElement("td"); statusTd.appendChild(Utils.statusBadge(c.status)); tr.appendChild(statusTd);
+        tr.appendChild(Utils.td(Utils.dateStr(c.updated_at || c.created_at)));
+        tr.addEventListener("click", ()=> ProjectDetail.open(c));
+        tbody.appendChild(tr);
+      });
+    }
+  };
 
   // ============================================================
-  // INIT — load data after PIN unlock
+  // PROJECT DETAIL DRAWER
   // ============================================================
+  const ProjectDetail = {
+    open(p){
+      const modal = document.getElementById("detailModal");
+      modal.innerHTML = "";
+      const h3 = document.createElement("h3"); h3.textContent = p.name || "Project detail";
+      modal.appendChild(h3);
+
+      const dl = document.createElement("dl"); dl.className = "drawer-grid";
+      const rows = [
+        ["Phone", p.phone], ["Email", p.email], ["Business", p.business_name],
+        ["Service", p.service_type], ["Budget", p.budget ? Utils.naira(p.budget) : "—"],
+        ["Timeline", p.timeline], ["Target users", p.target_users], ["Source", p.source],
+        ["Heard about us via", p.hear_about], ["Created", Utils.dateStr(p.created_at)], ["Updated", Utils.dateStr(p.updated_at)]
+      ];
+      rows.forEach(([k,v])=>{
+        const dt = document.createElement("dt"); dt.textContent = k;
+        const dd = document.createElement("dd"); dd.textContent = v || "—";
+        dl.appendChild(dt); dl.appendChild(dd);
+      });
+      modal.appendChild(dl);
+
+      if(p.description){
+        const dt = document.createElement("div"); dt.style.cssText="font-size:0.72rem;color:var(--text-faint);margin-top:14px;"; dt.textContent="Description";
+        const dd = document.createElement("div"); dd.style.cssText="font-size:0.85rem;margin-top:4px;"; dd.textContent = p.description;
+        modal.appendChild(dt); modal.appendChild(dd);
+      }
+
+      const statusRow = document.createElement("div"); statusRow.style.cssText = "margin-top:18px;";
+      const lbl = document.createElement("label"); lbl.textContent = "Change status"; lbl.style.cssText="display:block;font-size:0.78rem;color:var(--text-dim);margin-bottom:6px;";
+      const sel = document.createElement("select"); sel.style.cssText="width:100%;background:rgba(232,245,232,0.04);border:1px solid var(--border-strong);border-radius:8px;padding:9px 12px;color:var(--text);";
+      CONFIG.STATUS_ORDER.forEach(s=>{ const o = document.createElement("option"); o.value=s; o.textContent=CONFIG.STATUS_LABELS[s]; if(s===p.status) o.selected=true; sel.appendChild(o); });
+      statusRow.appendChild(lbl); statusRow.appendChild(sel);
+      modal.appendChild(statusRow);
+
+      const actions = document.createElement("div"); actions.className="modal-actions";
+      const closeBtn = document.createElement("button"); closeBtn.className="btn btn-outline"; closeBtn.textContent="Close";
+      closeBtn.addEventListener("click", ()=> this.close());
+      const waBtn = document.createElement("button"); waBtn.className="btn btn-outline"; waBtn.textContent="Open WhatsApp";
+      waBtn.addEventListener("click", ()=> window.open(`https://wa.me/${Utils.formatPhone(p.phone)}`,"_blank"));
+      const saveBtn = document.createElement("button"); saveBtn.className="btn btn-green"; saveBtn.textContent="Update status";
+      saveBtn.addEventListener("click", async ()=>{
+        const newStatus = sel.value;
+        if(newStatus === p.status){ this.close(); return; }
+        const confirmed = confirm(`Change status from "${CONFIG.STATUS_LABELS[p.status]||p.status}" to "${CONFIG.STATUS_LABELS[newStatus]}"?`);
+        if(!confirmed) return;
+        saveBtn.disabled = true; saveBtn.textContent = "Saving…";
+        try {
+          await API.post("/api/sb-update-lead-status", { id: p.id, status: newStatus });
+          Toast.show("Status updated.", "success");
+          this.close();
+          App.loadAll(true);
+        } catch(err){
+          Toast.show("Couldn't update status: " + err.message, "error");
+          saveBtn.disabled = false; saveBtn.textContent = "Update status";
+        }
+      });
+      actions.appendChild(closeBtn); actions.appendChild(waBtn); actions.appendChild(saveBtn);
+      modal.appendChild(actions);
+
+      document.getElementById("detailOverlay").classList.add("open");
+    },
+    close(){ document.getElementById("detailOverlay").classList.remove("open"); }
+  };
+  document.getElementById("detailOverlay").addEventListener("click", (e)=>{ if(e.target.id==="detailOverlay") ProjectDetail.close(); });
+
+  // ============================================================
+  // ADD PROJECT / LEAD FORM MODAL
+  // ============================================================
+  const FormModal = {
+    mode: "project",
+    open(mode){
+      this.mode = mode;
+      document.getElementById("formModalTitle").textContent = mode === "project" ? "Add project request" : "Add lead";
+      ["fName","fPhone","fBusiness","fBudget"].forEach(id=> document.getElementById(id).value = "");
+      document.getElementById("fService").selectedIndex = 0;
+      ["errName","errPhone","errBudget"].forEach(id=> document.getElementById(id).classList.remove("show"));
+      document.getElementById("formOverlay").classList.add("open");
+    },
+    close(){ document.getElementById("formOverlay").classList.remove("open"); },
+    validate(){
+      let ok = true;
+      const name = document.getElementById("fName").value.trim();
+      const phone = document.getElementById("fPhone").value.trim();
+      const budget = document.getElementById("fBudget").value.trim();
+      if(!name){ document.getElementById("errName").classList.add("show"); ok = false; } else document.getElementById("errName").classList.remove("show");
+      if(!phone || phone.replace(/\D/g,"").length < 7){ document.getElementById("errPhone").classList.add("show"); ok = false; } else document.getElementById("errPhone").classList.remove("show");
+      if(budget && isNaN(Number(budget))){ document.getElementById("errBudget").classList.add("show"); ok = false; } else document.getElementById("errBudget").classList.remove("show");
+      return ok;
+    },
+    async save(){
+      if(!this.validate()) return;
+      const payload = {
+        name: document.getElementById("fName").value.trim(),
+        phone: document.getElementById("fPhone").value.trim(),
+        business: document.getElementById("fBusiness").value.trim(),
+        budget: document.getElementById("fBudget").value.trim() || null
+      };
+      const btn = document.getElementById("formSaveBtn");
+      btn.disabled = true; btn.textContent = "Saving…";
+      try {
+        if(this.mode === "project"){
+          payload.service = document.getElementById("fService").value;
+          await API.post("/api/sb-quick-action", { action:"add-project", data: payload });
+        } else {
+          await API.post("/api/sb-quick-action", { action:"add-lead", data: payload });
+        }
+        Toast.show(this.mode === "project" ? "Project added." : "Lead added.", "success");
+        this.close();
+        App.loadAll(true);
+      } catch(err){
+        Toast.show("Couldn't save: " + err.message, "error");
+      } finally {
+        btn.disabled = false; btn.textContent = "Save";
+      }
+    }
+  };
+  document.getElementById("formCancelBtn").addEventListener("click", ()=> FormModal.close());
+  document.getElementById("formSaveBtn").addEventListener("click", ()=> FormModal.save());
+  document.getElementById("formOverlay").addEventListener("click",(e)=>{ if(e.target.id==="formOverlay") FormModal.close(); });
+
+  // ============================================================
+  // AI ASSISTANT
+  // ============================================================
+  const AIChat = {
+    agentEndpoints: { general: "/api/ai-assistant", sales: "/api/agent-sales", onboarding: "/api/agent-onboarding", support: "/api/agent-support" },
+    prompts: {
+      general: ["Summarize today's leads", "What's our pipeline value?", "Who needs follow-up?", "Show high-value prospects"],
+      sales: ["Draft a WhatsApp follow-up for a ₦500k CRM lead", "Explain our pricing", "What's included in a custom automation project?"],
+      onboarding: ["Guide me through WABA setup", "What do I need from a new client?", "Client says Phone Number ID isn't showing"],
+      support: ["Bot isn't responding", "Client asking about data privacy", "How do I escalate to Segun?"]
+    },
+    pendingAction: null,
+    switchAgent(agent){
+      State.aiAgent = agent;
+      document.querySelectorAll(".agent-btn").forEach(b=> b.classList.toggle("active", b.dataset.agent===agent));
+      this.renderLog();
+      this.renderPrompts();
+    },
+    renderPrompts(){
+      const wrap = document.getElementById("suggestedPrompts"); wrap.innerHTML = "";
+      (this.prompts[State.aiAgent]||[]).forEach(p=>{
+        const b = document.createElement("button"); b.textContent = p;
+        b.addEventListener("click", ()=> this.send(p));
+        wrap.appendChild(b);
+      });
+    },
+    renderLog(){
+      const log = document.getElementById("chatLog");
+      log.innerHTML = "";
+      const hist = State.aiHistory[State.aiAgent] || [];
+      if(!hist.length){
+        const div = document.createElement("div"); div.className="empty-state";
+        div.innerHTML = "<p>Ask a question to get started — try one of the suggestions below.</p>";
+        log.appendChild(div);
+      } else {
+        hist.forEach(m=> this.appendMsg(m.role, m.text, false));
+      }
+      this.renderPrompts();
+      log.scrollTop = log.scrollHeight;
+    },
+    appendMsg(role, text, push){
+      if(push !== false){ if(!State.aiHistory[State.aiAgent]) State.aiHistory[State.aiAgent]=[]; State.aiHistory[State.aiAgent].push({role, text}); }
+      const log = document.getElementById("chatLog");
+      const emptyState = log.querySelector(".empty-state"); if(emptyState) emptyState.remove();
+      const div = document.createElement("div"); div.className = "msg " + role; div.textContent = text; // textContent only — never render AI/user text as HTML
+      log.appendChild(div);
+      log.scrollTop = log.scrollHeight;
+      return div;
+    },
+    showTyping(){
+      const log = document.getElementById("chatLog");
+      const div = document.createElement("div"); div.className="msg typing"; div.textContent="Thinking…"; div.id="typingIndicator";
+      log.appendChild(div); log.scrollTop = log.scrollHeight;
+    },
+    hideTyping(){ const t = document.getElementById("typingIndicator"); if(t) t.remove(); },
+    showActionCard(action){
+      const log = document.getElementById("chatLog");
+      const card = document.createElement("div"); card.className = "action-card";
+      const p = document.createElement("div"); p.textContent = action.confirm_message || `Proposed action: ${action.name}`;
+      const row = document.createElement("div"); row.className = "aq";
+      const yesBtn = document.createElement("button"); yesBtn.className="btn btn-green btn-sm"; yesBtn.textContent="Confirm";
+      const noBtn = document.createElement("button"); noBtn.className="btn btn-outline btn-sm"; noBtn.textContent="Dismiss";
+      yesBtn.addEventListener("click", async ()=>{
+        yesBtn.disabled = true; yesBtn.textContent = "Applying…";
+        try {
+          await API.post(action.endpoint, action.body);
+          Toast.show("Action applied.", "success");
+          card.remove();
+          App.loadAll(true);
+        } catch(err){ Toast.show("Couldn't apply action: " + err.message, "error"); yesBtn.disabled=false; yesBtn.textContent="Confirm"; }
+      });
+      noBtn.addEventListener("click", ()=> card.remove());
+      row.appendChild(yesBtn); row.appendChild(noBtn);
+      card.appendChild(p); card.appendChild(row);
+      log.appendChild(card); log.scrollTop = log.scrollHeight;
+    },
+    async send(overrideText){
+      const input = document.getElementById("chatInput");
+      const text = (overrideText !== undefined ? overrideText : input.value).trim();
+      if(!text) return;
+      input.value = "";
+      this.appendMsg("user", text);
+      this.showTyping();
+      document.getElementById("chatSendBtn").disabled = true;
+      try {
+        const endpoint = this.agentEndpoints[State.aiAgent];
+        const history = (State.aiHistory[State.aiAgent]||[]).slice(-10).map(m=>m.text);
+        const body = State.aiAgent === "general" ? { message: text, history, category: "dashboard" } : { message: text, history };
+        const res = await API.post(endpoint, body);
+        this.hideTyping();
+        this.appendMsg("ai", res.response || "No response.");
+        if(res.proposed_action && !res.proposed_action.error){ this.showActionCard(res.proposed_action); }
+      } catch(err){
+        this.hideTyping();
+        this.appendMsg("ai", "⚠ " + err.message);
+        Toast.show("AI request failed: " + err.message, "error");
+      } finally {
+        document.getElementById("chatSendBtn").disabled = false;
+      }
+    },
+    clear(){ State.aiHistory[State.aiAgent] = []; this.renderLog(); }
+  };
+  document.getElementById("agentList").addEventListener("click",(e)=>{
+    const btn = e.target.closest(".agent-btn"); if(btn) AIChat.switchAgent(btn.dataset.agent);
+  });
+  document.getElementById("chatSendBtn").addEventListener("click", ()=> AIChat.send());
+  document.getElementById("chatInput").addEventListener("keydown",(e)=>{ if(e.key==="Enter") AIChat.send(); });
+  document.getElementById("clearChatBtn").addEventListener("click", ()=> AIChat.clear());
+
+  // ============================================================
+  // REPORTS
+  // ============================================================
+  const Reports = {
+    charts: {},
+    rangeRows(){
+      const val = document.getElementById("reportRange").value;
+      const rows = State.projects;
+      const now = new Date();
+      if(val === "all") return rows;
+      if(val === "thismonth") return rows.filter(r=>{ const d=new Date(r.created_at); return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear(); });
+      if(val === "lastmonth"){ const lm = new Date(now.getFullYear(), now.getMonth()-1, 1); return rows.filter(r=>{ const d=new Date(r.created_at); return d.getMonth()===lm.getMonth() && d.getFullYear()===lm.getFullYear(); }); }
+      const days = parseInt(val,10);
+      const cutoff = Date.now() - days*24*3600000;
+      return rows.filter(r=> new Date(r.created_at).getTime() >= cutoff);
+    },
+    render(){
+      const rows = this.rangeRows();
+      this.renderProjectsChart(rows);
+      this.renderRevenueChart(rows);
+      this.renderSourcesChart(rows);
+      this.renderFunnelChart(rows);
+      this.renderInsights(rows);
+    },
+    monthBuckets(rows, valueFn){
+      const buckets = {};
+      rows.forEach(r=>{ const d=new Date(r.created_at); const key = d.toLocaleString(undefined,{month:"short",year:"2-digit"}); buckets[key] = (buckets[key]||0) + (valueFn ? valueFn(r) : 1); });
+      return buckets;
+    },
+    destroy(key){ if(this.charts[key]){ this.charts[key].destroy(); delete this.charts[key]; } },
+    renderProjectsChart(rows){
+      this.destroy("projects");
+      const buckets = this.monthBuckets(rows);
+      const labels = Object.keys(buckets);
+      this.charts.projects = new Chart(document.getElementById("chartProjects"), {
+        type:"bar", data:{ labels, datasets:[{ data:Object.values(buckets), backgroundColor:"#00c853", borderRadius:5, maxBarThickness:28 }] },
+        options:{ plugins:{legend:{display:false}}, scales:{ x:{grid:{display:false}, ticks:{color:"rgba(232,245,232,0.55)"}}, y:{grid:{color:"rgba(232,245,232,0.06)"}, ticks:{color:"rgba(232,245,232,0.55)"}} } }
+      });
+    },
+    renderRevenueChart(rows){
+      this.destroy("revenue");
+      const won = rows.filter(r=> r.status==="converted" || r.status==="paid");
+      const buckets = this.monthBuckets(won, r=>r.budget||0);
+      const labels = Object.keys(buckets);
+      this.charts.revenue = new Chart(document.getElementById("chartRevenue"), {
+        type:"line", data:{ labels, datasets:[{ data:Object.values(buckets), borderColor:"#00e676", backgroundColor:"rgba(0,230,118,0.12)", fill:true, tension:0.35 }] },
+        options:{ plugins:{legend:{display:false}}, scales:{ x:{grid:{display:false}, ticks:{color:"rgba(232,245,232,0.55)"}}, y:{grid:{color:"rgba(232,245,232,0.06)"}, ticks:{color:"rgba(232,245,232,0.55)", callback:v=>"₦"+(v/1000)+"k"}} } }
+      });
+    },
+    renderSourcesChart(rows){
+      this.destroy("sources");
+      const buckets = {};
+      rows.forEach(r=>{ const s=r.source||"unknown"; buckets[s]=(buckets[s]||0)+1; });
+      this.charts.sources = new Chart(document.getElementById("chartSources"), {
+        type:"pie", data:{ labels:Object.keys(buckets), datasets:[{ data:Object.values(buckets), backgroundColor:["#25d366","#00c853","#3b82f6","#ff9100","#818cf8","#5b6b8c"], borderColor:"#0d130d", borderWidth:2 }] },
+        options:{ plugins:{legend:{position:"bottom", labels:{color:"rgba(232,245,232,0.7)", boxWidth:10, font:{size:11}}}} }
+      });
+    },
+    renderFunnelChart(rows){
+      this.destroy("funnel");
+      const counts = { new:0, brief_received:0, quoted:0, converted:0, paid:0 };
+      rows.forEach(r=>{ if(counts[r.status]!==undefined) counts[r.status]++; });
+      this.charts.funnel = new Chart(document.getElementById("chartFunnel"), {
+        type:"doughnut", data:{ labels:Object.keys(counts).map(k=>CONFIG.STATUS_LABELS[k]), datasets:[{ data:Object.values(counts), backgroundColor:["#3b82f6","#818cf8","#ff9100","#00c853","#00e676"], borderColor:"#0d130d", borderWidth:2 }] },
+        options:{ plugins:{legend:{position:"bottom", labels:{color:"rgba(232,245,232,0.7)", boxWidth:10, font:{size:11}}}} }
+      });
+    },
+    renderInsights(rows){
+      const wrap = document.getElementById("insightsList"); wrap.innerHTML = "";
+      if(!rows.length){ wrap.innerHTML = '<div class="insight">Not enough data in this range to generate insights yet.</div>'; return; }
+      const bySource = {};
+      rows.forEach(r=>{ const s=r.source||"unknown"; bySource[s]=(bySource[s]||0)+1; });
+      const topSource = Object.entries(bySource).sort((a,b)=>b[1]-a[1])[0];
+      const byService = {};
+      rows.forEach(r=>{ if(r.service_type){ byService[r.service_type]=(byService[r.service_type]||0)+1; } });
+      const topService = Object.entries(byService).sort((a,b)=>b[1]-a[1])[0];
+      const won = rows.filter(r=>r.status==="converted"||r.status==="paid").length;
+      const rate = Math.round((won/rows.length)*100);
+
+      const insights = [];
+      if(topSource) insights.push(`${topSource[0]} generated ${Math.round(topSource[1]/rows.length*100)}% of project requests in this period.`);
+      if(topService) insights.push(`${topService[0]} is the most requested service in this period (${topService[1]} requests).`);
+      insights.push(`${rate}% of requests in this period have converted or been paid.`);
+
+      insights.forEach(txt=>{ const d = document.createElement("div"); d.className="insight"; d.textContent = txt; wrap.appendChild(d); });
+    }
+  };
+  document.getElementById("reportRange").addEventListener("change", ()=> Reports.render());
+
+  // ============================================================
+  // SETTINGS
+  // ============================================================
+  const Settings = {
+    init(){
+      document.getElementById("sessionTimeoutSelect").value = localStorage.getItem(CONFIG.TIMEOUT_KEY) || "30";
+      const started = sessionStorage.getItem(CONFIG.SESSION_STARTED_KEY);
+      document.getElementById("sessionStartedAt").textContent = started ? Utils.relTime(started) : "—";
+      document.getElementById("sessionTimeoutSelect").addEventListener("change", (e)=>{
+        localStorage.setItem(CONFIG.TIMEOUT_KEY, e.target.value);
+        Auth.resetTimer();
+        Toast.show("Session timeout updated.", "success");
+      });
+      document.getElementById("savePinBtn").addEventListener("click", ()=>{
+        const digits = [...document.querySelectorAll(".newpin")].map(i=>i.value.trim());
+        if(digits.some(d=>!/^[0-9]$/.test(d))){ Toast.show("Enter all 4 digits.", "warn"); return; }
+        Auth.setPin(digits.join(""));
+        document.querySelectorAll(".newpin").forEach(i=>i.value="");
+        Toast.show("PIN updated on this device. Note: this is stored locally in the browser, not verified by the backend — see chat for what a server-side version would need.", "success");
+      });
+      document.querySelectorAll(".newpin").forEach((el,i,arr)=>{
+        el.addEventListener("input", ()=>{ if(el.value && arr[i+1]) arr[i+1].focus(); });
+      });
+    }
+  };
+
+  // ============================================================
+  // APP BOOTSTRAP
+  // ============================================================
+  const App = {
+    async loadAll(isRefresh){
+      await Promise.allSettled([Projects.load(), Leads.load(), Briefs.load(), Clients.load()]);
+      Overview.load();
+      State.lastUpdated = new Date();
+      document.getElementById("lastUpdated").textContent = "Last updated: just now";
+      if(isRefresh) Toast.show("Data refreshed.", "success");
+    },
+    init(){
+      document.getElementById("app").classList.add("ready");
+      Settings.init();
+      this.loadAll();
+      setInterval(()=>{
+        if(!State.lastUpdated) return;
+        document.getElementById("lastUpdated").textContent = "Last updated: " + Utils.relTime(State.lastUpdated);
+      }, 30000);
+      document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState === "visible") this.loadAll(); });
+    }
+  };
+
+  if(Auth.isLoggedIn()) App.init();
+
+})();
 </script>
 </body>
 </html>
