@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SmartWork CRM — OVIE DAVID Trading LTD</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>
+  html, body, #root { height: 100%; margin: 0; }
+  body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif; }
+  * { box-sizing: border-box; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: #C7CCD6; border-radius: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-type="module" data-presets="react">
+import React, { useState } from "https://esm.sh/react@18.2.0";
+import { createRoot } from "https://esm.sh/react-dom@18.2.0/client";
+import {
+  LayoutDashboard, Users, Package, CheckSquare, UsersRound, Wallet,
+  MessageSquare, BarChart3, Settings, Search, Bell, HelpCircle,
+  ChevronDown, Plus, MoreHorizontal, TrendingUp, TrendingDown, Clock,
+  Truck, CheckCircle2, AlertTriangle, X, FileText, Send, ArrowRight,
+  LogOut, Menu, ChevronLeft, ChevronRight, Phone, Mail, Building2,
+  Calendar, Tag, ClipboardList, PackageCheck, Hourglass, PackageSearch,
+  Star, ShieldCheck, MessageCircle
+} from "https://esm.sh/lucide-react@0.383.0?external=react";
+import {
+  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid,
+  ResponsiveContainer, Tooltip as RTooltip
+} from "https://esm.sh/recharts@2.12.7?external=react,react-dom";
+
+
+/* ---------------------------------------------------------------
+   TOKENS
+---------------------------------------------------------------- */
+const C = {
+  navy: "#1A2A4A",
+  navyDeep: "#132038",
+  gold: "#D4A843",
+  bg: "#F7F8FA",
+  card: "#FFFFFF",
+  text: "#172033",
+  textSub: "#667085",
+  border: "#E7E9EE",
+  success: "#16A34A",
+  warning: "#F59E0B",
+  danger: "#DC2626",
+  info: "#2563EB",
+};
+
+const naira = (n) => "₦" + n.toLocaleString("en-NG");
+
+/* ---------------------------------------------------------------
+   DEMO DATA
+---------------------------------------------------------------- */
+const leadsData = [
+  { id: 1, name: "Adeola O.", company: "Adeola Trading", stage: "Quotation", value: 450000, assigned: "Blessing", followUp: "Tomorrow", status: "Urgent", initials: "AO" },
+  { id: 2, name: "Chidi E.", company: "Chidi Ventures", stage: "Negotiation", value: 280000, assigned: "Michael", followUp: "Today", status: "Pending", initials: "CE" },
+  { id: 3, name: "Funmi O.", company: "Funmi Supplies", stage: "Closed Won", value: 1200000, assigned: "Sarah", followUp: "Completed", status: "Won", initials: "FO" },
+  { id: 4, name: "Kofi A.", company: "Kofi Logistics", stage: "New Enquiry", value: 150000, assigned: "Unassigned", followUp: "Friday", status: "New", initials: "KA" },
+];
+
+const stageColor = {
+  "New Enquiry": { bg: "#F1F2F4", fg: "#475467" },
+  "Quotation": { bg: "#EAF1FE", fg: C.info },
+  "Negotiation": { bg: "#FCF1DC", fg: "#B7791F" },
+  "Closed Won": { bg: "#E9F8EF", fg: C.success },
+  "Lost": { bg: "#FCE9E9", fg: C.danger },
+};
+const statusColor = {
+  Urgent: { bg: "#FCE9E9", fg: C.danger },
+  Pending: { bg: "#FCF1DC", fg: "#B7791F" },
+  Won: { bg: "#E9F8EF", fg: C.success },
+  New: { bg: "#F1F2F4", fg: "#475469" },
+};
+
+const ordersData = {
+  Pending: [
+    { id: 106, client: "Kofi Logistics", project: "Industrial Equipment Procurement", value: 850000, eta: "5 days", assigned: "Blessing", progress: 35 },
+    { id: 107, client: "Chidi Ventures", project: "Office Supplies Restock", value: 180000, eta: "6 days", assigned: "Michael", progress: 10 },
+    { id: 111, client: "Adeola Trading", project: "Warehouse Racking Units", value: 320000, eta: "9 days", assigned: "Sarah", progress: 5 },
+  ],
+  Processing: [
+    { id: 105, client: "Adeola Trading", project: "Packaging Materials Supply", value: 450000, eta: "3 days", assigned: "Blessing", progress: 55 },
+    { id: 109, client: "Bose Enterprise Solutions", project: "IT Hardware Rollout", value: 610000, eta: "4 days", assigned: "Michael", progress: 40 },
+  ],
+  "In Transit": [
+    { id: 108, client: "Funmi Supplies", project: "Raw Material Shipment", value: 940000, eta: "2 days", assigned: "Sarah", progress: 75 },
+    { id: 110, client: "Tunde Industrial Services", project: "Machine Parts Delivery", value: 700000, eta: "1 day", assigned: "Blessing", progress: 85 },
+  ],
+  Delivered: [
+    { id: 104, client: "John Okafor", project: "Retail Fixtures Order", value: 300000, eta: "Delivered", assigned: "Sarah", progress: 100 },
+    { id: 103, client: "Amaka Stores", project: "Furniture Consignment", value: 260000, eta: "Delivered", assigned: "Michael", progress: 100 },
+    { id: 101, client: "Kofi Logistics", project: "Spare Parts Order", value: 190000, eta: "Delivered", assigned: "Blessing", progress: 100 },
+    { id: 99, client: "Adeola Trading", project: "Stationery Bulk Order", value: 95000, eta: "Delivered", assigned: "Sarah", progress: 100 },
+    { id: 96, client: "Chidi Ventures", project: "Generator Maintenance Parts", value: 145000, eta: "Delivered", assigned: "Michael", progress: 100 },
+  ],
+};
+const columnMeta = {
+  Pending: { icon: ClipboardList, color: C.textSub },
+  Processing: { icon: Hourglass, color: C.info },
+  "In Transit": { icon: Truck, color: C.warning },
+  Delivered: { icon: PackageCheck, color: C.success },
+};
+
+const revenueData = [
+  { d: "Mon", v: 420000 }, { d: "Tue", v: 610000 }, { d: "Wed", v: 380000 },
+  { d: "Thu", v: 720000 }, { d: "Fri", v: 940000 }, { d: "Sat", v: 510000 }, { d: "Sun", v: 620000 },
+];
+
+const activity = [
+  { id: 1, text: "John's order #104", sub: "Processing", time: "Today, 2:30 PM", type: "order" },
+  { id: 2, text: "New lead: Adeola O.", sub: "Follow-up scheduled", time: "Today, 12:00 PM", type: "lead" },
+  { id: 3, text: "Delivery completed — Order #103", sub: "", time: "Yesterday, 4:15 PM", type: "delivery" },
+  { id: 4, text: "Sarah closed a deal with Chidi E.", sub: "₦280,000", time: "Yesterday, 11:30 AM", type: "deal" },
+];
+
+const team = [
+  { name: "Blessing", tasks: [8, 10], leads: 3, revenue: 450000, status: "On Track", initials: "BL" },
+  { name: "Michael", tasks: [5, 10], leads: 1, revenue: 280000, status: "Needs Support", initials: "MI" },
+  { name: "Sarah", tasks: [10, 10], leads: 5, revenue: 1200000, status: "Top Performer", initials: "SA" },
+  { name: "Tobi", tasks: [7, 10], leads: 2, revenue: 310000, status: "On Track", initials: "TO" },
+];
+const teamStatusColor = {
+  "On Track": { bg: "#EAF1FE", fg: C.info },
+  "Needs Support": { bg: "#FCF1DC", fg: "#B7791F" },
+  "Top Performer": { bg: "#FCF6E6", fg: C.gold },
+};
+const teamChartData = team.map((t) => ({ name: t.name, tasks: t.tasks[0] }));
+
+const navItems = [
+  { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { key: "leads", label: "Leads & Clients", icon: Users },
+  { key: "orders", label: "Orders & Projects", icon: Package },
+  { key: "tasks", label: "Tasks", icon: CheckSquare },
+  { key: "team", label: "Team", icon: UsersRound },
+  { key: "revenue", label: "Revenue", icon: Wallet },
+  { key: "messages", label: "Messages", icon: MessageSquare },
+  { key: "reports", label: "Reports", icon: BarChart3 },
+  { key: "settings", label: "Settings", icon: Settings },
+];
+
+/* ---------------------------------------------------------------
+   SMALL PRIMITIVES
+---------------------------------------------------------------- */
+function Avatar({ initials, size = 32, tone = "navy" }) {
+  const bg = tone === "gold" ? C.gold : C.navy;
+  return (
+    <div
+      style={{ width: size, height: size, background: bg, color: "#fff", fontSize: size * 0.36 }}
+      className="rounded-full flex items-center justify-center font-semibold shrink-0"
+    >
+      {initials}
+    </div>
+  );
+}
+
+function Badge({ children, bg, fg }) {
+  return (
+    <span
+      style={{ background: bg, color: fg }}
+      className="px-2.5 py-1 rounded-md text-xs font-medium inline-block whitespace-nowrap"
+    >
+      {children}
+    </span>
+  );
+}
+
+function Card({ children, className = "", padded = true }) {
+  return (
+    <div
+      style={{ background: C.card, border: `1px solid ${C.border}` }}
+      className={`rounded-xl shadow-[0_1px_2px_rgba(23,32,51,0.04)] ${padded ? "p-5" : ""} ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
+
+function KpiCard({ icon: Icon, label, value, delta, deltaDir, sub, gold }) {
+  const up = deltaDir === "up";
+  return (
+    <Card className="flex-1 min-w-[190px]">
+      <div className="flex items-start justify-between">
+        <div>
+          <div style={{ color: C.textSub }} className="text-[13px] font-medium mb-2">{label}</div>
+          <div style={{ color: gold ? C.gold : C.text }} className="text-[26px] font-bold leading-none">{value}</div>
+        </div>
+        <div
+          style={{ background: gold ? "#FCF6E6" : "#EEF1F6", color: gold ? C.gold : C.navy }}
+          className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+        >
+          <Icon size={18} />
+        </div>
+      </div>
+      <div className="flex items-center gap-1 mt-3 text-[12.5px]">
+        <span style={{ color: up ? C.success : C.danger }} className="flex items-center gap-0.5 font-semibold">
+          {up ? <TrendingUp size={13} /> : <TrendingDown size={13} />} {delta}
+        </span>
+        <span style={{ color: C.textSub }}>{sub}</span>
+      </div>
+    </Card>
+  );
+}
+
+function PrimaryButton({ children, icon: Icon, onClick, className = "" }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{ background: C.gold, color: C.navyDeep }}
+      className={`px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-1.5 hover:brightness-95 transition ${className}`}
+    >
+      {Icon && <Icon size={15} />} {children}
+    </button>
+  );
+}
+function GhostButton({ children, icon: Icon, onClick, className = "" }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{ border: `1px solid ${C.border}`, color: C.text }}
+      className={`px-3.5 py-2 rounded-lg text-sm font-medium flex items-center gap-1.5 hover:bg-[#F1F2F5] transition bg-white ${className}`}
+    >
+      {Icon && <Icon size={15} />} {children}
+    </button>
+  );
+}
+
+/* ---------------------------------------------------------------
+   SIDEBAR + HEADER (Internal App Shell)
+---------------------------------------------------------------- */
+function Sidebar({ active, onNav, collapsed, setCollapsed }) {
+  return (
+    <div
+      style={{ background: C.navy, width: collapsed ? 76 : 240, transition: "width .2s ease" }}
+      className="shrink-0 h-full flex flex-col py-5"
+    >
+      <div className="flex items-center gap-2.5 px-5 mb-8">
+        <div style={{ background: C.gold }} className="w-8 h-8 rounded-md flex items-center justify-center text-[13px] font-bold text-[#1A2A4A] shrink-0">SW</div>
+        {!collapsed && <span className="text-white font-semibold text-[15px] tracking-tight">SmartWork CRM</span>}
+      </div>
+
+      <div className="flex-1 flex flex-col gap-0.5 px-3">
+        {navItems.map((item) => {
+          const isActive = active === item.key;
+          const Icon = item.icon;
+          return (
+            <button
+              key={item.key}
+              onClick={() => onNav(item.key)}
+              style={{
+                background: isActive ? "rgba(212,168,67,0.14)" : "transparent",
+                color: isActive ? C.gold : "rgba(255,255,255,0.75)",
+              }}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition hover:bg-white/5"
+            >
+              <Icon size={17} className="shrink-0" />
+              {!collapsed && <span className="truncate">{item.label}</span>}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="px-3 mt-4">
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-white/50 hover:text-white/80 hover:bg-white/5 text-sm"
+        >
+          {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+          {!collapsed && <span>Collapse</span>}
+        </button>
+      </div>
+
+      <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }} className="mx-3 mt-3 pt-3 flex items-center gap-2.5 px-1">
+        <div style={{ background: "rgba(255,255,255,0.1)" }} className="w-7 h-7 rounded-md flex items-center justify-center text-white text-[11px] font-bold shrink-0">OD</div>
+        {!collapsed && (
+          <div className="min-w-0">
+            <div className="text-white text-[12.5px] font-semibold truncate">OVIE DAVID Trading LTD</div>
+            <div className="text-white/40 text-[11px]">Nigerian Procurement Co.</div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function TopHeader({ title, subtitle }) {
+  return (
+    <div style={{ borderBottom: `1px solid ${C.border}` }} className="bg-white px-8 py-4 flex items-center justify-between shrink-0">
+      <div>
+        <h1 style={{ color: C.text }} className="text-[22px] font-bold leading-tight">{title}</h1>
+        {subtitle && <p style={{ color: C.textSub }} className="text-[13.5px] mt-0.5">{subtitle}</p>}
+      </div>
+      <div className="flex items-center gap-4">
+        <div style={{ background: "#F1F2F5" }} className="flex items-center gap-2 px-3 py-2 rounded-lg w-56">
+          <Search size={15} style={{ color: C.textSub }} />
+          <span style={{ color: C.textSub }} className="text-[13px]">Search...</span>
+        </div>
+        <button className="relative" style={{ color: C.textSub }}>
+          <Bell size={19} />
+          <span style={{ background: C.danger }} className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[9px] text-white flex items-center justify-center font-bold">3</span>
+        </button>
+        <HelpCircle size={19} style={{ color: C.textSub }} />
+        <div style={{ borderLeft: `1px solid ${C.border}` }} className="pl-4 flex items-center gap-2.5">
+          <Avatar initials="DA" size={34} />
+          <div className="leading-tight">
+            <div style={{ color: C.text }} className="text-[13.5px] font-semibold">David</div>
+            <div style={{ color: C.textSub }} className="text-[11.5px]">Administrator</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------
+   SCREEN: DASHBOARD
+---------------------------------------------------------------- */
+function Dashboard({ onOpenLead, onOpenOrders }) {
+  const pipeline = [
+    { label: "Pending", count: 3, color: C.textSub },
+    { label: "Processing", count: 4, color: C.info },
+    { label: "In Transit", count: 2, color: C.warning },
+    { label: "Delivered", count: 5, color: C.success },
+  ];
+  const maxCount = Math.max(...pipeline.map((p) => p.count));
+
+  return (
+    <div className="p-8 flex flex-col gap-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 style={{ color: C.text }} className="text-[24px] font-bold">Good morning, David</h2>
+          <p style={{ color: C.textSub }} className="text-[13.5px] mt-1">Here's what's happening with your business today.</p>
+        </div>
+        <GhostButton icon={Calendar}>September 7, 2026 <ChevronDown size={14} /></GhostButton>
+      </div>
+
+      <div className="flex gap-4 flex-wrap">
+        <div onClick={onOpenLead} className="cursor-pointer flex-1 min-w-[190px]">
+          <KpiCard icon={Users} label="Total Leads" value="24" delta="12%" deltaDir="up" sub="vs. last week" />
+        </div>
+        <div onClick={onOpenOrders} className="cursor-pointer flex-1 min-w-[190px]">
+          <KpiCard icon={Package} label="Active Orders" value="12" delta="8%" deltaDir="up" sub="vs. last week" />
+        </div>
+        <KpiCard icon={Clock} label="Pending Tasks" value="8" delta="3" deltaDir="down" sub="from yesterday" />
+        <KpiCard icon={Wallet} label="Revenue — MTD" value={naira(4200000)} delta="22%" deltaDir="up" sub="vs. last month" gold />
+      </div>
+
+      <div className="grid grid-cols-3 gap-5">
+        <Card className="col-span-2">
+          <div className="flex items-center justify-between mb-1">
+            <h3 style={{ color: C.text }} className="font-semibold text-[15px]">Revenue Performance</h3>
+            <div style={{ background: "#F1F2F5" }} className="flex text-[12px] rounded-lg p-0.5">
+              {["7 Days", "30 Days", "3 Months", "12 Months"].map((t, i) => (
+                <span key={t} style={i === 0 ? { background: C.navy, color: "#fff" } : { color: C.textSub }} className="px-2.5 py-1 rounded-md font-medium cursor-pointer">{t}</span>
+              ))}
+            </div>
+          </div>
+          <div className="h-[220px] mt-3">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={revenueData} margin={{ left: -18, top: 5 }}>
+                <CartesianGrid stroke={C.border} vertical={false} />
+                <XAxis dataKey="d" tick={{ fontSize: 12, fill: C.textSub }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: C.textSub }} axisLine={false} tickLine={false} tickFormatter={(v) => `₦${v / 1000}k`} />
+                <RTooltip formatter={(v) => naira(v)} contentStyle={{ borderRadius: 8, fontSize: 12, border: `1px solid ${C.border}` }} />
+                <Line type="monotone" dataKey="v" stroke={C.gold} strokeWidth={2.5} dot={{ r: 3, fill: C.gold }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        <Card>
+          <h3 style={{ color: C.text }} className="font-semibold text-[15px] mb-4">Order Pipeline</h3>
+          <div className="flex flex-col gap-4">
+            {pipeline.map((p) => (
+              <div key={p.label}>
+                <div className="flex justify-between text-[13px] mb-1.5">
+                  <span style={{ color: C.text }} className="font-medium">{p.label}</span>
+                  <span style={{ color: C.textSub }}>{p.count}</span>
+                </div>
+                <div style={{ background: "#EEF0F3" }} className="h-2 rounded-full overflow-hidden">
+                  <div style={{ width: `${(p.count / maxCount) * 100}%`, background: p.color }} className="h-full rounded-full" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-3 gap-5">
+        <Card className="col-span-2">
+          <h3 style={{ color: C.text }} className="font-semibold text-[15px] mb-4">Recent Activity</h3>
+          <div className="flex flex-col">
+            {activity.map((a, i) => (
+              <div key={a.id} style={{ borderTop: i > 0 ? `1px solid ${C.border}` : "none" }} className="flex items-center gap-3 py-3">
+                <div
+                  style={{
+                    background: a.type === "deal" ? "#FCF6E6" : a.type === "delivery" ? "#E9F8EF" : "#EAF1FE",
+                    color: a.type === "deal" ? C.gold : a.type === "delivery" ? C.success : C.info,
+                  }}
+                  className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+                >
+                  {a.type === "order" && <Package size={14} />}
+                  {a.type === "lead" && <Users size={14} />}
+                  {a.type === "delivery" && <CheckCircle2 size={14} />}
+                  {a.type === "deal" && <Wallet size={14} />}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div style={{ color: C.text }} className="text-[13.5px] font-medium truncate">{a.text}</div>
+                  {a.sub && <div style={{ color: C.textSub }} className="text-[12.5px]">{a.sub}</div>}
+                </div>
+                <div style={{ color: C.textSub }} className="text-[12px] shrink-0">{a.time}</div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card>
+          <h3 style={{ color: C.text }} className="font-semibold text-[15px] mb-4">Quick Actions</h3>
+          <div className="flex flex-col gap-2.5">
+            <PrimaryButton icon={Plus} className="w-full justify-center">Add Lead</PrimaryButton>
+            <GhostButton icon={Package} className="w-full justify-center">New Order</GhostButton>
+            <GhostButton icon={CheckSquare} className="w-full justify-center">Create Task</GhostButton>
+            <GhostButton icon={FileText} className="w-full justify-center">Generate Quote</GhostButton>
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------
+   SCREEN: LEADS & CLIENTS
+---------------------------------------------------------------- */
+function LeadsClients({ onSelect }) {
+  return (
+    <div className="p-8 flex flex-col gap-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 style={{ color: C.text }} className="text-[24px] font-bold">Leads & Clients</h2>
+          <p style={{ color: C.textSub }} className="text-[13.5px] mt-1">Manage prospects, customers, opportunities and follow-ups in one place.</p>
+        </div>
+        <PrimaryButton icon={Plus}>Add Lead</PrimaryButton>
+      </div>
+
+      <div className="flex items-center gap-2.5 flex-wrap">
+        <div style={{ background: "#fff", border: `1px solid ${C.border}` }} className="flex items-center gap-2 px-3 py-2 rounded-lg w-64">
+          <Search size={15} style={{ color: C.textSub }} />
+          <span style={{ color: C.textSub }} className="text-[13px]">Search clients</span>
+        </div>
+        {["Stage", "Assigned", "Follow-up date", "Status"].map((f) => (
+          <GhostButton key={f} icon={Tag} className="text-[13px]">{f} <ChevronDown size={13} /></GhostButton>
+        ))}
+        <div className="flex-1" />
+        <GhostButton>Export</GhostButton>
+      </div>
+
+      <Card padded={false} className="overflow-hidden">
+        <table className="w-full text-sm">
+          <thead>
+            <tr style={{ borderBottom: `1px solid ${C.border}`, color: C.textSub }} className="text-left text-[12.5px] uppercase tracking-wide">
+              <th className="py-3 px-5 font-semibold">Client</th>
+              <th className="py-3 px-5 font-semibold">Company</th>
+              <th className="py-3 px-5 font-semibold">Stage</th>
+              <th className="py-3 px-5 font-semibold">Deal Value</th>
+              <th className="py-3 px-5 font-semibold">Assigned To</th>
+              <th className="py-3 px-5 font-semibold">Follow-up</th>
+              <th className="py-3 px-5 font-semibold">Status</th>
+              <th className="py-3 px-5"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {leadsData.map((l, i) => (
+              <tr
+                key={l.id}
+                onClick={() => onSelect(l)}
+                style={{ borderTop: i > 0 ? `1px solid ${C.border}` : "none" }}
+                className="hover:bg-[#F7F8FA] cursor-pointer transition"
+              >
+                <td className="py-3.5 px-5">
+                  <div className="flex items-center gap-2.5">
+                    <Avatar initials={l.initials} size={30} />
+                    <span style={{ color: C.text }} className="font-medium">{l.name}</span>
+                  </div>
+                </td>
+                <td className="py-3.5 px-5" style={{ color: C.text }}>{l.company}</td>
+                <td className="py-3.5 px-5"><Badge bg={stageColor[l.stage].bg} fg={stageColor[l.stage].fg}>{l.stage}</Badge></td>
+                <td className="py-3.5 px-5 font-semibold" style={{ color: C.text }}>{naira(l.value)}</td>
+                <td className="py-3.5 px-5" style={{ color: l.assigned === "Unassigned" ? C.textSub : C.text }}>{l.assigned}</td>
+                <td className="py-3.5 px-5" style={{ color: C.textSub }}>{l.followUp}</td>
+                <td className="py-3.5 px-5"><Badge bg={statusColor[l.status].bg} fg={statusColor[l.status].fg}>{l.status}</Badge></td>
+                <td className="py-3.5 px-5"><MoreHorizontal size={16} style={{ color: C.textSub }} /></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Card>
+    </div>
+  );
+}
+
+function ClientDrawer({ lead, onClose }) {
+  if (!lead) return null;
+  return (
+    <div className="fixed inset-0 z-40 flex justify-end">
+      <div onClick={onClose} className="absolute inset-0 bg-black/30" />
+      <div style={{ background: C.card }} className="relative w-[400px] h-full p-6 overflow-y-auto shadow-2xl flex flex-col gap-5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Avatar initials={lead.initials} size={44} />
+            <div>
+              <div style={{ color: C.text }} className="font-bold text-[16px]">{lead.name}</div>
+              <div style={{ color: C.textSub }} className="text-[13px]">{lead.company}</div>
+            </div>
+          </div>
+          <button onClick={onClose}><X size={18} style={{ color: C.textSub }} /></button>
+        </div>
+
+        <div className="flex gap-2">
+          <Badge bg={stageColor[lead.stage].bg} fg={stageColor[lead.stage].fg}>{lead.stage}</Badge>
+          <Badge bg={statusColor[lead.status].bg} fg={statusColor[lead.status].fg}>{lead.status}</Badge>
+        </div>
+
+        <Card>
+          <div className="flex flex-col gap-3 text-[13.5px]">
+            <div className="flex items-center gap-2.5" style={{ color: C.text }}><Phone size={14} style={{ color: C.textSub }} /> +234 803 {String(100 + lead.id).padStart(4, "0")} 552</div>
+            <div className="flex items-center gap-2.5" style={{ color: C.text }}><Mail size={14} style={{ color: C.textSub }} /> {lead.name.split(" ")[0].toLowerCase()}@{lead.company.split(" ")[0].toLowerCase()}.ng</div>
+            <div className="flex items-center gap-2.5" style={{ color: C.text }}><Building2 size={14} style={{ color: C.textSub }} /> Lead source: Referral</div>
+            <div className="flex items-center gap-2.5" style={{ color: C.text }}><UsersRound size={14} style={{ color: C.textSub }} /> Assigned: {lead.assigned}</div>
+          </div>
+        </Card>
+
+        <div className="grid grid-cols-2 gap-3">
+          <Card>
+            <div style={{ color: C.textSub }} className="text-[12px] mb-1">Deal Value</div>
+            <div style={{ color: C.gold }} className="font-bold text-[17px]">{naira(lead.value)}</div>
+          </Card>
+          <Card>
+            <div style={{ color: C.textSub }} className="text-[12px] mb-1">Follow-up</div>
+            <div style={{ color: C.text }} className="font-bold text-[17px]">{lead.followUp}</div>
+          </Card>
+        </div>
+
+        <div>
+          <h4 style={{ color: C.text }} className="font-semibold text-[13.5px] mb-2">Notes</h4>
+          <Card>
+            <p style={{ color: C.textSub }} className="text-[13px] leading-relaxed">
+              Interested in bulk procurement pricing. Requested updated quotation with delivery timelines for the next order cycle.
+            </p>
+          </Card>
+        </div>
+
+        <div>
+          <h4 style={{ color: C.text }} className="font-semibold text-[13.5px] mb-2">Orders</h4>
+          <Card>
+            <div className="flex items-center justify-between text-[13px]">
+              <span style={{ color: C.text }}>Order #{100 + lead.id}</span>
+              <Badge bg="#EAF1FE" fg={C.info}>Processing</Badge>
+            </div>
+          </Card>
+        </div>
+
+        <PrimaryButton className="w-full justify-center mt-auto">View Full Client Profile</PrimaryButton>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------
+   SCREEN: ORDER PIPELINE / KANBAN
+---------------------------------------------------------------- */
+function OrderCard({ order, onClick }) {
+  return (
+    <div
+      onClick={onClick}
+      style={{ background: "#fff", border: `1px solid ${C.border}` }}
+      className="rounded-lg p-4 cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition flex flex-col gap-2.5"
+    >
+      <div className="flex items-center justify-between">
+        <span style={{ color: C.text }} className="font-semibold text-[13.5px]">Order #{order.id}</span>
+        <MoreHorizontal size={14} style={{ color: C.textSub }} />
+      </div>
+      <div className="flex items-center gap-2">
+        <Avatar initials={order.client.split(" ").map((w) => w[0]).slice(0, 2).join("")} size={22} />
+        <span style={{ color: C.textSub }} className="text-[12.5px]">{order.client}</span>
+      </div>
+      <p style={{ color: C.text }} className="text-[12.5px] leading-snug">{order.project}</p>
+      <div className="flex items-center justify-between text-[12.5px]">
+        <span style={{ color: C.gold }} className="font-semibold">{naira(order.value)}</span>
+        <span style={{ color: C.textSub }}>{order.eta}</span>
+      </div>
+      <div style={{ background: "#EEF0F3" }} className="h-1.5 rounded-full overflow-hidden">
+        <div style={{ width: `${order.progress}%`, background: order.progress === 100 ? C.success : C.navy }} className="h-full rounded-full" />
+      </div>
+    </div>
+  );
+}
+
+function OrderPipeline({ onSelect }) {
+  return (
+    <div className="p-8 flex flex-col gap-5 h-full">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 style={{ color: C.text }} className="text-[24px] font-bold">Order Pipeline</h2>
+          <p style={{ color: C.textSub }} className="text-[13.5px] mt-1">Track every procurement order from request to delivery.</p>
+        </div>
+        <PrimaryButton icon={Plus}>New Order</PrimaryButton>
+      </div>
+
+      <div className="flex items-center gap-2.5 flex-wrap">
+        <div style={{ background: "#fff", border: `1px solid ${C.border}` }} className="flex items-center gap-2 px-3 py-2 rounded-lg w-64">
+          <Search size={15} style={{ color: C.textSub }} />
+          <span style={{ color: C.textSub }} className="text-[13px]">Search order</span>
+        </div>
+        {["Client", "Assigned", "Delivery date", "Status"].map((f) => (
+          <GhostButton key={f} className="text-[13px]">{f} <ChevronDown size={13} /></GhostButton>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-4 gap-4 flex-1 overflow-x-auto">
+        {Object.entries(ordersData).map(([col, orders]) => {
+          const meta = columnMeta[col];
+          const Icon = meta.icon;
+          return (
+            <div key={col} style={{ background: "#EFF1F5" }} className="rounded-xl p-3 flex flex-col gap-3 min-w-[240px]">
+              <div className="flex items-center justify-between px-1">
+                <div className="flex items-center gap-2">
+                  <Icon size={15} style={{ color: meta.color }} />
+                  <span style={{ color: C.text }} className="font-semibold text-[13.5px]">{col}</span>
+                </div>
+                <span style={{ color: C.textSub }} className="text-[12px] font-medium">{orders.length} Orders</span>
+              </div>
+              <div className="flex flex-col gap-3">
+                {orders.map((o) => (
+                  <OrderCard key={o.id} order={o} onClick={() => onSelect(o)} />
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function OrderDetailModal({ order, onClose }) {
+  if (!order) return null;
+  const steps = [
+    { label: "Order Received", done: true },
+    { label: "Quotation Approved", done: true },
+    { label: "Procurement Processing", done: order.progress >= 40 },
+    { label: "Shipment", done: order.progress >= 75 },
+    { label: "Delivery", done: order.progress >= 100 },
+  ];
+  return (
+    <div className="fixed inset-0 z-40 flex items-center justify-center">
+      <div onClick={onClose} className="absolute inset-0 bg-black/40" />
+      <div style={{ background: C.card }} className="relative w-[560px] max-h-[85vh] overflow-y-auto rounded-2xl p-7 shadow-2xl flex flex-col gap-6">
+        <div className="flex items-start justify-between">
+          <div>
+            <div style={{ color: C.text }} className="font-bold text-[20px]">Order #{order.id}</div>
+            <div style={{ color: C.textSub }} className="text-[13.5px] mt-0.5">{order.client}</div>
+          </div>
+          <button onClick={onClose}><X size={18} style={{ color: C.textSub }} /></button>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <span style={{ color: C.gold }} className="font-bold text-[20px]">{naira(order.value)}</span>
+          <Badge bg="#EAF1FE" fg={C.info}>{order.progress === 100 ? "Delivered" : "Processing"}</Badge>
+        </div>
+
+        <div>
+          <h4 style={{ color: C.text }} className="font-semibold text-[13.5px] mb-3">Progress Timeline</h4>
+          <div className="flex flex-col gap-3">
+            {steps.map((s, i) => (
+              <div key={s.label} className="flex items-center gap-3">
+                <div
+                  style={{ background: s.done ? C.success : "#EEF0F3", color: s.done ? "#fff" : C.textSub }}
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0"
+                >
+                  {s.done ? <CheckCircle2 size={14} /> : i + 1}
+                </div>
+                <span style={{ color: s.done ? C.text : C.textSub }} className="text-[13.5px] font-medium">{s.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <Card>
+          <h4 style={{ color: C.text }} className="font-semibold text-[13.5px] mb-3">Order Information</h4>
+          <div className="grid grid-cols-2 gap-y-3 text-[13px]">
+            <div><div style={{ color: C.textSub }}>Client</div><div style={{ color: C.text }} className="font-medium">{order.client}</div></div>
+            <div><div style={{ color: C.textSub }}>Assigned employee</div><div style={{ color: C.text }} className="font-medium">{order.assigned}</div></div>
+            <div><div style={{ color: C.textSub }}>Products</div><div style={{ color: C.text }} className="font-medium">{order.project}</div></div>
+            <div><div style={{ color: C.textSub }}>Expected delivery</div><div style={{ color: C.text }} className="font-medium">{order.eta}</div></div>
+            <div><div style={{ color: C.textSub }}>Payment status</div><div style={{ color: C.success }} className="font-medium">Partially Paid</div></div>
+            <div><div style={{ color: C.textSub }}>Order date</div><div style={{ color: C.text }} className="font-medium">Sept 2, 2026</div></div>
+          </div>
+        </Card>
+
+        <div className="flex gap-2.5">
+          <GhostButton icon={FileText} className="flex-1 justify-center">Upload Document</GhostButton>
+          <GhostButton icon={Send} className="flex-1 justify-center">Send Update</GhostButton>
+          <PrimaryButton icon={CheckCircle2} className="flex-1 justify-center">Mark as Delivered</PrimaryButton>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------
+   SCREEN: TEAM PERFORMANCE
+---------------------------------------------------------------- */
+function TeamPerformance() {
+  return (
+    <div className="p-8 flex flex-col gap-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 style={{ color: C.text }} className="text-[24px] font-bold">Team Performance</h2>
+          <p style={{ color: C.textSub }} className="text-[13.5px] mt-1">Monitor productivity, sales activity and task completion.</p>
+        </div>
+        <GhostButton icon={Calendar}>This Week <ChevronDown size={14} /></GhostButton>
+      </div>
+
+      <div className="grid grid-cols-4 gap-4">
+        {team.map((m) => (
+          <Card key={m.name}>
+            <div className="flex items-center gap-3 mb-4">
+              <Avatar initials={m.initials} size={40} tone={m.status === "Top Performer" ? "gold" : "navy"} />
+              <div>
+                <div style={{ color: C.text }} className="font-semibold text-[14.5px]">{m.name}</div>
+                <Badge bg={teamStatusColor[m.status].bg} fg={teamStatusColor[m.status].fg}>{m.status}</Badge>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2.5 text-[13px]">
+              <div className="flex justify-between"><span style={{ color: C.textSub }}>Tasks</span><span style={{ color: C.text }} className="font-medium">{m.tasks[0]} / {m.tasks[1]}</span></div>
+              <div style={{ background: "#EEF0F3" }} className="h-1.5 rounded-full overflow-hidden -mt-1.5">
+                <div style={{ width: `${(m.tasks[0] / m.tasks[1]) * 100}%`, background: C.navy }} className="h-full rounded-full" />
+              </div>
+              <div className="flex justify-between"><span style={{ color: C.textSub }}>Leads</span><span style={{ color: C.text }} className="font-medium">{m.leads}</span></div>
+              <div className="flex justify-between"><span style={{ color: C.textSub }}>Revenue</span><span style={{ color: C.gold }} className="font-semibold">{naira(m.revenue)}</span></div>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-3 gap-5">
+        <Card className="col-span-2">
+          <h3 style={{ color: C.text }} className="font-semibold text-[15px] mb-4">Tasks Completed by Team Member</h3>
+          <div className="h-[220px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={teamChartData} margin={{ left: -18 }}>
+                <CartesianGrid stroke={C.border} vertical={false} />
+                <XAxis dataKey="name" tick={{ fontSize: 12, fill: C.textSub }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: C.textSub }} axisLine={false} tickLine={false} />
+                <RTooltip contentStyle={{ borderRadius: 8, fontSize: 12, border: `1px solid ${C.border}` }} />
+                <Bar dataKey="tasks" fill={C.navy} radius={[6, 6, 0, 0]} barSize={38} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+        <Card>
+          <h3 style={{ color: C.text }} className="font-semibold text-[15px] mb-4">Revenue Contribution</h3>
+          <div className="flex flex-col gap-4">
+            {team.map((m) => {
+              const total = team.reduce((s, t) => s + t.revenue, 0);
+              const pct = Math.round((m.revenue / total) * 100);
+              return (
+                <div key={m.name}>
+                  <div className="flex justify-between text-[13px] mb-1.5">
+                    <span style={{ color: C.text }} className="font-medium">{m.name}</span>
+                    <span style={{ color: C.textSub }}>{pct}%</span>
+                  </div>
+                  <div style={{ background: "#EEF0F3" }} className="h-2 rounded-full overflow-hidden">
+                    <div style={{ width: `${pct}%`, background: C.gold }} className="h-full rounded-full" />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------
+   SCREEN: CLIENT PORTAL
+---------------------------------------------------------------- */
+function ClientPortal() {
+  const invoices = [
+    { id: "INV-104", date: "Sept 5", amount: 450000, status: "Paid" },
+    { id: "INV-101", date: "Aug 20", amount: 280000, status: "Paid" },
+  ];
+  return (
+    <div style={{ background: C.bg }} className="min-h-full">
+      <div style={{ borderBottom: `1px solid ${C.border}`, background: "#fff" }} className="px-10 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-8">
+          <div className="flex items-center gap-2.5">
+            <div style={{ background: C.gold }} className="w-7 h-7 rounded-md flex items-center justify-center text-[12px] font-bold text-[#1A2A4A]">SW</div>
+            <span style={{ color: C.text }} className="font-semibold text-[14.5px]">OVIE DAVID Trading LTD</span>
+          </div>
+          <div className="flex items-center gap-6 text-[13.5px]" style={{ color: C.textSub }}>
+            <span style={{ color: C.navy }} className="font-semibold">Dashboard</span>
+            <span>My Orders</span>
+            <span>Invoices</span>
+            <span>Documents</span>
+            <span>Messages</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <span style={{ color: C.text }} className="text-[13.5px] font-medium">Adeola O.</span>
+          <Avatar initials="AO" size={32} />
+          <LogOut size={16} style={{ color: C.textSub }} />
+        </div>
+      </div>
+
+      <div className="max-w-5xl mx-auto px-10 py-10 flex flex-col gap-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 style={{ color: C.text }} className="text-[24px] font-bold">Welcome back, Adeola</h2>
+            <p style={{ color: C.textSub }} className="text-[14px] mt-1">Here's an overview of your orders and recent activity.</p>
+          </div>
+          <Badge bg="#FCF6E6" fg={C.gold}>Coming soon — more self-service features on the way</Badge>
+        </div>
+
+        <div>
+          <h3 style={{ color: C.text }} className="font-semibold text-[16px] mb-3">Your Orders</h3>
+          <Card className="flex items-center justify-between">
+            <div className="flex items-center gap-5">
+              <div style={{ background: "#FCF1DC" }} className="w-12 h-12 rounded-xl flex items-center justify-center"><Truck size={20} style={{ color: C.warning }} /></div>
+              <div>
+                <div style={{ color: C.text }} className="font-semibold text-[15px]">Order #105</div>
+                <Badge bg="#FCF1DC" fg="#B7791F">In Transit</Badge>
+              </div>
+            </div>
+            <div className="flex items-center gap-10 text-[13.5px]">
+              <div><div style={{ color: C.textSub }}>Expected Delivery</div><div style={{ color: C.text }} className="font-medium">2 days</div></div>
+              <div><div style={{ color: C.textSub }}>Items</div><div style={{ color: C.text }} className="font-medium">5 products</div></div>
+              <div><div style={{ color: C.textSub }}>Total</div><div style={{ color: C.gold }} className="font-semibold">{naira(450000)}</div></div>
+              <GhostButton icon={ArrowRight}>Track Order</GhostButton>
+            </div>
+          </Card>
+        </div>
+
+        <div>
+          <h3 style={{ color: C.text }} className="font-semibold text-[16px] mb-3">Recent Invoices</h3>
+          <Card padded={false} className="overflow-hidden">
+            <table className="w-full text-[13.5px]">
+              <thead>
+                <tr style={{ borderBottom: `1px solid ${C.border}`, color: C.textSub }} className="text-left uppercase text-[11.5px] tracking-wide">
+                  <th className="py-3 px-5 font-semibold">Invoice</th>
+                  <th className="py-3 px-5 font-semibold">Date</th>
+                  <th className="py-3 px-5 font-semibold">Amount</th>
+                  <th className="py-3 px-5 font-semibold">Status</th>
+                  <th className="py-3 px-5 font-semibold">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {invoices.map((inv, i) => (
+                  <tr key={inv.id} style={{ borderTop: i > 0 ? `1px solid ${C.border}` : "none" }}>
+                    <td className="py-3.5 px-5 font-medium" style={{ color: C.text }}>{inv.id}</td>
+                    <td className="py-3.5 px-5" style={{ color: C.textSub }}>{inv.date}</td>
+                    <td className="py-3.5 px-5 font-medium" style={{ color: C.text }}>{naira(inv.amount)}</td>
+                    <td className="py-3.5 px-5"><Badge bg="#E9F8EF" fg={C.success}>{inv.status}</Badge></td>
+                    <td className="py-3.5 px-5"><span style={{ color: C.info }} className="font-medium cursor-pointer">View</span></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Card>
+        </div>
+
+        <Card className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div style={{ background: "#EAF1FE" }} className="w-12 h-12 rounded-xl flex items-center justify-center"><MessageCircle size={20} style={{ color: C.info }} /></div>
+            <div>
+              <div style={{ color: C.text }} className="font-semibold text-[15px]">Need help with your order?</div>
+              <div style={{ color: C.textSub }} className="text-[13px]">Our team usually responds within a few hours.</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2.5">
+            <GhostButton>Contact OVIE DAVID Trading LTD</GhostButton>
+            <PrimaryButton icon={MessageCircle}>Message Support</PrimaryButton>
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------
+   SCREEN: MOBILE DASHBOARD (phone frame)
+---------------------------------------------------------------- */
+function MobileDashboard() {
+  const kpis = [
+    { icon: Users, label: "Total Leads", value: "24", delta: "+12%" },
+    { icon: Package, label: "Active Orders", value: "12", delta: "+8%" },
+    { icon: Clock, label: "Pending Tasks", value: "8", delta: "-3" },
+    { icon: Wallet, label: "Revenue MTD", value: "₦4.2M", delta: "+22%" },
+  ];
+  return (
+    <div className="flex justify-center py-8">
+      <div style={{ width: 390, background: "#0B1220" }} className="rounded-[2.2rem] p-2.5 shadow-2xl">
+        <div style={{ background: C.bg }} className="rounded-[1.7rem] overflow-hidden h-[720px] overflow-y-auto relative">
+          <div style={{ background: C.navy }} className="px-5 pt-5 pb-6 flex items-center justify-between">
+            <Menu size={20} color="#fff" />
+            <span className="text-white font-semibold text-[14px]">SmartWork CRM</span>
+            <Avatar initials="DA" size={26} />
+          </div>
+          <div className="px-5 -mt-3">
+            <Card>
+              <div style={{ color: C.text }} className="font-bold text-[16px]">Good morning, David</div>
+              <div style={{ color: C.textSub }} className="text-[12.5px] mt-0.5">Here's today's overview</div>
+            </Card>
+          </div>
+
+          <div className="px-5 mt-4 grid grid-cols-2 gap-3">
+            {kpis.map((k) => (
+              <Card key={k.label} className="!p-3.5">
+                <k.icon size={16} style={{ color: C.gold }} />
+                <div style={{ color: C.text }} className="font-bold text-[17px] mt-2">{k.value}</div>
+                <div style={{ color: C.textSub }} className="text-[11px]">{k.label}</div>
+                <div style={{ color: k.delta.startsWith("-") ? C.danger : C.success }} className="text-[11px] font-semibold mt-1">{k.delta}</div>
+              </Card>
+            ))}
+          </div>
+
+          <div className="px-5 mt-4">
+            <Card>
+              <div style={{ color: C.text }} className="font-semibold text-[13px] mb-2">Revenue Performance</div>
+              <div className="h-[110px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={revenueData}>
+                    <Line type="monotone" dataKey="v" stroke={C.gold} strokeWidth={2} dot={false} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </Card>
+          </div>
+
+          <div className="px-5 mt-4">
+            <Card>
+              <div style={{ color: C.text }} className="font-semibold text-[13px] mb-3">Order Pipeline</div>
+              <div className="flex gap-1.5 h-2.5 rounded-full overflow-hidden">
+                <div style={{ background: C.textSub, width: "21%" }} />
+                <div style={{ background: C.info, width: "29%" }} />
+                <div style={{ background: C.warning, width: "14%" }} />
+                <div style={{ background: C.success, width: "36%" }} />
+              </div>
+              <div className="flex justify-between text-[10.5px] mt-2" style={{ color: C.textSub }}>
+                <span>Pending 3</span><span>Processing 4</span><span>Transit 2</span><span>Delivered 5</span>
+              </div>
+            </Card>
+          </div>
+
+          <div className="px-5 mt-4 pb-24">
+            <div style={{ color: C.text }} className="font-semibold text-[13px] mb-2">Recent Activity</div>
+            <div className="flex flex-col gap-2.5">
+              {activity.map((a) => (
+                <Card key={a.id} className="!p-3">
+                  <div style={{ color: C.text }} className="text-[12.5px] font-medium">{a.text}</div>
+                  <div style={{ color: C.textSub }} className="text-[11px] mt-0.5">{a.time}</div>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          <button
+            style={{ background: C.gold, color: C.navyDeep }}
+            className="absolute bottom-5 right-5 w-14 h-14 rounded-full flex items-center justify-center shadow-lg"
+          >
+            <Plus size={24} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------
+   ROOT APP
+---------------------------------------------------------------- */
+function SmartWorkCRM() {
+  const [view, setView] = useState("desktop"); // desktop | portal | mobile
+  const [screen, setScreen] = useState("dashboard");
+  const [collapsed, setCollapsed] = useState(false);
+  const [selectedLead, setSelectedLead] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+
+  const screenTitles = {
+    dashboard: null,
+    leads: null,
+    orders: null,
+    team: null,
+    tasks: { title: "Tasks", subtitle: "Coming soon in this prototype." },
+    revenue: { title: "Revenue", subtitle: "Coming soon in this prototype." },
+    messages: { title: "Messages", subtitle: "Coming soon in this prototype." },
+    reports: { title: "Reports", subtitle: "Coming soon in this prototype." },
+    settings: { title: "Settings", subtitle: "Coming soon in this prototype." },
+  };
+
+  return (
+    <div style={{ fontFamily: "Inter, ui-sans-serif, system-ui" }} className="w-full h-full flex flex-col" >
+      {/* Meta switcher for this demo/presentation */}
+      <div style={{ background: C.navyDeep }} className="flex items-center justify-center gap-1 py-2 px-3 shrink-0">
+        {[
+          { key: "desktop", label: "Desktop CRM" },
+          { key: "portal", label: "Client Portal" },
+          { key: "mobile", label: "Mobile Dashboard" },
+        ].map((v) => (
+          <button
+            key={v.key}
+            onClick={() => setView(v.key)}
+            style={{
+              background: view === v.key ? C.gold : "transparent",
+              color: view === v.key ? C.navyDeep : "rgba(255,255,255,0.6)",
+            }}
+            className="px-3.5 py-1.5 rounded-md text-[12.5px] font-semibold transition"
+          >
+            {v.label}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ background: C.bg }} className="flex-1 overflow-hidden">
+        {view === "desktop" && (
+          <div className="flex h-full">
+            <Sidebar active={screen} onNav={setScreen} collapsed={collapsed} setCollapsed={setCollapsed} />
+            <div className="flex-1 flex flex-col overflow-hidden">
+              {screenTitles[screen] && <TopHeader title={screenTitles[screen].title} subtitle={screenTitles[screen].subtitle} />}
+              {screen !== "dashboard" && screen !== "leads" && screen !== "orders" && screen !== "team" && (
+                <div className="flex-1 flex items-center justify-center">
+                  <p style={{ color: C.textSub }} className="text-sm">This section isn't part of the prototype yet.</p>
+                </div>
+              )}
+              <div className="flex-1 overflow-y-auto">
+                {screen === "dashboard" && (
+                  <Dashboard onOpenLead={() => setScreen("leads")} onOpenOrders={() => setScreen("orders")} />
+                )}
+                {screen === "leads" && <LeadsClients onSelect={setSelectedLead} />}
+                {screen === "orders" && <OrderPipeline onSelect={setSelectedOrder} />}
+                {screen === "team" && <TeamPerformance />}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {view === "portal" && <div className="h-full overflow-y-auto"><ClientPortal /></div>}
+        {view === "mobile" && <div className="h-full overflow-y-auto"><MobileDashboard /></div>}
+      </div>
+
+      <ClientDrawer lead={selectedLead} onClose={() => setSelectedLead(null)} />
+      <OrderDetailModal order={selectedOrder} onClose={() => setSelectedOrder(null)} />
+    </div>
+  );
+}
+
+const root = createRoot(document.getElementById("root"));
+root.render(<SmartWorkCRM />);
+</script>
+</body>
+</html>
