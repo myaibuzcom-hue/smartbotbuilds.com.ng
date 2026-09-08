@@ -812,13 +812,28 @@ tbody tr:last-child td{border-bottom:none}
   };
   ["click","keydown","mousemove","touchstart"].forEach(evt=> document.addEventListener(evt, ()=>{ if(Auth.isLoggedIn()) Auth.resetTimer(); }, {passive:true}));
 
-  // ---- PIN screen wiring ----
-  (function initLock(){
+ // ---- PIN screen wiring (robust version) ----
+(function initLock(){
+  // Wait for DOM to be ready
+  function setupLock(){
     let entered = "";
-    const dots = ()=> document.querySelectorAll("#pinDots span");
+    const dots = document.querySelectorAll("#pinDots span");
     const lockEl = document.getElementById("lockScreen");
     const errEl = document.getElementById("lockError");
-    function render(){ dots().forEach((d,i)=> d.classList.toggle("filled", i < entered.length)); }
+    const keypad = document.getElementById("keypad");
+    const clearBtn = document.getElementById("clearBtn");
+    const delBtn = document.getElementById("delBtn");
+
+    if (!lockEl || !keypad) {
+      console.warn("Lock screen elements not found — retrying...");
+      setTimeout(setupLock, 100);
+      return;
+    }
+
+    function render(){
+      dots.forEach((d,i)=> d.classList.toggle("filled", i < entered.length));
+    }
+
     function tryUnlock(){
       if(entered === Auth.getPin()){
         errEl.textContent = "";
@@ -828,25 +843,61 @@ tbody tr:last-child td{border-bottom:none}
       } else {
         errEl.textContent = "Incorrect PIN";
         lockEl.classList.add("shake");
-        setTimeout(()=>{ lockEl.classList.remove("shake"); entered=""; render(); }, 400);
+        setTimeout(()=>{
+          lockEl.classList.remove("shake");
+          entered = "";
+          render();
+        }, 400);
       }
     }
-    document.querySelectorAll("#keypad button[data-k]").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
+
+    // Attach number buttons
+    keypad.querySelectorAll("button[data-k]").forEach(btn=>{
+      btn.addEventListener("click", function(e){
+        e.stopPropagation();
         if(entered.length >= 4) return;
-        entered += btn.dataset.k;
+        entered += this.dataset.k;
         render();
-        if(entered.length === 4) setTimeout(tryUnlock, 120);
+        if(entered.length === 4){
+          setTimeout(tryUnlock, 120);
+        }
       });
     });
-    document.getElementById("clearBtn").addEventListener("click", ()=>{ entered=""; render(); errEl.textContent=""; });
-    document.getElementById("delBtn").addEventListener("click", ()=>{ entered = entered.slice(0,-1); render(); });
 
+    // Clear button
+    if(clearBtn){
+      clearBtn.addEventListener("click", function(){
+        entered = "";
+        render();
+        errEl.textContent = "";
+      });
+    }
+
+    // Delete button
+    if(delBtn){
+      delBtn.addEventListener("click", function(){
+        entered = entered.slice(0, -1);
+        render();
+      });
+    }
+
+    // If already logged in, hide lock
     if(Auth.isLoggedIn()){
       lockEl.classList.add("hidden");
       Auth.resetTimer();
+    } else {
+      lockEl.classList.remove("hidden");
+      errEl.textContent = "\u00A0"; // non-breaking space to keep height
     }
-  })();
+  }
+
+  // Run setup after a small delay to ensure DOM is ready
+  if (document.readyState === "complete" || document.readyState === "interactive") {
+    setupLock();
+  } else {
+    document.addEventListener("DOMContentLoaded", setupLock);
+  }
+})();
 
   // ============================================================
   // NAVIGATION
