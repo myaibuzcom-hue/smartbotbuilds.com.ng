@@ -209,8 +209,8 @@ header { background: rgba(8,12,8,0.97); backdrop-filter: blur(20px); border-bott
           <div class="pkg-check"></div>
           <div class="pkg-emoji">🥉</div>
           <div class="pkg-name">Starter Website</div>
-          <div class="pkg-price">₦35,000</div>
-          <div class="pkg-normal">Normal: ₦75,000</div>
+          <div class="pkg-price">₦50,000</div>
+<div class="pkg-normal">Normal: ₦100,000</div>
           <div class="pkg-days">⏱ Ready in 7 days</div>
           <ul class="pkg-features">
             <li>1-page professional design</li>
@@ -230,8 +230,8 @@ header { background: rgba(8,12,8,0.97); backdrop-filter: blur(20px); border-bott
           <div class="pkg-check"></div>
           <div class="pkg-emoji">🥈</div>
           <div class="pkg-name">Business Website</div>
-          <div class="pkg-price">₦60,000</div>
-          <div class="pkg-normal">Normal: ₦120,000</div>
+          <div class="pkg-price">₦85,000</div>
+<div class="pkg-normal">Normal: ₦170,000</div>
           <div class="pkg-days">⏱ Ready in 10 days</div>
           <ul class="pkg-features">
             <li>Everything in Starter</li>
@@ -250,8 +250,8 @@ header { background: rgba(8,12,8,0.97); backdrop-filter: blur(20px); border-bott
           <div class="pkg-check"></div>
           <div class="pkg-emoji">🥇</div>
           <div class="pkg-name">Premium Website</div>
-          <div class="pkg-price">₦100,000</div>
-          <div class="pkg-normal">Normal: ₦200,000</div>
+          <div class="pkg-price">₦150,000</div>
+<div class="pkg-normal">Normal: ₦300,000</div>
           <div class="pkg-days">⏱ Ready in 14 days</div>
           <ul class="pkg-features">
             <li>Everything in Business</li>
@@ -582,7 +582,7 @@ function selectPackage(pkg, el) {
   if (isBusiness && listingCount === 0) addListing();
   if (isBusiness && testimonialCount === 0) addTestimonial();
 
-  const names = { starter: 'Starter Website — ₦35,000', business: 'Business Website — ₦60,000', premium: 'Premium Website — ₦100,000' };
+  const names = { starter: 'Starter Website — ₦50,000', business: 'Business Website — ₦85,000', premium: 'Premium Website — ₦150,000' };
   document.getElementById('selectedPkgDisplay').value = names[pkg] || '';
 }
 
@@ -785,7 +785,7 @@ function submitForm() {
   btn.disabled = true;
   btn.innerHTML = '⏳ Submitting...';
 
-  const pkgNames = { starter: 'Starter Website — ₦35,000', business: 'Business Website — ₦60,000', premium: 'Premium Website — ₦100,000' };
+  const pkgNames = { starter: 'Starter Website — ₦50,000', business: 'Business Website — ₦85,000', premium: 'Premium Website — ₦150,000' };
   const style = document.querySelector('input[name="style"]:checked')?.value || 'Not selected';
   const logo = document.querySelector('input[name="logo"]:checked')?.value || 'Not answered';
   const domain = domainAns;
