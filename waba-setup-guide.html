@@ -65,7 +65,16 @@
 
 <div class="container">
   <h1>WhatsApp Business Account (WABA)<br><span>Simple Setup Guide</span></h1>
-  <p class="sub">Choose one of the two options below. We will guide you step by step.</p>
+   <p class="sub">Choose one of the two options below. We will guide you step by step.</p>
+
+  <div class="warning" style="margin-bottom:20px;">
+    <strong>⚠️ Before you start — 3 things you must know:</strong>
+    <ol style="margin-top:10px;padding-left:20px;">
+      <li style="margin-bottom:8px;"><strong>Buy a NEW SIM for your bot</strong> — ₦200 from any shop. This SIM must <strong>NOT</strong> already be on WhatsApp. It must be a fresh number.</li>
+      <li style="margin-bottom:8px;"><strong>Your personal WhatsApp is safe.</strong> Your personal number stays untouched. The bot uses its own separate number.</li>
+      <li><strong>Display name approval takes time.</strong> After you set up, Meta may take 24 hours–5 days to approve your business name. Your bot won't work fully until approved. We'll start building meanwhile.</li>
+    </ol>
+  </div>
 
   <!-- OPTION A: DO IT YOURSELF -->
   <div class="option-card" onclick="toggleDetails('optionA')">
@@ -93,6 +102,7 @@
             <li>Under the <strong>Accounts</strong> section, click <strong>WhatsApp Accounts</strong>.</li>
             <li>Click the blue <strong>Add</strong> button, then select <strong>Create a new WhatsApp Business Account</strong>.</li>
             <li>Enter a name (your business name), select your time zone (for Nigeria choose <strong>(GMT+01:00) West Central Africa</strong>), and click <strong>Create</strong>.</li>
+<li><strong>IMPORTANT:</strong> Meta will ask you to set up <strong>Two-Factor Authentication (2FA)</strong>. Choose <strong>SMS</strong> and enter the bot SIM number. This is required — you cannot skip it.</li>
           </ol>
         </li>
         <li>
@@ -106,6 +116,7 @@
             <li>Click <strong>Next</strong> or <strong>Continue</strong>.</li>
             <li>Meta will send a 6-digit code to that number via SMS or call. The code will arrive on the phone where the SIM is inserted.</li>
             <li>Enter that code in the field and click <strong>Verify</strong>.</li>
+<li><strong>⚠️ Heads up:</strong> Once the number is verified in WABA, WhatsApp will be <strong>removed</strong> from that SIM's phone app. This is normal and expected — your bot now lives in the cloud, not on the phone. The SIM must stay active (never let it expire or be used for anything else).</li>
           </ol>
         </li>
         <li>
@@ -144,7 +155,7 @@
             <li>Find the <strong>Configuration</strong> or <strong>Webhooks</strong> section.</li>
             <li>Click <strong>Edit</strong>.</li>
             <li>In the <strong>Callback URL</strong> field, type exactly: <strong>https://smartbot-genius-bot.myaibuzcom-hue.deno.net</strong></li>
-            <li>In the <strong>Verify token</strong> field, type exactly: <strong>smartbot</strong></li>
+            <li>In the <strong>Verify token</strong> field, we'll send you the exact token via WhatsApp when you're ready. Do NOT guess this — it must match exactly.</li>
             <li>Click <strong>Verify and Save</strong>. You should see a green success message.</li>
             <li>If asked to subscribe to fields, make sure <strong>messages</strong> is checked.</li>
           </ol>
@@ -159,7 +170,7 @@
           </ol>
         </li>
       </ol>
-      <div class="note">✅ This DIY route takes about 20–30 minutes. If you prefer not to do these steps, use Option B and we'll handle it.</div>
+      <div class="note">✅ This DIY route takes about 20–30 minutes of setup. Meta's display name approval can take 24 hours–5 days more — that's normal, not a delay on your end. If you prefer not to do these steps, use Option B and we'll handle it.</div>
     </div>
   </div>
 
