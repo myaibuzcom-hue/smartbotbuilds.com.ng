@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Custom CRMs, dashboards, AI tools, and web applications for Nigerian businesses. Built from scratch from ₦500,000. One-time payment. Full source code ownership.">
+  <title>Custom Solutions – CRMs, Dashboards & AI Tools | SmartBot Builds</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    :root {
+      --black: #080c08;
+      --green: #00c853;
+      --white: #f5faf5;
+      --grey: #2a332a;
+      --wa-green: #25d366;
+      --text: #e8f5e8;
+      --text-dim: #7a9e7a;
+      --radius: 16px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: 'Cabinet Grotesk', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 14px 28px; border-radius: 100px; font-weight: 700; font-size: 16px;
+      transition: all 0.3s; border: none; cursor: pointer; text-decoration: none;
+    }
+    .btn-primary { background: var(--wa-green); color: #fff; box-shadow: 0 0 30px rgba(37,211,102,0.3); }
+    .btn-primary:hover { background: #20c05a; transform: translateY(-2px); box-shadow: 0 0 50px rgba(37,211,102,0.4); }
+    .btn-secondary { background: transparent; border: 1px solid rgba(255,255,255,0.15); color: var(--text); }
+    .btn-secondary:hover { border-color: var(--green); color: var(--green); }
+    .btn-outline { background: transparent; border: 2px solid var(--green); color: var(--green); }
+    .btn-outline:hover { background: var(--green); color: var(--black); }
+
+    /* HEADER */
+    .header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 16px 0; background: rgba(8,12,8,0.92);
+      backdrop-filter: blur(16px); border-bottom: 1px solid rgba(0,200,83,0.08);
+    }
+    .header .container { display: flex; align-items: center; justify-content: space-between; }
+    .logo {
+      font-family: 'Clash Display', sans-serif; font-size: 20px; font-weight: 700;
+      color: var(--white); text-decoration: none; display: flex; align-items: center; gap: 10px;
+    }
+    .logo span { color: var(--green); }
+    .logo-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    #menuToggle { display: none; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 5px; background: none; border: none; }
+    .hamburger span { display: block; width: 26px; height: 2.5px; background: var(--white); border-radius: 2px; transition: all 0.3s; }
+
+    .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
+    .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--green); }
+    .nav-links .nav-cta {
+      background: var(--green); color: var(--black) !important;
+      padding: 10px 22px !important; border-radius: 100px;
+      font-weight: 700 !important; font-size: 14px !important;
+    }
+    .nav-links .nav-cta:hover { background: #00e676 !important; }
+    .menu-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 98; }
+
+    @media (max-width: 900px) {
+      .hamburger { display: flex; z-index: 101; }
+      .nav-links {
+        position: fixed; top: 0; right: -100%; width: 80%; max-width: 340px;
+        height: 100vh; background: var(--black); flex-direction: column;
+        align-items: flex-start; justify-content: center; padding: 40px 32px;
+        gap: 22px; transition: right 0.3s ease; box-shadow: -10px 0 40px rgba(0,0,0,0.5);
+        z-index: 100; border-left: 1px solid rgba(0,200,83,0.1);
+      }
+      .nav-links a { font-size: 17px; color: var(--white); opacity: 0.85; }
+      .nav-links a:hover { opacity: 1; color: var(--green); }
+      .nav-links .nav-cta { width: 100%; text-align: center; font-size: 15px !important; margin-top: 8px; }
+      #menuToggle:checked ~ .nav-links { right: 0; }
+      #menuToggle:checked ~ .menu-overlay { display: block; }
+    }
+
+    /* HERO */
+    .hero { padding: 150px 0 80px; position: relative; overflow: hidden; }
+    .hero-bg {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      object-fit: cover; opacity: 0.08; z-index: 0;
+    }
+    .hero .container { position: relative; z-index: 1; text-align: center; }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(0,200,83,0.1); border: 1px solid rgba(0,200,83,0.25);
+      color: var(--green); font-size: 12px; font-weight: 700; padding: 6px 16px;
+      border-radius: 100px; margin-bottom: 22px; text-transform: uppercase; letter-spacing: 1px;
+    }
+    .hero h1 {
+      font-family: 'Clash Display', sans-serif;
+      font-size: clamp(34px, 5.5vw, 56px); font-weight: 700;
+      line-height: 1.05; margin-bottom: 22px; letter-spacing: -1.5px;
+    }
+    .hero h1 .accent { color: var(--green); }
+    .hero p {
+      font-size: 17px; color: var(--text-dim); max-width: 680px;
+      margin: 0 auto 36px; line-height: 1.75;
+    }
+    .hero-buttons { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+    .hero-stats {
+      display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 36px;
+    }
+    .hero-stat {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 100px; padding: 10px 22px; font-size: 13px; color: var(--text-dim);
+    }
+    .hero-stat strong { color: var(--green); font-weight: 700; }
+
+    @media (max-width: 480px) {
+      .hero { padding: 120px 0 60px; }
+      .hero-buttons .btn { width: 100%; }
+    }
+
+    /* SECTION */
+    .section { padding: 80px 0; }
+    .section-tag {
+      display: inline-block; font-size: 11px; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase; color: var(--green); margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Clash Display', sans-serif;
+      font-size: clamp(30px, 4vw, 44px); font-weight: 700; line-height: 1.1;
+      margin-bottom: 16px; letter-spacing: -0.5px;
+    }
+    .section-subtitle {
+      font-size: 17px; color: var(--text-dim);
+      max-width: 640px; margin-bottom: 48px; line-height: 1.7;
+    }
+    .text-center { text-align: center; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
+
+    /* SERVICES DETAIL */
+    .services-stack { display: flex; flex-direction: column; gap: 20px; max-width: 960px; margin: 0 auto; }
+
+    .service-row {
+      background: var(--grey); border: 1px solid rgba(255,255,255,0.05);
+      border-radius: var(--radius); padding: 32px 34px; transition: all 0.3s;
+      display: grid; grid-template-columns: 60px 1fr auto; gap: 24px; align-items: center;
+    }
+    .service-row:hover { border-color: rgba(0,200,83,0.3); transform: translateX(4px); }
+    .service-row .s-icon { font-size: 34px; text-align: center; }
+    .service-row .s-info h3 { font-family: 'Clash Display', sans-serif; font-size: 19px; font-weight: 700; margin-bottom: 6px; }
+    .service-row .s-info p { font-size: 14px; color: var(--text-dim); line-height: 1.65; }
+    .service-row .s-price {
+      font-family: 'Clash Display', sans-serif; font-size: 17px; font-weight: 700;
+      color: var(--green); white-space: nowrap; text-align: right;
+    }
+    .service-row .s-price .from { display: block; font-size: 11px; color: var(--text-dim); font-weight: 500; margin-bottom: 2px; }
+
+    @media (max-width: 700px) {
+      .service-row { grid-template-columns: 1fr; text-align: center; gap: 14px; padding: 26px 22px; }
+      .service-row .s-price { text-align: center; }
+    }
+
+    /* PROCESS */
+    .process-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 22px; max-width: 1000px; margin: 0 auto;
+    }
+    .process-step {
+      text-align: center; padding: 26px 20px; background: var(--grey);
+      border: 1px solid rgba(255,255,255,0.05); border-radius: var(--radius);
+    }
+    .process-step .step-num {
+      width: 46px; height: 46px; border-radius: 50%; background: var(--green);
+      color: var(--black); font-family: 'Clash Display', sans-serif;
+      font-weight: 700; font-size: 20px; display: flex; align-items: center;
+      justify-content: center; margin: 0 auto 14px;
+    }
+    .process-step h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .process-step p { font-size: 14px; color: var(--text-dim); line-height: 1.6; }
+
+    /* WHY CUSTOM */
+    .why-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 22px;
+      max-width: 1000px; margin: 0 auto;
+    }
+    .why-item {
+      text-align: center; padding: 28px 22px; background: var(--grey);
+      border: 1px solid rgba(255,255,255,0.05); border-radius: var(--radius); transition: all 0.3s;
+    }
+    .why-item:hover { transform: translateY(-4px); border-color: rgba(0,200,83,0.2); }
+    .why-item .icon { font-size: 32px; margin-bottom: 12px; display: block; }
+    .why-item h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .why-item p { font-size: 14px; color: var(--text-dim); line-height: 1.6; }
+
+    /* CASE STUDY */
+    .case-card {
+      background: var(--grey); border: 1px solid rgba(255,255,255,0.05);
+      border-radius: var(--radius); padding: 44px 44px; max-width: 900px; margin: 0 auto;
+    }
+    .case-card .case-tag {
+      display: inline-block; background: var(--green); color: var(--black);
+      font-size: 11px; font-weight: 700; padding: 4px 14px; border-radius: 100px;
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px;
+    }
+    .case-card h3 { font-family: 'Clash Display', sans-serif; font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+    .case-card .case-sub { color: var(--text-dim); font-size: 14px; margin-bottom: 20px; }
+    .case-card .case-sub strong { color: var(--text); }
+    .case-card .case-desc { color: var(--text-dim); line-height: 1.75; margin: 16px 0; font-size: 15px; }
+    .case-card .case-desc strong { color: var(--text); }
+    @media (max-width: 700px) { .case-card { padding: 28px 22px; } }
+
+    /* FAQ */
+    .faq-list { max-width: 800px; margin: 0 auto; }
+    .faq-item {
+      background: var(--grey); border: 1px solid rgba(255,255,255,0.05);
+      border-radius: var(--radius); margin-bottom: 14px; overflow: hidden;
+    }
+    .faq-q {
+      width: 100%; background: none; border: none; color: var(--text);
+      font-family: 'Cabinet Grotesk', sans-serif; font-size: 16px; font-weight: 600;
+      padding: 20px 24px; display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; text-align: left; gap: 12px; transition: background 0.2s;
+    }
+    .faq-q:hover { background: rgba(0,200,83,0.03); }
+    .faq-q .icon { font-size: 18px; color: var(--green); transition: transform 0.3s; flex-shrink: 0; }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    .faq-a p { padding: 0 24px 20px; font-size: 14px; color: var(--text-dim); line-height: 1.7; }
+    .faq-item.open .faq-q .icon { transform: rotate(45deg); }
+    .faq-item.open .faq-a { max-height: 500px; }
+
+    /* CTA */
+    .cta-section {
+      padding: 90px 0; text-align: center;
+      background: rgba(0,200,83,0.03);
+      border-top: 1px solid rgba(0,200,83,0.06);
+      border-bottom: 1px solid rgba(0,200,83,0.06);
+    }
+    .cta-section h2 {
+      font-family: 'Clash Display', sans-serif;
+      font-size: clamp(30px, 4vw, 46px); font-weight: 700;
+      line-height: 1.1; margin-bottom: 16px;
+    }
+    .cta-section h2 span { color: var(--green); }
+    .cta-section p {
+      font-size: 17px; color: var(--text-dim);
+      max-width: 600px; margin: 0 auto 32px; line-height: 1.7;
+    }
+    .cta-buttons { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+    .cta-section .phone-note { margin-top: 22px; font-size: 14px; color: var(--text-dim); }
+    .cta-section .phone-note a { color: var(--green); font-weight: 700; text-decoration: none; }
+
+    /* FOOTER */
+    .footer {
+      background: rgba(0,0,0,0.4); border-top: 1px solid rgba(255,255,255,0.04);
+      padding: 60px 0 30px;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 40px; margin-bottom: 40px;
+    }
+    .footer-logo {
+      font-family: 'Clash Display', sans-serif; font-size: 20px;
+      font-weight: 700; color: var(--white); margin-bottom: 12px;
+    }
+    .footer-logo span { color: var(--green); }
+    .footer p { font-size: 14px; color: var(--text-dim); line-height: 1.7; }
+    .footer h4 { font-size: 14px; font-weight: 700; margin-bottom: 16px; color: var(--text); }
+    .footer ul { list-style: none; }
+    .footer ul li { margin-bottom: 10px; }
+    .footer ul a { color: var(--text-dim); text-decoration: none; font-size: 14px; transition: color 0.2s; }
+    .footer ul a:hover { color: var(--green); }
+    .footer .socials { display: flex; gap: 12px; margin-top: 16px; }
+    .footer .socials a {
+      width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      color: var(--text-dim); transition: all 0.3s;
+    }
+    .footer .socials a:hover { border-color: var(--green); color: var(--green); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.04); padding-top: 24px;
+      text-align: center; font-size: 13px; color: var(--text-dim);
+    }
+    .footer-bottom a { color: var(--green); text-decoration: none; }
+    @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr; gap: 24px; } }
+
+    /* FLOATING */
+    .wa-float {
+      position: fixed; bottom: 24px; right: 24px; z-index: 100;
+      width: 60px; height: 60px; background: var(--wa-green); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 28px;
+      color: #fff; box-shadow: 0 4px 20px rgba(37,211,102,0.4); text-decoration: none;
+      transition: all 0.3s; animation: floatPulse 3s infinite;
+    }
+    .wa-float:hover { transform: scale(1.1); box-shadow: 0 6px 30px rgba(37,211,102,0.6); }
+    @keyframes floatPulse {
+      0%,100% { box-shadow: 0 4px 20px rgba(37,211,102,0.4); }
+      50% { box-shadow: 0 4px 40px rgba(37,211,102,0.7); }
+    }
+    @media (max-width: 768px) {
+      .wa-float { width: 50px; height: 50px; font-size: 22px; bottom: 20px; right: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="container">
+      <a href="/" class="logo">
+        <div class="logo-dot"></div>
+        Smart<span>Bot</span> Builds
+      </a>
+
+      <input type="checkbox" id="menuToggle">
+      <label for="menuToggle" class="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </label>
+      <div class="menu-overlay"></div>
+
+      <ul class="nav-links">
+        <li><a href="/genius-bot.html">Genius Bot</a></li>
+        <li><a href="/website-design.html">Websites</a></li>
+        <li><a href="/custom-solutions.html" class="active" style="color:var(--green);">Custom Solutions</a></li>
+        <li><a href="/pricing.html">Pricing</a></li>
+        <li><a href="/about.html">About</a></li>
+        <li><a href="https://wa.me/2347055403967?text=Hi%2C%20I%27d%20like%20to%20discuss%20a%20custom%20project" target="_blank" class="nav-cta">Chat With Our Bot</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1400&q=80&fit=crop" alt="Data dashboard" class="hero-bg">
+    <div class="container">
+      <div class="hero-tag">
+        <div class="logo-dot"></div>
+        Custom Software · Built From Scratch
+      </div>
+      <h1>
+        Software Built<br>
+        <span class="accent">Around Your Business</span>.
+      </h1>
+      <p>
+        CRMs, dashboards, admin portals, AI tools, and full-stack web apps —
+        designed around your exact workflow. You own the source code, forever.
+      </p>
+      <div class="hero-buttons">
+        <a href="/project-request.html" class="btn btn-primary">→ Start a Project</a>
+        <a href="https://wa.me/2347055403967?text=Hi%2C%20I%27d%20like%20to%20discuss%20a%20custom%20project" target="_blank" class="btn btn-secondary">💬 Chat With Our Bot</a>
+      </div>
+      <div class="hero-stats">
+        <span class="hero-stat">From <strong>₦500,000</strong></span>
+        <span class="hero-stat"><strong>3–6 weeks</strong> delivery</span>
+        <span class="hero-stat"><strong>50/50</strong> payment split</span>
+        <span class="hero-stat"><strong>100%</strong> source code ownership</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT WE BUILD -->
+  <section class="section">
+    <div class="container">
+      <div class="text-center">
+        <div class="section-tag">What We Build</div>
+        <h2 class="section-title">Six Types of <span style="color:var(--green);">Custom Work</span></h2>
+        <p class="section-subtitle mx-auto">Every project is unique. These are the categories we build most often.</p>
+      </div>
+
+      <div class="services-stack">
+        <div class="service-row">
+          <div class="s-icon">📊</div>
+          <div class="s-info">
+            <h3>Custom CRM &amp; Lead Management</h3>
+            <p>Track leads, manage pipelines, automate follow-ups, and see exactly who is ready to buy — all in one dashboard your team will actually use.</p>
+          </div>
+          <div class="s-price"><span class="from">from</span>₦500,000</div>
+        </div>
+
+        <div class="service-row">
+          <div class="s-icon">⚙️</div>
+          <div class="s-info">
+            <h3>Process Automation Tools</h3>
+            <p>Stop doing the same task 100 times a day. We automate document collection, approvals, notifications, and repetitive workflows.</p>
+          </div>
+          <div class="s-price"><span class="from">from</span>₦500,000</div>
+        </div>
+
+        <div class="service-row">
+          <div class="s-icon">🏢</div>
+          <div class="s-info">
+            <h3>Admin Portals &amp; Internal Systems</h3>
+            <p>Give your staff a private portal to manage clients, documents, orders, and operations — with role-based access control.</p>
+          </div>
+          <div class="s-price"><span class="from">from</span>₦500,000</div>
+        </div>
+
+        <div class="service-row">
+          <div class="s-icon">🧠</div>
+          <div class="s-info">
+            <h3>AI-Powered Tools &amp; Agents</h3>
+            <p>Custom AI trained on your business — to process documents, answer questions, search your data, or support decisions.</p>
+          </div>
+          <div class="s-price"><span class="from">from</span>₦600,000</div>
+        </div>
+
+        <div class="service-row">
+          <div class="s-icon">📈</div>
+          <div class="s-info">
+            <h3>Data Analytics &amp; Business Intelligence</h3>
+            <p>Dashboards that turn your scattered data into clear insights — sales trends, customer behaviour, and real-time reports.</p>
+          </div>
+          <div class="s-price"><span class="from">from</span>₦700,000</div>
+        </div>
+
+        <div class="service-row">
+          <div class="s-icon">📱</div>
+          <div class="s-info">
+            <h3>Full-Stack Web Applications</h3>
+            <p>Booking systems, client portals, fintech dashboards, marketplaces — anything that needs a login, database, and real logic.</p>
+          </div>
+          <div class="s-price"><span class="from">from</span>₦800,000</div>
+        </div>
+      </div>
+
+      <p class="text-center" style="font-size:14px;color:var(--text-dim);margin-top:36px;">
+        💬 Not sure which one fits? <a href="https://wa.me/2347055403967?text=Hi%2C%20I%20need%20help%20choosing%20the%20right%20solution" target="_blank" style="color:var(--green);font-weight:700;text-decoration:none;">Chat with our bot</a> — it will ask a few questions and guide you.
+      </p>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="section" style="background: rgba(0,200,83,0.015); border-top: 1px solid rgba(0,200,83,0.06); border-bottom: 1px solid rgba(0,200,83,0.06);">
+    <div class="container">
+      <div class="text-center">
+        <div class="section-tag">The Process</div>
+        <h2 class="section-title">From Idea to <span style="color:var(--green);">Launch</span></h2>
+        <p class="section-subtitle mx-auto">Fixed price. Fixed timeline. No surprises.</p>
+      </div>
+
+      <div class="process-grid">
+        <div class="process-step">
+          <div class="step-num">1</div>
+          <h4>Tell Us Your Idea</h4>
+          <p>Fill the project form or chat with our bot. Attach any docs or mockups you have.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-num">2</div>
+          <h4>Get a Fixed Quote</h4>
+          <p>We send a detailed scope, price, and delivery date within 24 hours.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-num">3</div>
+          <h4>50% Upfront</h4>
+          <p>We start building immediately upon payment. Weekly progress updates.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-num">4</div>
+          <h4>Deliver &amp; Handover</h4>
+          <p>We deploy, train your team, and transfer full source code ownership.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CASE STUDY -->
+  <section class="section">
+    <div class="container">
+      <div class="text-center">
+        <div class="section-tag">Recent Work</div>
+        <h2 class="section-title">Real Project, <span style="color:var(--green);">Real Results</span></h2>
+      </div>
+
+      <div class="case-card">
+        <span class="case-tag">📌 Featured Project</span>
+        <h3>EDUPLAN360 — CRM + WhatsApp Bot</h3>
+        <div class="case-sub">
+          <strong>Delivered:</strong> August 2026 &nbsp;·&nbsp;
+          <strong>Project Value:</strong> ₦650,000
+        </div>
+
+        <p class="case-desc">
+          <strong>What we built:</strong> Full CRM dashboard with lead pipeline, document collection via WhatsApp,
+          auto-tagging system, team management, and real-time analytics. The bot handles end-to-end student
+          qualification while the CRM helps the conversion team track every lead.
+        </p>
+
+        <p class="case-desc">
+          <strong>Result:</strong> 77 qualified leads captured, 8 team members onboarded, and the admissions team
+          now saves several hours of manual work every week.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY CUSTOM -->
+  <section class="section" style="background: rgba(0,200,83,0.015); border-top: 1px solid rgba(0,200,83,0.06); border-bottom: 1px solid rgba(0,200,83,0.06);">
+    <div class="container">
+      <div class="text-center">
+        <div class="section-tag">Why Custom</div>
+        <h2 class="section-title">Built <span style="color:var(--green);">Just For You</span></h2>
+        <p class="section-subtitle mx-auto">Off-the-shelf software forces you to change. Custom software adapts to how you already work.</p>
+      </div>
+
+      <div class="why-grid">
+        <div class="why-item">
+          <span class="icon">🎯</span>
+          <h4>Exact Fit</h4>
+          <p>Built around your workflow — not the other way around.</p>
+        </div>
+        <div class="why-item">
+          <span class="icon">🔒</span>
+          <h4>You Own It</h4>
+          <p>Full source code handed over. No lock-in, no monthly fees.</p>
+        </div>
+        <div class="why-item">
+          <span class="icon">🚀</span>
+          <h4>Scales With You</h4>
+          <p>Add features or users anytime — no forced upgrade tiers.</p>
+        </div>
+        <div class="why-item">
+          <span class="icon">📞</span>
+          <h4>Direct Line</h4>
+          <p>You talk to Segun, not a support ticket system.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section">
+    <div class="container">
+      <div class="text-center">
+        <div class="section-tag">Questions</div>
+        <h2 class="section-title">Common <span style="color:var(--green);">Questions</span></h2>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item open">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span>Why does custom start at ₦500,000?</span>
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-a"><p>Custom software requires discovery, design, development, testing, and deployment — often 3–6 weeks of work. QuickLaunch packages (bot + website) start at ₦50,000 because they use proven templates. Custom builds everything from scratch around your business.</p></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span>How long does a custom project take?</span>
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-a"><p>Most projects are 3–6 weeks. Larger systems (with multiple modules, complex integrations, or AI features) can take 8–12 weeks. We give you a fixed timeline in the quote.</p></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span>What do you need from me to start?</span>
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-a"><p>A clear description of what you want, who will use it, and your budget/timeline. Mockups, documents, or screenshots of similar tools help a lot — but aren't required. We'll ask clarifying questions during the quote stage.</p></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span>What if I need changes after delivery?</span>
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-a"><p>Minor fixes are free for 14 days after delivery. Bigger changes (new features, redesigns) are quoted separately — usually much cheaper than the original build.</p></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span>Can you maintain it after handover?</span>
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-a"><p>Yes — you can either maintain it yourself (you have the source code), or hire us for updates on a per-project basis. No monthly retainer required.</p></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span>Do you sign NDAs?</span>
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-a"><p>Yes. If your project involves sensitive data or proprietary ideas, send us your NDA and we'll sign before discussing details.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <h2>Have a Project <span>in Mind?</span></h2>
+      <p>Tell us what you want to build and we'll send a fixed quote within 24 hours. No obligation.</p>
+      <div class="cta-buttons">
+        <a href="/project-request.html" class="btn btn-primary">→ Start a Project</a>
+        <a href="https://wa.me/2347055403967?text=Hi%2C%20I%27d%20like%20to%20discuss%20a%20custom%20project" target="_blank" class="btn btn-secondary">💬 Chat With Our Bot</a>
+      </div>
+      <p class="phone-note">
+        Prefer to speak to Segun first? <a href="https://wa.me/2348154857377?text=Hi%20Segun%2C%20I%20have%20a%20custom%20project%20in%20mind" target="_blank">Chat with the founder →</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">Smart<span>Bot</span> Builds</div>
+          <p>AI WhatsApp bots, professional websites, and custom software for Nigerian businesses. Founded by Segun Jegede.</p>
+          <div class="socials">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+        <div>
+          <h4>QuickLaunch</h4>
+          <ul>
+            <li><a href="/genius-bot.html">Genius Bot</a></li>
+            <li><a href="/website-design.html">Website Design</a></li>
+            <li><a href="/pricing.html#bundles">Bundles</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Custom</h4>
+          <ul>
+            <li><a href="/custom-solutions.html">Custom Solutions</a></li>
+            <li><a href="/project-request.html">Start a Project</a></li>
+            <li><a href="/pricing.html">Pricing</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li><i class="fas fa-phone" style="color: var(--green); width: 20px;"></i> <a href="https://wa.me/2348154857377" target="_blank" style="color:var(--text-dim);text-decoration:none;">08154857377 (founder)</a></li>
+            <li><i class="fas fa-envelope" style="color: var(--green); width: 20px;"></i> segunjegede@smartbotbuilds.com.ng</li>
+            <li><i class="fas fa-map-marker-alt" style="color: var(--green); width: 20px;"></i> Lagos, Nigeria</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 SmartBot Builds Enterprises. Built by <a href="/">SmartBot Builds</a>.</p>
+      </div>
+    </div>
+  </footer>
+
+  <a href="https://wa.me/2347055403967?text=Hi%2C%20I%27d%20like%20to%20discuss%20a%20custom%20project" target="_blank" class="wa-float" title="Chat with our bot">🤖</a>
+
+  <script>
+    function toggleFaq(btn) {
+      const item = btn.parentElement;
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(faq => faq.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    }
+    document.querySelectorAll('.nav-links a').forEach(function(link) {
+      link.addEventListener('click', function() {
+        const checkbox = document.getElementById('menuToggle');
+        if (checkbox) checkbox.checked = false;
+      });
+    });
+  </script>
+</body>
+</html>
