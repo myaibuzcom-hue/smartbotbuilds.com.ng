@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SmartSchool NG — Service Agreement</title>
+  <style>
+    @page { size: A4; margin: 20mm; }
+    body {
+      font-family: 'Georgia', 'Cambria', serif;
+      color: #111;
+      line-height: 1.55;
+      font-size: 11pt;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 30px;
+    }
+    h1 {
+      font-family: 'Helvetica', 'Arial', sans-serif;
+      font-size: 18pt;
+      text-align: center;
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 10pt;
+      color: #555;
+      margin-bottom: 24px;
+      font-family: 'Helvetica', 'Arial', sans-serif;
+    }
+    h2 {
+      font-family: 'Helvetica', 'Arial', sans-serif;
+      font-size: 12pt;
+      margin-top: 20px;
+      margin-bottom: 6px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 3px;
+    }
+    p { margin: 6px 0; }
+    ol, ul { margin: 6px 0 6px 20px; }
+    li { margin: 3px 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
+      font-size: 10pt;
+    }
+    table th, table td {
+      border: 1px solid #ccc;
+      padding: 8px 10px;
+      text-align: left;
+    }
+    table th {
+      background: #f3f3f3;
+      font-family: 'Helvetica', 'Arial', sans-serif;
+      font-weight: 700;
+      font-size: 10pt;
+    }
+    .signatures {
+      display: flex;
+      gap: 40px;
+      margin-top: 40px;
+      page-break-inside: avoid;
+    }
+    .sig-block { flex: 1; }
+    .sig-line {
+      border-bottom: 1px solid #333;
+      height: 40px;
+      margin-bottom: 6px;
+    }
+    .sig-label {
+      font-size: 9pt;
+      color: #555;
+      font-family: 'Helvetica', 'Arial', sans-serif;
+    }
+    .closing {
+      margin-top: 24px;
+      padding: 12px 14px;
+      background: #f8f9fa;
+      border-left: 3px solid #00c853;
+      font-size: 10pt;
+    }
+    .footer-note {
+      margin-top: 30px;
+      text-align: center;
+      font-size: 8.5pt;
+      color: #888;
+      font-family: 'Helvetica', 'Arial', sans-serif;
+    }
+    .print-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #00c853;
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-family: 'Helvetica', 'Arial', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    @media print { .print-btn { display: none; } }
+  </style>
+</head>
+<body>
+
+  <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+
+  <h1>Service Agreement</h1>
+  <div class="subtitle">SmartSchool NG — Academic Records &amp; Results Management System</div>
+
+  <p><strong>This Agreement</strong> is made on <strong>_____________________</strong> between:</p>
+
+  <p><strong>Service Provider:</strong> SmartBot Builds Enterprises, Lagos, Nigeria ("SmartBot Builds", "we", "us")</p>
+
+  <p><strong>Client:</strong> _______________________________________________ ("the School", "you")</p>
+
+  <p style="margin-top:14px;">Both parties agree to the following terms regarding the SmartSchool NG platform ("the System").</p>
+
+  <h2>1. Scope of Service</h2>
+  <p>SmartBot Builds will configure and deploy a private instance of the SmartSchool NG System for the School, including:</p>
+  <ul>
+    <li>School branding (name, address, motto, logo, principal signature)</li>
+    <li>Setup of classes, arms, subjects, and academic session structure</li>
+    <li>Configuration of the School's grading scale and assessment rubric (CA/exam weightings)</li>
+    <li>Creation of staff and parent user accounts</li>
+    <li>Deployment to a secure cloud environment with HTTPS</li>
+    <li>A one-hour online walkthrough/training session for the School's staff</li>
+  </ul>
+
+  <h2>2. Fees and Payment</h2>
+  <table>
+    <tr>
+      <th>Item</th>
+      <th>Amount (₦)</th>
+      <th>When Due</th>
+    </tr>
+    <tr>
+      <td>Setup Fee — 50% deposit</td>
+      <td>125,000</td>
+      <td>On signing this Agreement</td>
+    </tr>
+    <tr>
+      <td>Setup Fee — 50% balance</td>
+      <td>125,000</td>
+      <td>On go-live (before staff training)</td>
+    </tr>
+    <tr>
+      <td>Monthly Subscription — first month</td>
+      <td>25,000</td>
+      <td>On go-live</td>
+    </tr>
+    <tr>
+      <td>Monthly Subscription — ongoing</td>
+      <td>25,000</td>
+      <td>On the 1st of each month thereafter</td>
+    </tr>
+  </table>
+  <p><strong>Total Year-One cost:</strong> ₦550,000 (₦250,000 setup + 12 × ₦25,000 subscription).</p>
+  <p>All payments are by bank transfer to the account provided on the invoice. The School is responsible for any bank charges.</p>
+
+  <h2>3. Service Term</h2>
+  <p>The subscription is month-to-month. It renews automatically each month unless either party gives written notice of termination at least <strong>30 days</strong> in advance. Setup fees are non-refundable once configuration work has begun.</p>
+
+  <h2>4. Data Ownership and Privacy</h2>
+  <ul>
+    <li><strong>The School owns all data</strong> entered into the System — student records, scores, comments, attendance, and parent links.</li>
+    <li>SmartBot Builds will never sell, share, or use the School's data for any purpose other than operating and supporting the System.</li>
+    <li>The School may request a full export of its data at any time.</li>
+    <li>Upon written request after termination, SmartBot Builds will export the School's data in a common format and delete it from our systems within 30 days.</li>
+  </ul>
+
+  <h2>5. Support and Uptime</h2>
+  <ul>
+    <li>Support is provided via WhatsApp and email during business hours (Mon–Fri, 9am–6pm WAT).</li>
+    <li>Critical bugs reported by the School will be acknowledged within 24 hours.</li>
+    <li>Routine database backups run daily. In the unlikely event of data loss, we restore from the most recent backup.</li>
+    <li>We target 99% monthly uptime. Planned maintenance will be announced in advance whenever possible.</li>
+  </ul>
+
+  <h2>6. Responsibilities of the School</h2>
+  <ul>
+    <li>Provide accurate setup information (class list, subject list, grading scale, staff list) in a timely manner.</li>
+    <li>Ensure staff use the System in good faith and follow the workflows explained in training.</li>
+    <li>Keep login credentials confidential.</li>
+    <li>Notify SmartBot Builds promptly of any suspected unauthorised access.</li>
+  </ul>
+
+  <h2>7. Intellectual Property</h2>
+  <p>The SmartSchool NG software, its source code, and its design remain the property of SmartBot Builds Enterprises. The School is granted a non-exclusive, non-transferable licence to use the System for its own academic operations during the subscription term. The School's data remains the School's property (see Section 4).</p>
+
+  <h2>8. Limitation of Liability</h2>
+  <p>SmartBot Builds' total liability under this Agreement is limited to the fees paid by the School in the three (3) months preceding any claim. We are not liable for indirect or consequential losses, including loss of business or reputation.</p>
+
+  <h2>9. Termination</h2>
+  <p>Either party may terminate this Agreement with 30 days' written notice. On termination:</p>
+  <ul>
+    <li>Access to the System will end at the close of the notice period.</li>
+    <li>The School's data will be exported and delivered on request (see Section 4).</li>
+    <li>Outstanding fees up to the termination date remain payable.</li>
+  </ul>
+
+  <h2>10. Governing Law</h2>
+  <p>This Agreement is governed by the laws of the Federal Republic of Nigeria. Any disputes will be resolved first by good-faith discussion between the parties, and if necessary, in the courts of Lagos State.</p>
+
+  <div class="closing">
+    <strong>By signing below, both parties confirm they have read, understood, and accepted the terms of this Agreement.</strong>
+  </div>
+
+  <div class="signatures">
+    <div class="sig-block">
+      <div class="sig-line"></div>
+      <div class="sig-label">For SmartBot Builds Enterprises</div>
+      <div class="sig-label">Name: Segun Jegede</div>
+      <div class="sig-label">Title: Founder &amp; Director</div>
+      <div class="sig-label">Date: ___________________</div>
+    </div>
+    <div class="sig-block">
+      <div class="sig-line"></div>
+      <div class="sig-label">For the School</div>
+      <div class="sig-label">Name: ___________________</div>
+      <div class="sig-label">Title: ___________________</div>
+      <div class="sig-label">Date: ___________________</div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    SmartBot Builds Enterprises · Lagos, Nigeria · segunjegede@smartbotbuilds.com.ng · 08154857377
+  </div>
+
+</body>
+</html>
