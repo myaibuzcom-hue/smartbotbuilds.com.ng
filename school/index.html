@@ -109,6 +109,31 @@
       margin: 0 auto 36px; line-height: 1.75;
     }
     .hero-buttons { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+    
+    /* FOUNDER OFFER BANNER */
+    .offer-banner {
+      margin: 32px auto;
+      padding: 24px;
+      background: rgba(255, 213, 79, 0.08);
+      border: 2px solid var(--gold);
+      border-radius: var(--radius);
+      max-width: 800px;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(255,213,79,0.1);
+    }
+    .offer-banner h3 {
+      color: var(--gold);
+      font-size: 20px;
+      margin-bottom: 8px;
+      font-family: 'Clash Display', sans-serif;
+    }
+    .offer-banner p {
+      font-size: 15px;
+      color: var(--text);
+      margin-bottom: 0;
+      line-height: 1.6;
+    }
+
     .hero-tiers { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 32px; }
     .tier-chip {
       background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
@@ -437,9 +462,18 @@
         Publish results parents can view online — no more printing delays or lost
         mark sheets. Built specifically for Nigerian school workflows.
       </p>
+      
+      <!-- FOUNDER'S OFFER BANNER -->
+      <div class="offer-banner">
+        <h3>🔥 Founder's Concierge Offer (First 5 Schools Only)</h3>
+        <p>
+          Save ₦50,000 on setup + <strong>we import all your students and staff for you</strong> + we custom-design your report cards to match your exact school branding. <em>You don't type a single name.</em>
+        </p>
+      </div>
+
       <div class="hero-buttons">
         <a href="https://demo.smartbotbuilds.com.ng" target="_blank" class="btn btn-primary">🚀 Try the Live Demo</a>
-        <a href="https://wa.me/2347055403967?text=Hi%2C%20I%27d%20like%20to%20book%20a%20SmartSchool%20NG%20demo%20for%20my%20school" target="_blank" class="btn btn-secondary">💬 Book a Walkthrough</a>
+        <a href="https://wa.me/2347055403967?text=Hi%2C%20I%27d%20like%20to%20claim%20one%20of%20the%205%20Founder%27s%20slots%20for%20SmartSchool%20NG" target="_blank" class="btn btn-secondary">💬 Claim a Slot</a>
       </div>
       <div class="hero-tiers">
         <span class="tier-chip">📚 <strong>Nursery to SS3</strong></span>
@@ -678,6 +712,11 @@
       </div>
 
       <div class="feat-grid">
+        <div class="feat-item" style="border-color: var(--gold);">
+          <span class="feat-icon">🎁</span>
+          <h4>VIP Data Onboarding <span style="color:var(--gold);font-size:10px;vertical-align:top;">(LIMITED)</span></h4>
+          <p>For the first 5 schools, we will physically import all your students and staff from your Excel sheets. You don't type a single name.</p>
+        </div>
         <div class="feat-item">
           <span class="feat-icon">📊</span>
           <h4>Flexible Rubrics</h4>
@@ -702,11 +741,6 @@
           <span class="feat-icon">✍️</span>
           <h4>Digital Signatures</h4>
           <p>Upload the principal's and class teachers' signatures once. They appear automatically on every PDF.</p>
-        </div>
-        <div class="feat-item">
-          <span class="feat-icon">🖼️</span>
-          <h4>School Branding</h4>
-          <p>Upload your school logo — it appears at the top of every report card, automatically.</p>
         </div>
         <div class="feat-item">
           <span class="feat-icon">🔒</span>
@@ -773,16 +807,19 @@
       </div>
 
       <div class="pricing-grid">
-        <div class="price-card featured">
-          <div class="price-label">One-Time Setup</div>
-          <div class="price-amount">₦250,000</div>
-          <div class="price-desc">Paid once. Covers onboarding, configuration, and training. 50% on signing, 50% on go-live.</div>
+        <div class="price-card featured" style="border-color: var(--gold); box-shadow: 0 20px 60px rgba(255,213,79,0.1);">
+          <div class="price-label" style="color: var(--gold);">Founder's Concierge Setup</div>
+          <div class="price-amount" style="display: flex; align-items: baseline; justify-content: center; gap: 10px;">
+            <span style="font-size: 24px; color: var(--text-dim); text-decoration: line-through;">₦250,000</span>
+            ₦200,000
+          </div>
+          <div class="price-desc">Paid once. Includes VIP onboarding where we do the heavy lifting. 50% on signing, 50% on go-live.</div>
           <ul>
+            <li style="color: var(--white); font-weight: 700;"><span style="color: var(--gold);">★</span> VIP Data Import: We type in your students & staff</li>
+            <li style="color: var(--white); font-weight: 700;"><span style="color: var(--gold);">★</span> Custom Report Card Design (matches your paper version)</li>
             <li>Branded for your school (logo, colours, motto)</li>
             <li>Your classes, arms, and subject structure</li>
             <li>Your grading rubric and CA/exam weights</li>
-            <li>Student and class lists imported</li>
-            <li>Staff accounts created and trained</li>
             <li>Staff walkthrough session (online or on-site)</li>
           </ul>
         </div>
@@ -802,7 +839,7 @@
       </div>
 
       <div class="text-center" style="margin-top:32px;">
-        <p style="color:var(--text-dim);font-size:14px;">Year one total (setup + three terms): <strong style="color:var(--green);">₦550,000</strong></p>
+        <p style="color:var(--text-dim);font-size:14px;">Year one total (setup + three terms): <strong style="color:var(--green);">₦500,000</strong> <span style="font-size:12px;">(with Founder's discount)</span></p>
       </div>
     </div>
   </section>
