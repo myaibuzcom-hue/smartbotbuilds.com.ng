@@ -160,6 +160,20 @@
     .trust-item .icon { font-size: 1.4rem; }
     .trust-item strong { color: var(--text); }
 
+    /* DIGITAL PRODUCTS (NEW) */
+    .products-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 1000px; margin: 0 auto; }
+    .product-card {
+      background: var(--grey); border: 1px solid rgba(255,255,255,0.05);
+      border-radius: var(--radius); padding: 40px 30px; display: flex; flex-direction: column;
+      transition: all 0.3s; text-align: center;
+    }
+    .product-card:hover { border-color: var(--green); transform: translateY(-4px); }
+    .product-card .prod-icon { font-size: 48px; margin-bottom: 20px; }
+    .product-card h3 { font-family: 'Clash Display', sans-serif; font-size: 24px; margin-bottom: 10px; color: var(--white); }
+    .product-card .prod-price { font-size: 20px; font-weight: 700; color: var(--green); margin-bottom: 20px; }
+    .product-card p { font-size: 15px; color: var(--text-dim); line-height: 1.6; margin-bottom: 30px; flex: 1; }
+    @media (max-width: 768px) { .products-grid { grid-template-columns: 1fr; } }
+
     /* TIER SECTIONS */
     .tier-section { padding: 90px 0; }
     .tier-section.alt {
@@ -169,9 +183,7 @@
     }
 
     /* QUICKLAUNCH GRID */
-    .ql-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 8px;
-    }
+    .ql-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 8px; }
     .ql-card {
       background: var(--grey); border: 1px solid rgba(255,255,255,0.05);
       border-radius: var(--radius); padding: 32px 26px; transition: all 0.3s;
@@ -180,150 +192,73 @@
     .ql-card:hover { border-color: rgba(0,200,83,0.35); transform: translateY(-4px); }
     .ql-card .ql-icon { font-size: 36px; margin-bottom: 14px; }
     .ql-card h3 { font-family: 'Clash Display', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 8px; }
-    .ql-card .ql-price {
-      font-family: 'Clash Display', sans-serif; font-size: 22px; font-weight: 700;
-      color: var(--green); margin-bottom: 14px;
-    }
+    .ql-card .ql-price { font-family: 'Clash Display', sans-serif; font-size: 22px; font-weight: 700; color: var(--green); margin-bottom: 14px; }
     .ql-card .ql-price .from { font-size: 13px; color: var(--text-dim); font-weight: 500; }
     .ql-card p { font-size: 14px; color: var(--text-dim); line-height: 1.65; margin-bottom: 18px; flex: 1; }
-    .ql-card .ql-link {
-      color: var(--green); font-weight: 700; font-size: 14px;
-      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
-      transition: gap 0.3s;
-    }
+    .ql-card .ql-link { color: var(--green); font-weight: 700; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: gap 0.3s; }
     .ql-card .ql-link:hover { gap: 12px; }
 
     /* CUSTOM SOLUTIONS GRID */
-    .cs-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px;
-    }
+    .cs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; }
     .cs-card {
       background: var(--grey); border: 1px solid rgba(255,255,255,0.05);
       border-radius: var(--radius); padding: 30px 26px; transition: all 0.3s;
       position: relative; overflow: hidden;
     }
-    .cs-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(90deg, var(--green), transparent);
-      opacity: 0; transition: opacity 0.3s;
-    }
+    .cs-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--green), transparent); opacity: 0; transition: opacity 0.3s; }
     .cs-card:hover { border-color: rgba(0,200,83,0.3); transform: translateY(-4px); }
     .cs-card:hover::before { opacity: 1; }
     .cs-card .cs-icon { font-size: 32px; margin-bottom: 14px; display: block; }
     .cs-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
     .cs-card p { font-size: 14px; color: var(--text-dim); line-height: 1.65; margin-bottom: 16px; }
-    .cs-card .cs-price {
-      display: inline-block; background: rgba(0,200,83,0.08); color: var(--green);
-      font-weight: 700; font-size: 13px; padding: 5px 14px; border-radius: 100px;
-      border: 1px solid rgba(0,200,83,0.15);
-    }
+    .cs-card .cs-price { display: inline-block; background: rgba(0,200,83,0.08); color: var(--green); font-weight: 700; font-size: 13px; padding: 5px 14px; border-radius: 100px; border: 1px solid rgba(0,200,83,0.15); }
 
     /* CASE STUDY */
-    .case-card {
-      background: var(--grey); border: 1px solid rgba(255,255,255,0.05);
-      border-radius: var(--radius); padding: 44px 44px; max-width: 1000px; margin: 0 auto;
-    }
-    .case-card .case-tag {
-      display: inline-block; background: var(--green); color: var(--black);
-      font-size: 11px; font-weight: 700; padding: 4px 14px; border-radius: 100px;
-      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px;
-    }
+    .case-card { background: var(--grey); border: 1px solid rgba(255,255,255,0.05); border-radius: var(--radius); padding: 44px 44px; max-width: 1000px; margin: 0 auto; }
+    .case-card .case-tag { display: inline-block; background: var(--green); color: var(--black); font-size: 11px; font-weight: 700; padding: 4px 14px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; }
     .case-card h3 { font-family: 'Clash Display', sans-serif; font-size: 26px; font-weight: 700; margin-bottom: 6px; }
     .case-card .case-sub { color: var(--text-dim); font-size: 14px; margin-bottom: 22px; }
     .case-card .case-sub strong { color: var(--text); }
-    .case-stats {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 14px; margin: 22px 0;
-    }
-    .case-stat {
-      background: var(--black); border-radius: var(--radius); padding: 16px 18px;
-      text-align: center; border: 1px solid rgba(255,255,255,0.05);
-    }
+    .case-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 14px; margin: 22px 0; }
+    .case-stat { background: var(--black); border-radius: var(--radius); padding: 16px 18px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
     .case-stat .num { font-family: 'Clash Display', sans-serif; font-size: 26px; font-weight: 700; color: var(--green); }
     .case-stat .desc { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
     .case-card .case-desc { color: var(--text-dim); line-height: 1.75; margin: 18px 0; font-size: 15px; }
     .case-card .case-desc strong { color: var(--text); }
     .case-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 20px; }
-    .case-tags span {
-      background: var(--black); color: var(--text-dim); font-size: 12px;
-      padding: 5px 14px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.05);
-    }
-    .case-card .case-quote {
-      border-top: 1px solid rgba(255,255,255,0.05); padding-top: 18px;
-      margin-top: 18px; font-style: italic; color: var(--text-dim); font-size: 15px;
-    }
-    .case-card .case-quote .author {
-      font-style: normal; font-weight: 600; color: var(--text); margin-top: 6px;
-    }
+    .case-tags span { background: var(--black); color: var(--text-dim); font-size: 12px; padding: 5px 14px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.05); }
+    .case-card .case-quote { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 18px; margin-top: 18px; font-style: italic; color: var(--text-dim); font-size: 15px; }
+    .case-card .case-quote .author { font-style: normal; font-weight: 600; color: var(--text); margin-top: 6px; }
     @media (max-width: 700px) { .case-card { padding: 28px 22px; } }
 
     /* WHY US */
-    .why-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 22px;
-      max-width: 1000px; margin: 0 auto;
-    }
-    .why-item {
-      text-align: center; padding: 28px 22px; background: var(--grey);
-      border: 1px solid rgba(255,255,255,0.05); border-radius: var(--radius); transition: all 0.3s;
-    }
+    .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 22px; max-width: 1000px; margin: 0 auto; }
+    .why-item { text-align: center; padding: 28px 22px; background: var(--grey); border: 1px solid rgba(255,255,255,0.05); border-radius: var(--radius); transition: all 0.3s; }
     .why-item:hover { transform: translateY(-4px); border-color: rgba(0,200,83,0.2); }
     .why-item .icon { font-size: 32px; margin-bottom: 12px; display: block; }
     .why-item h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
     .why-item p { font-size: 14px; color: var(--text-dim); line-height: 1.6; }
 
     /* PROCESS */
-    .process-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 22px; max-width: 1000px; margin: 0 auto;
-    }
-    .process-step {
-      text-align: center; padding: 26px 20px; background: var(--grey);
-      border: 1px solid rgba(255,255,255,0.05); border-radius: var(--radius);
-    }
-    .process-step .step-num {
-      width: 46px; height: 46px; border-radius: 50%; background: var(--green);
-      color: var(--black); font-family: 'Clash Display', sans-serif;
-      font-weight: 700; font-size: 20px; display: flex; align-items: center;
-      justify-content: center; margin: 0 auto 14px;
-    }
+    .process-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 22px; max-width: 1000px; margin: 0 auto; }
+    .process-step { text-align: center; padding: 26px 20px; background: var(--grey); border: 1px solid rgba(255,255,255,0.05); border-radius: var(--radius); }
+    .process-step .step-num { width: 46px; height: 46px; border-radius: 50%; background: var(--green); color: var(--black); font-family: 'Clash Display', sans-serif; font-weight: 700; font-size: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
     .process-step h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
     .process-step p { font-size: 14px; color: var(--text-dim); line-height: 1.6; }
 
     /* CTA */
-    .cta-section {
-      padding: 90px 0; text-align: center;
-      background: rgba(0,200,83,0.03);
-      border-top: 1px solid rgba(0,200,83,0.06);
-      border-bottom: 1px solid rgba(0,200,83,0.06);
-    }
-    .cta-section h2 {
-      font-family: 'Clash Display', sans-serif;
-      font-size: clamp(30px, 4vw, 46px); font-weight: 700;
-      line-height: 1.1; margin-bottom: 16px;
-    }
+    .cta-section { padding: 90px 0; text-align: center; background: rgba(0,200,83,0.03); border-top: 1px solid rgba(0,200,83,0.06); border-bottom: 1px solid rgba(0,200,83,0.06); }
+    .cta-section h2 { font-family: 'Clash Display', sans-serif; font-size: clamp(30px, 4vw, 46px); font-weight: 700; line-height: 1.1; margin-bottom: 16px; }
     .cta-section h2 span { color: var(--green); }
-    .cta-section p {
-      font-size: 17px; color: var(--text-dim);
-      max-width: 600px; margin: 0 auto 32px; line-height: 1.7;
-    }
+    .cta-section p { font-size: 17px; color: var(--text-dim); max-width: 600px; margin: 0 auto 32px; line-height: 1.7; }
     .cta-buttons { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
-    .cta-section .phone-note {
-      margin-top: 22px; font-size: 14px; color: var(--text-dim);
-    }
+    .cta-section .phone-note { margin-top: 22px; font-size: 14px; color: var(--text-dim); }
     .cta-section .phone-note strong { color: var(--text); }
 
     /* FOOTER */
-    .footer {
-      background: rgba(0,0,0,0.4); border-top: 1px solid rgba(255,255,255,0.04);
-      padding: 60px 0 30px;
-    }
-    .footer-grid {
-      display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr;
-      gap: 40px; margin-bottom: 40px;
-    }
-    .footer-logo {
-      font-family: 'Clash Display', sans-serif; font-size: 20px;
-      font-weight: 700; color: var(--white); margin-bottom: 12px;
-    }
+    .footer { background: rgba(0,0,0,0.4); border-top: 1px solid rgba(255,255,255,0.04); padding: 60px 0 30px; }
+    .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+    .footer-logo { font-family: 'Clash Display', sans-serif; font-size: 20px; font-weight: 700; color: var(--white); margin-bottom: 12px; }
     .footer-logo span { color: var(--green); }
     .footer p { font-size: 14px; color: var(--text-dim); line-height: 1.7; }
     .footer h4 { font-size: 14px; font-weight: 700; margin-bottom: 16px; color: var(--text); }
@@ -332,35 +267,17 @@
     .footer ul a { color: var(--text-dim); text-decoration: none; font-size: 14px; transition: color 0.2s; }
     .footer ul a:hover { color: var(--green); }
     .footer .socials { display: flex; gap: 12px; margin-top: 16px; }
-    .footer .socials a {
-      width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      color: var(--text-dim); transition: all 0.3s;
-    }
+    .footer .socials a { width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.06); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-dim); transition: all 0.3s; }
     .footer .socials a:hover { border-color: var(--green); color: var(--green); }
-    .footer-bottom {
-      border-top: 1px solid rgba(255,255,255,0.04); padding-top: 24px;
-      text-align: center; font-size: 13px; color: var(--text-dim);
-    }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.04); padding-top: 24px; text-align: center; font-size: 13px; color: var(--text-dim); }
     .footer-bottom a { color: var(--green); text-decoration: none; }
     @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr; gap: 24px; } }
 
     /* FLOATING */
-    .wa-float {
-      position: fixed; bottom: 24px; right: 24px; z-index: 100;
-      width: 60px; height: 60px; background: var(--wa-green); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; font-size: 28px;
-      color: #fff; box-shadow: 0 4px 20px rgba(37,211,102,0.4); text-decoration: none;
-      transition: all 0.3s; animation: floatPulse 3s infinite;
-    }
+    .wa-float { position: fixed; bottom: 24px; right: 24px; z-index: 100; width: 60px; height: 60px; background: var(--wa-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #fff; box-shadow: 0 4px 20px rgba(37,211,102,0.4); text-decoration: none; transition: all 0.3s; animation: floatPulse 3s infinite; }
     .wa-float:hover { transform: scale(1.1); box-shadow: 0 6px 30px rgba(37,211,102,0.6); }
-    @keyframes floatPulse {
-      0%,100% { box-shadow: 0 4px 20px rgba(37,211,102,0.4); }
-      50% { box-shadow: 0 4px 40px rgba(37,211,102,0.7); }
-    }
-    @media (max-width: 768px) {
-      .wa-float { width: 50px; height: 50px; font-size: 22px; bottom: 20px; right: 20px; }
-    }
+    @keyframes floatPulse { 0%,100% { box-shadow: 0 4px 20px rgba(37,211,102,0.4); } 50% { box-shadow: 0 4px 40px rgba(37,211,102,0.7); } }
+    @media (max-width: 768px) { .wa-float { width: 50px; height: 50px; font-size: 22px; bottom: 20px; right: 20px; } }
   </style>
 </head>
 <body>
@@ -380,12 +297,11 @@
       <div class="menu-overlay"></div>
 
       <ul class="nav-links">
+        <li><a href="#digital-products">Products</a></li>
         <li><a href="/genius-bot.html">Genius Bot</a></li>
         <li><a href="/website-design.html">Websites</a></li>
         <li><a href="/school/">SmartSchool NG</a></li>
         <li><a href="/custom-solutions.html">Custom Solutions</a></li>
-        <li><a href="/pricing.html">Pricing</a></li>
-        <li><a href="/about.html">About</a></li>
         <li><a href="https://wa.me/2347055403967?text=Hi%2C%20I%27d%20like%20to%20learn%20more%20about%20SmartBot%20Builds" target="_blank" class="nav-cta">Chat With Our Bot</a></li>
       </ul>
     </div>
@@ -397,25 +313,64 @@
     <div class="container">
       <div class="hero-tag">
         <div class="logo-dot"></div>
-        AI Bots · Websites · Custom Software
+        AI Bots · Websites · Digital Products
       </div>
       <h1>
-        Three Ways We Help<br>
-        Your Business <span class="accent">Win Online</span>.
+        We Build Software.<br>
+        And We <span class="accent">Teach You How</span>.
       </h1>
       <p>
-        Launch-ready AI bots and websites from ₦50,000. Or custom-built CRMs, dashboards, and AI tools from ₦500,000.
-        One-time payment. Full ownership. Built for Nigerian businesses.
+        Launch-ready AI bots and websites from ₦50,000. Custom software from ₦500,000. 
+        Or buy our offline desktop apps and the exact AI method we use to build them.
       </p>
       <div class="hero-buttons">
-        <a href="#quicklaunch" class="btn btn-primary">🚀 See QuickLaunch Packages</a>
+        <a href="#digital-products" class="btn btn-primary">🛒 Shop Digital Products</a>
         <a href="https://wa.me/2347055403967?text=Hi%2C%20I%27d%20like%20to%20learn%20more%20about%20SmartBot%20Builds" target="_blank" class="btn btn-secondary">💬 Chat With Our Bot</a>
       </div>
-      <div class="hero-tiers">
-        <span class="tier-chip">⚡ QuickLaunch from <strong>₦50,000</strong></span>
-        <span class="tier-chip">🛠 Custom Solutions from <strong>₦500,000</strong></span>
-        <span class="tier-chip">🔒 <strong>100%</strong> source code ownership</span>
+    </div>
+  </section>
+
+  <!-- DIGITAL PRODUCTS (NEW SECTION) -->
+  <section class="section" id="digital-products" style="background: rgba(0,200,83,0.02); border-top: 1px solid rgba(0,200,83,0.06); border-bottom: 1px solid rgba(0,200,83,0.06);">
+    <div class="container">
+      <div class="text-center">
+        <div class="section-tag">Digital Products</div>
+        <h2 class="section-title">Instant <span style="color:var(--green);">Downloads</span></h2>
+        <p class="section-subtitle mx-auto">Get our desktop apps and playbooks instantly. One-time payment. Zero monthly fees.</p>
       </div>
+
+      <div class="products-grid">
+        <!-- PRODUCT 1: APP -->
+        <div class="product-card">
+          <div class="prod-icon">💻</div>
+          <h3>SmartBillings App</h3>
+          <div class="prod-price">₦10,000</div>
+          <p>A 3-in-1 offline desktop app for Nigerian freelancers. Create Quotations, Invoices, and Receipts. Auto-generates PDFs and saves client history. No internet needed.</p>
+          <a href="https://paystack.com/buy/smartbillings--3-in-1-offline-billing-app-pablbs" target="_blank" class="btn btn-primary" style="width: 100%;">Buy for Windows</a>
+        </div>
+
+        <!-- PRODUCT 2: PLAYBOOK -->
+        <div class="product-card">
+          <div class="prod-icon">📘</div>
+          <h3>The Executioner Method</h3>
+          <div class="prod-price">₦15,000</div>
+          <p>The exact step-by-step system I use to build real software with AI, even though I don't write code. Includes the master prompt templates, security checklist, and handoff prompts.</p>
+          <!-- REPLACE THE LINK BELOW WITH YOUR ACTUAL PAYSTACK PLAYBOOK LINK -->
+          <a href="https://paystack.com/buy/the-executioner-method" target="_blank" class="btn btn-outline" style="width: 100%;">Buy the Playbook</a>
+        </div>
+      </div>
+
+      <!-- WAITLIST EMBED -->
+      <div style="text-align: center; margin-top: 50px; max-width: 600px; margin-left: auto; margin-right: auto;">
+        <h3 style="color: var(--white); margin-bottom: 10px;">Want early access to the next app?</h3>
+        <p style="color: var(--text-dim); margin-bottom: 20px;">Join the waitlist and get a launch discount when our next tool drops.</p>
+        
+        <div style="background: var(--grey); padding: 20px; border-radius: var(--radius); border: 1px solid var(--border);">
+          <!-- TALLY IFRAME EMBED -->
+          <iframe data-tally-src="https://tally.so/embed/1WXEk1?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="150" frameborder="0" marginheight="0" marginwidth="0" title="SmartBillings Waitlist"></iframe>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -683,25 +638,25 @@
           <div class="footer-logo">Smart<span>Bot</span> Builds</div>
           <p>AI WhatsApp bots, professional websites, and custom software for Nigerian businesses. Founded by Segun Jegede.</p>
           <div class="socials">
-            <a href="#"><i class="fab fa-facebook-f"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="https://web.facebook.com/profile.php?id=61570727812757" target="_blank"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://x.com/smartbotbuilds" target="_blank"><i class="fab fa-twitter"></i></a>
             <a href="#"><i class="fab fa-linkedin-in"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.instagram.com/smartbotbuildshq" target="_blank"><i class="fab fa-instagram"></i></a>
           </div>
         </div>
         <div>
-          <h4>QuickLaunch</h4>
+          <h4>Products</h4>
           <ul>
+            <li><a href="#digital-products">SmartBillings App</a></li>
+            <li><a href="#digital-products">The Executioner Method</a></li>
             <li><a href="/genius-bot.html">Genius Bot</a></li>
             <li><a href="/school/">SmartSchool NG</a></li>
             <li><a href="/website-design.html">Website Design</a></li>
-            <li><a href="/pricing.html#bundles">Bundles</a></li>
           </ul>
         </div>
         <div>
           <h4>Custom</h4>
           <ul>
-            <li><a href="/school/">SmartSchool NG</a></li>
             <li><a href="/custom-solutions.html">Custom Solutions</a></li>
             <li><a href="/project-request.html">Start a Project</a></li>
             <li><a href="/pricing.html">Pricing</a></li>
@@ -732,5 +687,6 @@
       });
     });
   </script>
+  <script async src="https://tally.so/widgets/embed.js"></script>
 </body>
 </html>
