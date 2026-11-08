@@ -1,121 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex">
-  <title>Free Executioner Starter Kit | SmartBot Builds</title>
-  <meta name="description" content="Three copy-paste prompts to start building real software with AI. I used this method to build my entire agency.">
-  <meta property="og:title" content="Free Executioner Starter Kit | SmartBot Builds">
-  <meta property="og:description" content="Three copy-paste prompts to start building real software with AI, even if you do not write code.">
-  <meta property="og:url" content="https://smartbotbuilds.com.ng/free-starter-kit.html">
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&f[]=cabinet-grotesk@400,500,700,800&display=swap" rel="stylesheet">
-  <style>
-    :root { --black:#080c08; --green:#00c853; --white:#f5faf5; --grey:#2a332a; --wa:#25d366; --gold:#ffd54f; --text:#e8f5e8; --dim:#8fb08f; --r:16px; }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    html { scroll-behavior:smooth; }
-    body { background:var(--black); color:var(--text); font-family:'Cabinet Grotesk',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif; line-height:1.7; overflow-x:hidden; }
-    h1,h2,h3 { font-family:'Clash Display',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif; line-height:1.15; color:var(--white); }
-    a { color:var(--green); }
-    .wrap { max-width:860px; margin:0 auto; padding:0 22px; }
-    .bar { padding:16px 0; border-bottom:1px solid rgba(0,200,83,.1); }
-    .bar .wrap { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
-    .logo { font-family:'Clash Display',system-ui,sans-serif; font-weight:700; font-size:19px; color:var(--white); text-decoration:none; }
-    .logo span { color:var(--green); }
-    .bar nav a { color:var(--dim); text-decoration:none; font-size:14px; margin-left:18px; }
-    .bar nav a:hover { color:var(--green); }
-    .hero { padding:64px 0 36px; }
-    .hero h1 { font-size:clamp(32px,6vw,52px); letter-spacing:-1px; margin-bottom:16px; }
-    .hero p { color:var(--dim); font-size:18px; max-width:680px; }
-    .highlight { color: var(--white); font-weight: 700; }
-    .btn { display:inline-flex; align-items:center; justify-content:center; padding:13px 26px; border-radius:100px; font-weight:700; font-size:15px; text-decoration:none; border:2px solid var(--green); color:var(--green); background:transparent; cursor:pointer; font-family:inherit; transition:all .25s; }
-    .btn:hover { background:var(--green); color:var(--black); }
-    .btn-wa { background:var(--wa); border-color:var(--wa); color:#fff; }
-    .btn-wa:hover { background:#20c05a; border-color:#20c05a; color:#fff; }
-    .btn-gold { border-color: var(--gold); color: var(--gold); }
-    .btn-gold:hover { background: var(--gold); color: var(--black); }
-    section { padding:34px 0; }
-    h2 { font-size:clamp(24px,4vw,32px); margin-bottom:12px; }
-    .lead { color:var(--dim); margin-bottom:22px; }
-    .steps { display:grid; gap:12px; counter-reset:s; }
-    .steps li { list-style:none; background:var(--grey); border:1px solid rgba(255,255,255,.05); border-radius:var(--r); padding:16px 18px 16px 58px; position:relative; counter-increment:s; }
-    .steps li::before { content:counter(s); position:absolute; left:16px; top:14px; width:30px; height:30px; border-radius:50%; background:var(--green); color:var(--black); font-weight:800; display:flex; align-items:center; justify-content:center; }
-    .card { background:var(--grey); border:1px solid rgba(0,200,83,.22); border-radius:var(--r); padding:22px; margin-bottom:20px; }
-    .card h3 { font-size:21px; margin-bottom:6px; }
-    .card .when { color:var(--dim); font-size:15px; margin-bottom:14px; }
-    pre { background:var(--black); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:16px; white-space:pre-wrap; word-wrap:break-word; font-family:ui-monospace,Consolas,'Courier New',monospace; font-size:14px; line-height:1.65; color:var(--text); margin-bottom:14px; }
-    .tip { border-left:3px solid var(--gold); padding:10px 14px; background:rgba(255,213,79,.06); border-radius:0 10px 10px 0; color:var(--text); margin-top:6px; font-size:15px; }
-    .next { background:rgba(0,200,83,.05); border:1px solid rgba(0,200,83,.2); border-radius:var(--r); padding:26px; margin-top: 20px;}
-    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; margin-top:18px; }
-    .mini { background:var(--grey); border:1px solid rgba(255,255,255,.06); border-radius:var(--r); padding:20px; display:flex; flex-direction:column; }
-    .mini h3 { font-size:18px; margin-bottom:4px; }
-    .mini .price { color:var(--green); font-weight:800; margin-bottom:8px; font-size: 18px;}
-    .mini p { color:var(--dim); font-size:15px; flex:1; margin-bottom:14px; }
-    .note { color:var(--dim); font-size:13.5px; margin-top:26px; }
-    footer { border-top:1px solid rgba(255,255,255,.06); padding:30px 0 50px; margin-top:30px; color:var(--dim); font-size:14px; }
-    footer a { color:var(--dim); margin-right:16px; text-decoration:none; }
-    footer a:hover { color:var(--green); }
-    #toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--green); color:var(--black); padding:10px 22px; border-radius:100px; font-weight:700; opacity:0; transition:all .3s; pointer-events:none; z-index:50; }
-    #toast.on { opacity:1; transform:translateX(-50%) translateY(0); }
-    a:focus-visible, button:focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
-    @media (prefers-reduced-motion: reduce) { * { transition:none !important; } html { scroll-behavior:auto; } }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Free Executioner Starter Kit | SmartBot Builds</title>
+<meta name="description" content="Three copy-paste prompts to start building real software with AI, even if you do not write code. The method behind SmartBot Builds.">
+<meta property="og:title" content="Free Executioner Starter Kit | SmartBot Builds">
+<meta property="og:description" content="Three copy-paste prompts to start building real software with AI, even if you do not write code.">
+<meta property="og:url" content="https://smartbotbuilds.com.ng/free-starter-kit.html">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&f[]=cabinet-grotesk@400,500,700,800&display=swap" rel="stylesheet">
+<style>
+:root{--black:#080c08;--green:#00c853;--white:#f5faf5;--grey:#2a332a;--wa:#25d366;--gold:#ffd54f;--text:#e8f5e8;--dim:#8fb08f;--r:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--text);font-family:'Cabinet Grotesk',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;line-height:1.7;overflow-x:hidden}
+h1,h2,h3{font-family:'Clash Display',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;line-height:1.15;color:var(--white)}
+a{color:var(--green)}
+.wrap{max-width:860px;margin:0 auto;padding:0 22px}
+#progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--green),var(--gold));z-index:100}
+.bar{padding:16px 0;border-bottom:1px solid rgba(0,200,83,.1)}
+.bar .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-family:'Clash Display',system-ui,sans-serif;font-weight:700;font-size:19px;color:var(--white);text-decoration:none}
+.logo span{color:var(--green)}
+.bar nav a{color:var(--dim);text-decoration:none;font-size:14px;margin-left:18px}
+.bar nav a:hover{color:var(--green)}
+.hero{padding:70px 0 30px;position:relative}
+.hero::before{content:"";position:absolute;inset:-40px -20% auto -20%;height:420px;background:radial-gradient(closest-side,rgba(0,200,83,.16),transparent 70%);animation:drift 9s ease-in-out infinite alternate;z-index:-1}
+@keyframes drift{to{transform:translateX(12%) scale(1.1)}}
+.eyebrow{display:inline-block;font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--black);background:var(--gold);padding:4px 14px;border-radius:100px;margin-bottom:18px}
+.hero h1{font-size:clamp(34px,6.4vw,56px);letter-spacing:-1.2px;margin-bottom:18px}
+.hero h1 em{font-style:normal;color:var(--green)}
+.hero .big{font-size:20px;color:var(--white);margin-bottom:12px;max-width:680px}
+.hero p{color:var(--dim);font-size:17.5px;max-width:680px}
+.hero .cta{margin-top:26px;display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:13px 26px;border-radius:100px;font-weight:700;font-size:15px;text-decoration:none;border:2px solid var(--green);color:var(--green);background:transparent;cursor:pointer;font-family:inherit;transition:all .25s}
+.btn:hover{background:var(--green);color:var(--black);transform:translateY(-2px)}
+.btn-solid{background:var(--green);color:var(--black)}
+.btn-solid:hover{background:#00e676;border-color:#00e676}
+.btn-wa{background:var(--wa);border-color:var(--wa);color:#fff}
+.btn-wa:hover{background:#20c05a;border-color:#20c05a;color:#fff}
+.btn-gold{border-color:var(--gold);color:var(--gold)}
+.btn-gold:hover{background:var(--gold);color:var(--black)}
+.btn.done{background:var(--green);color:var(--black)}
+.proof{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:22px 0 8px}
+.proof b{color:var(--dim);font-size:13px;font-weight:700;margin-right:4px}
+.chip{border:1px solid rgba(0,200,83,.3);background:rgba(0,200,83,.07);color:var(--text);font-size:13.5px;padding:5px 14px;border-radius:100px}
+section{padding:36px 0}
+h2{font-size:clamp(25px,4.2vw,34px);margin-bottom:12px}
+.lead{color:var(--dim);margin-bottom:22px}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+.chat{background:#050805;border:1px solid rgba(255,255,255,.08);border-radius:var(--r);padding:18px;min-height:120px}
+.chat-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:12.5px;color:var(--dim)}
+.chat-top button{background:none;border:1px solid rgba(255,255,255,.15);color:var(--dim);border-radius:100px;padding:3px 12px;cursor:pointer;font-family:inherit;font-size:12.5px}
+.chat-top button:hover{color:var(--green);border-color:var(--green)}
+.msg{max-width:88%;padding:10px 14px;border-radius:14px;margin:8px 0;font-size:15px;opacity:0;transform:translateY(8px);transition:all .4s}
+.msg.show{opacity:1;transform:none}
+.msg.me{margin-left:auto;background:rgba(0,200,83,.16);border:1px solid rgba(0,200,83,.3)}
+.msg.ai{background:var(--grey)}
+.msg small{display:block;color:var(--dim);font-size:11.5px;font-weight:700;letter-spacing:.5px;margin-bottom:2px}
+.steps{display:grid;gap:12px;counter-reset:s}
+.steps li{list-style:none;background:var(--grey);border:1px solid rgba(255,255,255,.05);border-radius:var(--r);padding:16px 18px 16px 58px;position:relative;counter-increment:s;transition:transform .25s,border-color .25s}
+.steps li:hover{transform:translateX(6px);border-color:rgba(0,200,83,.4)}
+.steps li::before{content:counter(s);position:absolute;left:16px;top:14px;width:30px;height:30px;border-radius:50%;background:var(--green);color:var(--black);font-weight:800;display:flex;align-items:center;justify-content:center}
+.card{background:var(--grey);border:1px solid rgba(0,200,83,.22);border-radius:var(--r);padding:22px;margin-bottom:20px}
+.card h3{font-size:21px;margin-bottom:6px}
+.card .when{color:var(--dim);font-size:15px;margin-bottom:14px}
+pre{background:var(--black);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;white-space:pre-wrap;word-wrap:break-word;font-family:ui-monospace,Consolas,'Courier New',monospace;font-size:14px;line-height:1.65;color:var(--text);margin-bottom:14px}
+.tip{border-left:3px solid var(--gold);padding:10px 14px;background:rgba(255,213,79,.06);border-radius:0 10px 10px 0;margin-top:12px;font-size:15px}
+.pitch{border-color:var(--gold);background:linear-gradient(160deg,rgba(255,213,79,.08),var(--grey) 55%)}
+.pitch h2{color:var(--gold)}
+.pitch p{margin-bottom:12px}
+.pitch ul{list-style:none;margin:6px 0 18px}
+.pitch li{padding:5px 0 5px 28px;position:relative}
+.pitch li::before{content:"\2713";position:absolute;left:0;color:var(--green);font-weight:800}
+.next{background:rgba(0,200,83,.05);border:1px solid rgba(0,200,83,.2);border-radius:var(--r);padding:26px}
+.next h3.opt{font-size:20px;margin:26px 0 12px;color:var(--green)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.mini{background:var(--grey);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;transition:transform .25s,border-color .25s}
+.mini:hover{transform:translateY(-4px);border-color:rgba(0,200,83,.4)}
+.mini.wide{grid-column:1/-1}
+.mini h3{font-size:18px;margin-bottom:4px}
+.mini .price{color:var(--green);font-weight:800;margin-bottom:8px;font-size:18px}
+.mini p{color:var(--dim);font-size:15px;flex:1;margin-bottom:14px}
+details{background:var(--grey);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);padding:14px 18px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:700;color:var(--white);list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::after{content:"+";color:var(--green);font-size:20px;line-height:1}
+details[open] summary::after{content:"\2212"}
+details p{color:var(--dim);margin-top:10px;font-size:15.5px}
+.final{text-align:center;padding:40px 0 10px}
+.final h2{margin-bottom:10px}
+.note{color:var(--dim);font-size:13.5px;margin-top:26px}
+footer{border-top:1px solid rgba(255,255,255,.06);padding:30px 0 90px;margin-top:30px;color:var(--dim);font-size:14px}
+footer a{color:var(--dim);margin-right:16px;text-decoration:none}
+footer a:hover{color:var(--green)}
+#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:var(--black);padding:10px 22px;border-radius:100px;font-weight:700;opacity:0;transition:all .3s;pointer-events:none;z-index:120}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#sticky{position:fixed;left:0;right:0;bottom:0;z-index:90;transform:translateY(110%);transition:transform .4s;background:rgba(8,12,8,.96);border-top:1px solid rgba(255,213,79,.4);padding:10px 16px;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+#sticky.on{transform:none}
+#sticky span{font-size:14.5px}
+#sticky .btn{padding:8px 20px;font-size:14px}
+#sticky button.x{background:none;border:none;color:var(--dim);font-size:22px;cursor:pointer;line-height:1}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}.reveal{opacity:1;transform:none}.msg{opacity:1;transform:none}}
+</style>
 </head>
 <body>
+<div id="progress"></div>
 
-  <header class="bar">
-    <div class="wrap">
-      <a href="/" class="logo">Smart<span>Bot</span> Builds</a>
-      <nav>
-        <a href="/#digital-products">Products</a>
-        <a href="/genius-bot.html">Genius Bot</a>
-        <a href="/website-design.html">Websites</a>
-        <a href="/custom-solutions.html">Custom Solutions</a>
-      </nav>
+<header class="bar">
+  <div class="wrap">
+    <a href="/" class="logo">Smart<span>Bot</span> Builds</a>
+    <nav>
+      <a href="/#digital-products">Products</a>
+      <a href="/genius-bot.html">Genius Bot</a>
+      <a href="/website-design.html">Websites</a>
+      <a href="/custom-solutions.html">Custom Solutions</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="hero">
+    <span class="eyebrow">Free. No sign-up.</span>
+    <h1>Build real software with AI, even if you <em>can't code</em>.</h1>
+    <p class="big">I don't write code. I don't pay for AI subscriptions. I use my data connection and the three prompts below.</p>
+    <p>This is the method behind SmartBot Builds: a client CRM with a WhatsApp bot, a lending platform, and the SmartBillings desktop app. I am using it right now to build this very system. Copy the same three templates and use them on your own idea today.</p>
+    <div class="cta">
+      <a class="btn btn-solid" href="#templates">Get the 3 templates</a>
+      <a class="btn" href="#how">See how a session feels</a>
     </div>
-  </header>
-
-  <main class="wrap">
-
-    <div class="hero">
-      <h1>Your free Executioner Starter Kit</h1>
-      <p style="font-size: 20px; color: var(--white); margin-bottom: 12px;">I don't write code. I don't pay for AI subscriptions. I use just my data connection and these exact prompts.</p>
-      <p>I used this exact method to build my entire agency, <strong>SmartBot Builds</strong>. I used it to build a client CRM with a WhatsApp bot, a lending platform, and the SmartBillings desktop app In fact, <strong>I am using it right now</strong> to build this very system with AI. Here are the 3 templates that make it work.</p>
+    <div class="proof">
+      <b>Built with this method:</b>
+      <span class="chip">Client CRM + WhatsApp bot</span>
+      <span class="chip">Lending platform</span>
+      <span class="chip">SmartBillings desktop app</span>
+      <span class="chip">This page</span>
     </div>
+  </div>
 
-    <section>
-      <h2>The one-step rule</h2>
-      <p class="lead">Most beginners paste a big idea into an AI chat and get a wall of code they cannot follow. The fix is simple: the AI gives you one step, you do it, you report back, and only then do you get the next one.</p>
-      <ol class="steps">
-        <li><strong>Describe your idea</strong> in plain words using Template 1. The AI turns it into a proper build brief.</li>
-        <li><strong>Paste the Executioner Rule</strong> (Template 2) at the end of that message. It tells the AI to act as your step-by-step partner.</li>
-        <li><strong>Do the first step</strong>, then reply DONE, or paste the exact error you got. Repeat.</li>
-        <li><strong>Before the chat gets long</strong>, use Template 3 to carry everything into a fresh chat without losing your progress.</li>
-      </ol>
-    </section>
+  <section id="how" class="reveal">
+    <h2>The one-step rule</h2>
+    <p class="lead">Most beginners paste a big idea into an AI chat and get a wall of code they cannot follow. The fix is simple: the AI gives you one step, you do it, you report back, and only then do you get the next one.</p>
+    <div class="chat" id="chat">
+      <div class="chat-top"><span>Example of how a session feels (illustrative)</span><button id="replay" type="button">Replay</button></div>
+    </div>
+    <ol class="steps" style="margin-top:22px">
+      <li><strong>Describe your idea</strong> in plain words using Template 1. The AI turns it into a proper build brief.</li>
+      <li><strong>Paste the Executioner Rule</strong> (Template 2) at the end of that message. It tells the AI to act as your step-by-step partner.</li>
+      <li><strong>Do the first step</strong>, then reply DONE, or paste the exact error you got. Repeat.</li>
+      <li><strong>Before the chat gets long</strong>, use Template 3 to carry everything into a fresh chat without losing your progress.</li>
+    </ol>
+  </section>
 
-    <section>
-      <h2>Your three templates</h2>
-      <p class="lead">Tap Copy, paste into any AI chat, and replace the parts in square brackets with your own details.</p>
+  <section id="templates">
+    <h2 class="reveal">Your three templates</h2>
+    <p class="lead reveal">Tap Copy, paste into any AI chat, and replace the parts in square brackets with your own details.</p>
 
-      <div class="card">
-        <h3>Template 1: The idea brief</h3>
-        <p class="when">Use this first. It makes the AI plan before it builds.</p>
-        <pre id="t1">I want to build: [describe your idea in plain words].
+    <div class="card reveal">
+      <h3>Template 1: The idea brief</h3>
+      <p class="when">Use this first. It makes the AI plan before it builds.</p>
+      <pre id="t1">I want to build: [describe your idea in plain words].
 Who it is for: [who will use it].
 The one problem it solves: [one sentence].
 My skill level: I do not write code. I can copy, paste and run commands.
 My computer: [Windows, Mac or phone], with [tools you have installed].
 
 Before you answer, turn this into a full build brief. List every feature a good first version needs, what could go wrong, and the security risks (never trust the user's browser, never put secrets in code). Then list what should wait for version 2. Do not write code yet.</pre>
-        <button class="btn" data-copy="t1">Copy template</button>
-      </div>
+      <button class="btn" data-copy="t1">Copy template</button>
+    </div>
 
-      <div class="card">
-        <h3>Template 2: The Executioner Rule</h3>
-        <p class="when">Paste this at the end of your brief. It is what keeps the AI from overwhelming you.</p>
-        <pre id="t2">THE EXECUTIONER RULE
+    <div class="card reveal">
+      <h3>Template 2: The Executioner Rule</h3>
+      <p class="when">Paste this at the end of your brief. It is what keeps the AI from overwhelming you.</p>
+      <pre id="t2">THE EXECUTIONER RULE
 You are my step-by-step coding partner. I do not write code. I only carry out your instructions and report back.
 1. Give me ONE step at a time. Never more than one.
 2. Zero assumptions. Tell me exactly what to open, click, name, paste and run.
@@ -124,117 +185,189 @@ You are my step-by-step coding partner. I do not write code. I only carry out yo
 5. When I reply DONE, give the next step. If I send an error, fix that error first.
 6. If anything could delete data, cost money or expose a secret, warn me and wait for my approval.
 Start with Step 1.</pre>
-        <button class="btn" data-copy="t2">Copy template</button>
-        <p class="tip">When something fails, send the AI the full error text and a screenshot. Do not describe it from memory.</p>
-      </div>
-
-      <div class="card">
-        <h3>Template 3: The handoff request</h3>
-        <p class="when">Use this when a chat gets long or slow. Paste the result into a new chat and carry on.</p>
-        <pre id="t3">This chat is getting long. Write a handoff prompt I can paste into a new chat. Include: what we are building, what is finished and tested, where we stopped, the exact next step, the folder and file list, the decisions we made and why, any errors still open, and the rules from the Executioner Rule. Do not include passwords or keys.</pre>
-        <button class="btn" data-copy="t3">Copy template</button>
-      </div>
-    </section>
-
-    <section>
-      <div class="card" style="border-color: var(--gold);">
-        <h3 style="color: var(--gold);">Why free templates aren't enough</h3>
-        <p class="when" style="margin-bottom: 10px;">These 3 prompts will get you started, but they won't get you to the finish line.</p>
-        <p>When you actually start building, you will hit errors. You will need to secure your data. You will need to package your app into an installer so you can sell it. </p>
-        <p><strong>The Executioner Method</strong> is the complete system I use to run my agency. It gives you the full security checklist, the exact error-reporting templates, and the "handoff prompt" so the AI never forgets your code. It is everything you need to go from an idea to a finished, paid product.</p>
-      </div>
-    </section>
-
-    <section>
-      <div class="next">
-        <h2>Ready for the next step?</h2>
-        <p class="lead" style="margin-bottom:24px;">You have two choices: learn the full method and build it yourself, or let me build it for you.</p>
-        
-        <div style="margin-bottom: 30px;">
-          <h3 style="font-size: 20px; margin-bottom: 12px; color: var(--green);">Option A: Build it yourself</h3>
-          <div class="grid">
-            <div class="mini" style="grid-column: span 2;">
-              <h3>The Executioner Method</h3>
-              <div class="price">₦15,000</div>
-              <p>The exact system I use to build client CRMs, lending platforms, and desktop apps. This is the same playbook I am using right now to build systems with AI. Includes master prompt templates, security checklist, and handoff prompts.</p>
-              <a class="btn btn-gold" href="https://paystack.com/buy/the-executioner-method-xmpllf" target="_blank" rel="noopener noreferrer">Get the playbook</a>
-            </div>
-            <div class="mini">
-              <h3>SmartBillings App</h3>
-              <div class="price">₦10,000</div>
-              <p>Quotations, invoices and receipts that work offline. See exactly what this method can build.</p>
-              <a class="btn" href="https://paystack.com/buy/smartbillings--3-in-1-offline-billing-app-pablbs" target="_blank" rel="noopener noreferrer">See the app</a>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <h3 style="font-size: 20px; margin-bottom: 12px; color: var(--green);">Option B: Let me build it for you</h3>
-          <div class="grid">
-            <div class="mini">
-              <h3>Genius Bot & Websites</h3>
-              <div class="price">from ₦50,000</div>
-              <p>A WhatsApp assistant that answers customers 24/7, or a professional website, delivered in about a week.</p>
-              <a class="btn" href="/pricing.html">See pricing</a>
-            </div>
-            <div class="mini">
-              <h3>Custom Software</h3>
-              <div class="price">from ₦200,000</div>
-              <p>CRMs, dashboards, automation and AI tools built around your business. Fixed quote before we start.</p>
-              <a class="btn" href="/custom-solutions.html">Explore custom work</a>
-            </div>
-          </div>
-        </div>
-
-        <p style="margin-top:30px; text-align: center;"><a class="btn btn-wa" href="https://wa.me/2347055403967?text=Hi%2C%20I%20just%20got%20the%20Starter%20Kit%20and%20have%20a%20question" target="_blank" rel="noopener noreferrer">Not sure? Chat with me on WhatsApp</a></p>
-      </div>
-      <p class="note">These templates are a starting point, not a guarantee of any result. AI-written code should be reviewed before it handles real money or private customer data.</p>
-    </section>
-
-  </main>
-
-  <footer>
-    <div class="wrap">
-      <p style="margin-bottom:10px;"><a href="/">Home</a><a href="/#digital-products">Products</a><a href="/pricing.html">Pricing</a><a href="/custom-solutions.html">Custom Solutions</a><a href="/project-request.html">Start a Project</a></p>
-      <p>&copy; 2026 SmartBot Builds Enterprises, Lagos, Nigeria.</p>
+      <button class="btn" data-copy="t2">Copy template</button>
+      <p class="tip">When something fails, send the AI the full error text and a screenshot. Do not describe it from memory.</p>
     </div>
-  </footer>
 
-  <div id="toast" role="status" aria-live="polite">Copied!</div>
+    <div class="card reveal">
+      <h3>Template 3: The handoff request</h3>
+      <p class="when">Use this when a chat gets long or slow. Paste the result into a new chat and carry on.</p>
+      <pre id="t3">This chat is getting long. Write a handoff prompt I can paste into a new chat. Include: what we are building, what is finished and tested, where we stopped, the exact next step, the folder and file list, the decisions we made and why, any errors still open, and the rules from the Executioner Rule. Do not include passwords or keys.</pre>
+      <button class="btn" data-copy="t3">Copy template</button>
+    </div>
+  </section>
 
-  <script>
-    (function () {
-      var toast = document.getElementById('toast');
-      function say(msg) {
-        toast.textContent = msg;
-        toast.classList.add('on');
-        setTimeout(function () { toast.classList.remove('on'); }, 1800);
-      }
-      function fallbackCopy(text) {
-        var ta = document.createElement('textarea');
-        ta.value = text;
-        ta.style.position = 'fixed';
-        ta.style.opacity = '0';
-        document.body.appendChild(ta);
-        ta.select();
-        var ok = false;
-        try { ok = document.execCommand('copy'); } catch (e) {}
-        document.body.removeChild(ta);
-        return ok;
-      }
-      document.querySelectorAll('[data-copy]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          var text = document.getElementById(btn.getAttribute('data-copy')).innerText;
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text).then(function () { say('Copied!'); }, function () {
-              say(fallbackCopy(text) ? 'Copied!' : 'Press and hold to copy');
-            });
-          } else {
-            say(fallbackCopy(text) ? 'Copied!' : 'Press and hold to copy');
-          }
-        });
-      });
-    })();
-  </script>
+  <section class="reveal">
+    <div class="card pitch">
+      <h2>The kit gets you started. The playbook gets you through the hard part.</h2>
+      <p>When you actually start building, you will hit errors. You will need to protect your data. Later you will need to package your app so other people can use it. That is where most beginners stop.</p>
+      <p><strong>The Executioner Method</strong> is the complete system I use to run my agency. Inside:</p>
+      <ul>
+        <li>Master prompt templates</li>
+        <li>A security checklist to run before real users touch your product</li>
+        <li>Error-reporting templates, so the AI can fix problems faster</li>
+        <li>Handoff prompts, so a new chat can pick up your project where the last one stopped</li>
+      </ul>
+      <a class="btn btn-gold" href="https://paystack.com/buy/the-executioner-method-xmpllf" target="_blank" rel="noopener noreferrer">Get the playbook, ₦15,000</a>
+      <p style="margin:12px 0 0;color:var(--dim);font-size:14px">One-time payment. No monthly fees.</p>
+    </div>
+  </section>
+
+  <section id="next" class="reveal">
+    <div class="next">
+      <h2>Ready for the next step?</h2>
+      <p class="lead" style="margin-bottom:0">Two ways forward: learn the method and build it yourself, or let me build it for you.</p>
+
+      <h3 class="opt">Option A: Build it yourself</h3>
+      <div class="grid">
+        <div class="mini wide">
+          <h3>The Executioner Method</h3>
+          <div class="price">₦15,000</div>
+          <p>The system behind my client CRMs, lending platform and desktop apps. Master prompt templates, security checklist and handoff prompts.</p>
+          <a class="btn btn-gold" href="https://paystack.com/buy/the-executioner-method-xmpllf" target="_blank" rel="noopener noreferrer">Get the playbook</a>
+        </div>
+        <div class="mini wide">
+          <h3>SmartBillings App</h3>
+          <div class="price">₦10,000</div>
+          <p>Quotations, invoices and receipts that work offline. See exactly what this method can build.</p>
+          <a class="btn" href="https://paystack.com/buy/smartbillings--3-in-1-offline-billing-app-pablbs" target="_blank" rel="noopener noreferrer">See the app</a>
+        </div>
+      </div>
+
+      <h3 class="opt">Option B: Let me build it for you</h3>
+      <div class="grid">
+        <div class="mini">
+          <h3>Genius Bot and Websites</h3>
+          <div class="price">from ₦50,000</div>
+          <p>A WhatsApp assistant that answers customers 24/7, or a professional website, delivered in about a week.</p>
+          <a class="btn" href="/pricing.html">See pricing</a>
+        </div>
+        <div class="mini">
+          <h3>Custom Software</h3>
+          <div class="price">from ₦200,000</div>
+          <p>CRMs, dashboards, automation and AI tools built around your business. Fixed quote before we start.</p>
+          <a class="btn" href="/custom-solutions.html">Explore custom work</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <h2>Questions people ask</h2>
+    <details><summary>Do I need to pay for an AI tool?</summary><p>These prompts work in any AI chat. Many have free plans, but their limits and rules change, so check the one you use.</p></details>
+    <details><summary>Do I need to know how to code?</summary><p>No. You need to be able to copy, paste, follow one instruction at a time and report exactly what you see.</p></details>
+    <details><summary>Will this guarantee I finish a product?</summary><p>No. The method makes the process clearer and easier to recover when something breaks. Results depend on your idea, your effort and the tools you use.</p></details>
+    <details><summary>Is AI-written code safe to use with real money or customer data?</summary><p>It needs to be reviewed first. The playbook includes a security checklist, but nothing replaces a proper review before real users and real money are involved.</p></details>
+    <details><summary>What is the difference between this kit and the playbook?</summary><p>The kit gives you the three core prompts. The playbook adds the master prompts, the security checklist, the error-reporting templates and the handoff prompts for building a full product.</p></details>
+  </section>
+
+  <section class="final reveal">
+    <h2>Still have a question?</h2>
+    <p class="lead">Message me directly and I will point you to the right next step.</p>
+    <a class="btn btn-wa" href="https://wa.me/2347055403967?text=Hi%2C%20I%20just%20got%20the%20Starter%20Kit%20and%20have%20a%20question" target="_blank" rel="noopener noreferrer">Chat with me on WhatsApp</a>
+    <p class="note">These templates are a starting point, not a guarantee of any result. AI-written code should be reviewed before it handles real money or private customer data.</p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p style="margin-bottom:10px"><a href="/">Home</a><a href="/#digital-products">Products</a><a href="/pricing.html">Pricing</a><a href="/custom-solutions.html">Custom Solutions</a><a href="/project-request.html">Start a Project</a></p>
+    <p>&copy; 2026 SmartBot Builds Enterprises, Lagos, Nigeria.</p>
+  </div>
+</footer>
+
+<div id="sticky" role="region" aria-label="Playbook offer">
+  <span>Want the full system? <strong>The Executioner Method, ₦15,000</strong></span>
+  <a class="btn btn-gold" href="https://paystack.com/buy/the-executioner-method-xmpllf" target="_blank" rel="noopener noreferrer">Get it</a>
+  <button class="x" id="stickyX" type="button" aria-label="Dismiss">&times;</button>
+</div>
+<div id="toast" role="status" aria-live="polite">Copied!</div>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Progress bar
+  var bar = document.getElementById('progress');
+  function onScroll() {
+    var h = document.documentElement, max = h.scrollHeight - h.clientHeight;
+    bar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Reveal on scroll
+  var items = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && !reduce) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    items.forEach(function (el) { io.observe(el); });
+  } else {
+    items.forEach(function (el) { el.classList.add('in'); });
+  }
+
+  // Example chat session
+  var script = [
+    ['me', 'You', 'I want to build a simple invoice maker. [Template 1 and the Executioner Rule pasted]'],
+    ['ai', 'AI', 'Here is your build brief: the features for version 1, the security risks, and what waits for version 2. Ready for Step 1?'],
+    ['me', 'You', 'Yes.'],
+    ['ai', 'AI', 'Step 1: On your Desktop, create a new folder called invoice-app. You should see an empty folder. Reply DONE.'],
+    ['me', 'You', 'DONE'],
+    ['ai', 'AI', 'Step 2: Open VS Code, click File, then Open Folder, and choose invoice-app. You should see its name at the top left. Reply DONE.']
+  ];
+  var chat = document.getElementById('chat'), timers = [], played = false;
+  function play() {
+    timers.forEach(clearTimeout); timers = [];
+    chat.querySelectorAll('.msg').forEach(function (m) { m.remove(); });
+    script.forEach(function (m, i) {
+      var d = document.createElement('div');
+      d.className = 'msg ' + m[0];
+      d.innerHTML = '<small>' + m[1] + '</small>';
+      d.appendChild(document.createTextNode(m[2]));
+      chat.appendChild(d);
+      if (reduce) { d.classList.add('show'); return; }
+      timers.push(setTimeout(function () { d.classList.add('show'); }, 500 + i * 1100));
+    });
+  }
+  if ('IntersectionObserver' in window) {
+    var io2 = new IntersectionObserver(function (es) {
+      if (es[0].isIntersecting && !played) { played = true; play(); }
+    }, { threshold: 0.35 });
+    io2.observe(chat);
+  } else { play(); }
+  document.getElementById('replay').addEventListener('click', play);
+
+  // Copy buttons
+  var toast = document.getElementById('toast');
+  function say(msg) { toast.textContent = msg; toast.classList.add('on'); setTimeout(function () { toast.classList.remove('on'); }, 1800); }
+  function fallbackCopy(t) {
+    var ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    var ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta); return ok;
+  }
+  document.querySelectorAll('[data-copy]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var text = document.getElementById(btn.getAttribute('data-copy')).innerText;
+      function ok() { say('Copied!'); btn.textContent = 'Copied \u2713'; btn.classList.add('done'); setTimeout(function () { btn.textContent = 'Copy template'; btn.classList.remove('done'); }, 2200); }
+      function fail() { say('Press and hold to copy'); }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(ok, function () { fallbackCopy(text) ? ok() : fail(); });
+      } else { fallbackCopy(text) ? ok() : fail(); }
+    });
+  });
+
+  // Sticky playbook bar: appears after scrolling, hides near the options section
+  var sticky = document.getElementById('sticky'), dismissed = false, nearNext = false;
+  function updateSticky() { sticky.classList.toggle('on', !dismissed && !nearNext && window.scrollY > 700); }
+  window.addEventListener('scroll', updateSticky, { passive: true });
+  document.getElementById('stickyX').addEventListener('click', function () { dismissed = true; updateSticky(); });
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (es) { nearNext = es[0].isIntersecting; updateSticky(); }).observe(document.getElementById('next'));
+  }
+})();
+</script>
 </body>
 </html>
