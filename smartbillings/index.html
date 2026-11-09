@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Billings</title>
+    <script src="./html2pdf.bundle.min.js"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#22c55e">
+    <style>
+        :root {
+            --bg-dark: #0b1120; --sidebar-bg: #0f172a; --panel-bg: #1e293b;
+            --text-main: #f8fafc; --text-muted: #94a3b8; --primary: #22c55e;
+            --primary-hover: #16a34a; --border: #334155;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-main); height: 100vh; display: flex; overflow: hidden; }
+        
+        /* Sidebar */
+        .sidebar { width: 250px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px 0; }
+        .sidebar-logo { padding: 0 20px 20px 20px; font-size: 1.5rem; font-weight: bold; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .sidebar-logo span { font-size: 0.8rem; color: var(--text-muted); display: block; font-weight: normal; }
+        .nav-item { padding: 15px 20px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 500; transition: 0.2s; text-decoration: none; }
+        .nav-item:hover, .nav-item.active { background-color: var(--panel-bg); color: var(--text-main); border-left: 4px solid var(--primary); }
+        
+        /* Main App Area */
+        .app-container { display: flex; flex: 1; overflow: hidden; }
+        
+        /* Left Panels */
+        .form-panel { width: 45%; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        #view-settings, #view-history, #view-clients { display: none; } 
+        
+        h2 { font-size: 1.1rem; margin-bottom: 5px; color: var(--primary); }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group label { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+        .form-group input, .form-group select, .form-group textarea { padding: 10px; border-radius: 6px; border: 1px solid var(--border); background-color: var(--panel-bg); color: var(--text-main); outline: none; font-family: inherit; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); }
+        .form-group textarea { resize: vertical; min-height: 60px; }
+        
+        .file-upload { background-color: var(--panel-bg); border: 1px dashed var(--text-muted); padding: 8px; border-radius: 6px; color: var(--text-muted); font-size: 0.8rem; cursor: pointer; }
+
+        /* Line Items */
+        .item-row { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; }
+        .item-row input { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid var(--border); background-color: var(--panel-bg); color: var(--text-main); }
+        .item-row input.qty { width: 60px; flex: none; }
+        .item-row input.rate { width: 90px; flex: none; }
+        .btn-delete { background-color: transparent; color: #ef4444; border: 1px solid #ef4444; border-radius: 6px; width: 36px; height: 36px; cursor: pointer; font-weight: bold; font-size: 1rem; display: flex; justify-content: center; align-items: center; }
+        .btn-delete:hover { background-color: #ef4444; color: white; }
+        .btn-add { background-color: var(--panel-bg); color: var(--primary); border: 1px dashed var(--primary); padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; margin-bottom: 15px; }
+        .btn-add:hover { background-color: var(--border); }
+        
+        .btn { padding: 12px; border: none; border-radius: 6px; background-color: var(--primary); color: white; font-weight: bold; cursor: pointer; font-size: 1rem; transition: background 0.2s; }
+        .btn:hover { background-color: var(--primary-hover); }
+        .btn-secondary { background-color: #3b82f6; } 
+        .btn-secondary:hover { background-color: #2563eb; }
+        .btn-reset { background-color: transparent; border: 1px solid var(--border); color: var(--text-muted); margin-top: 5px; }
+
+        /* Preview Panel */
+        .preview-panel { width: 55%; background-color: #cbd5e1; padding: 40px; display: flex; justify-content: center; overflow-y: auto; }
+        .invoice-paper { background-color: white; width: 100%; max-width: 650px; min-height: 850px; border-radius: 8px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); padding: 50px; color: #333; display: flex; flex-direction: column; position: relative; overflow: hidden;}
+        
+        /* --- THEMES --- */
+        .theme-blue { --doc-primary: #3b82f6; --doc-bg: #eff6ff; --doc-text: #1e3a8a; --doc-header-bg: #1e3a8a; }
+        .theme-green { --doc-primary: #22c55e; --doc-bg: #e8f5e9; --doc-text: #1b5e20; --doc-header-bg: #0f172a; }
+        .theme-gold { --doc-primary: #eab308; --doc-bg: #fefce8; --doc-text: #854d0e; --doc-header-bg: #422006; }
+
+        .invoice-header { display: flex; justify-content: space-between; border-bottom: 2px solid #eee; padding-bottom: 25px; margin-bottom: 30px; gap: 20px; flex-wrap: wrap; }
+        .header-left { display: flex; gap: 15px; align-items: center; flex: 1 1 50%; min-width: 0; }
+        .header-left-text { display: flex; flex-direction: column; min-width: 0; flex: 1; } 
+        .company-logo-img { max-height: 65px; max-width: 120px; object-fit: contain; flex-shrink: 0; }
+        .invoice-brand { font-size: 1.6rem; font-weight: 900; color: #1a2e44; line-height: 1.2; word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; }
+        .invoice-tagline { font-size: 0.75rem; color: var(--doc-primary); font-weight: bold; text-transform: uppercase; margin-top: 4px; word-wrap: break-word; overflow-wrap: break-word; }
+        
+        .invoice-title-box { text-align: right; flex: 1 1 40%; min-width: 150px; }
+        .invoice-title { font-size: 2.2rem; font-weight: 900; color: var(--doc-text); letter-spacing: 1px; line-height: 1.1; }
+        .invoice-meta { font-size: 0.85rem; color: #666; line-height: 1.6; margin-top: 8px; }
+        
+        .info-blocks { display: flex; justify-content: space-between; margin-bottom: 30px; gap: 20px; }
+        .info-block { width: 48%; min-width: 0; }
+        .info-block.right-align { text-align: right; }
+        .info-title { font-size: 0.75rem; color: #888; text-transform: uppercase; font-weight: bold; margin-bottom: 8px; letter-spacing: 0.5px; }
+        .info-text { font-size: 0.9rem; line-height: 1.5; color: #333; word-wrap: break-word; overflow-wrap: break-word; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { background-color: var(--doc-header-bg); color: white; text-align: left; padding: 12px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        td { padding: 12px; border-bottom: 1px solid #eee; font-size: 0.9rem; word-wrap: break-word; overflow-wrap: break-word; }
+        .text-right { text-align: right; }
+        .col-desc { width: 45%; } .col-qty { width: 15%; } .col-rate { width: 20%; } .col-amount { width: 20%; }
+        
+        .total-box { display: flex; justify-content: flex-end; margin-top: 20px; }
+        .total-inner { background-color: var(--doc-bg); color: var(--doc-text); padding: 15px 25px; border-radius: 8px; font-size: 1.3rem; font-weight: 900; border: 1px solid var(--doc-primary); }
+        
+        .invoice-footer { margin-top: auto; border-top: 1px solid #eee; padding-top: 20px; display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; }
+        .footer-payment { flex: 1; min-width: 0; }
+        .payment-title { font-size: 0.7rem; color: #888; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; }
+        .payment-text { font-size: 0.8rem; color: #333; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word; }
+        
+        .signature-box { text-align: center; flex-shrink: 0; }
+        .signature-img { max-height: 60px; max-width: 150px; object-fit: contain; margin-bottom: 5px; }
+        .signature-line { border-top: 1px solid #333; padding-top: 5px; font-size: 0.8rem; color: #333; font-weight: bold; }
+
+        /* --- PAID STAMP --- */
+        .paid-stamp {
+            position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%) rotate(-25deg);
+            font-size: 6rem; font-weight: 900; color: rgba(239, 68, 68, 0.3); border: 10px solid rgba(239, 68, 68, 0.3);
+            border-radius: 15px; padding: 10px 40px; display: none; pointer-events: none; z-index: 10; letter-spacing: 5px;
+        }
+
+        /* --- CARD STYLES (History & Clients) --- */
+        .data-card {
+            background-color: var(--panel-bg); border: 1px solid var(--border); border-radius: 8px;
+            padding: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .data-info h3 { font-size: 1rem; color: var(--primary); margin-bottom: 5px; }
+        .data-info p { font-size: 0.85rem; color: var(--text-muted); }
+        .data-actions { display: flex; gap: 10px; }
+        .btn-small { padding: 6px 12px; font-size: 0.8rem; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; color: white; }
+
+        /* --- RESPONSIVE DESIGN --- */
+        @media (max-width: 1100px) {
+            .app-container { flex-direction: column; overflow-y: auto; }
+            .form-panel { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+            .preview-panel { width: 100%; padding: 20px; }
+            .sidebar { width: 80px; align-items: center; }
+            .sidebar-logo div, .nav-item span { display: none; }
+            .nav-item { justify-content: center; padding: 15px 0; font-size: 1.5rem; }
+        }
+                /* --- MOBILE APP LAYOUT (Phones) --- */
+        @media (max-width: 768px) {
+            body { flex-direction: column; height: 100vh; overflow: hidden; }
+            
+            /* Turn sidebar into a bottom navigation bar */
+            .sidebar { 
+                width: 100%; height: auto; flex-direction: row; justify-content: space-around; 
+                padding: 0; border-right: none; border-top: 1px solid var(--border); 
+                order: 2; position: absolute; bottom: 0; z-index: 100; background: var(--sidebar-bg); 
+            }
+            .sidebar-logo { display: none; }
+            .nav-item { 
+                flex: 1; justify-content: center; padding: 12px 0; font-size: 1.3rem; 
+                border-left: none; border-top: 4px solid transparent; 
+            }
+            .nav-item.active { 
+                border-left: none; border-top: 4px solid var(--primary); background: transparent; 
+            }
+            .nav-item span { display: none; } /* Hide the text, only show the emoji icons */
+            
+            /* Stack the main container */
+            .app-container { flex-direction: column; height: 100%; padding-bottom: 65px; overflow-y: auto; }
+            .form-panel { width: 100%; padding: 15px; height: auto; }
+            .preview-panel { width: 100%; padding: 10px; background: var(--bg-dark); }
+            
+            /* Make the paper fit mobile screens */
+            .invoice-paper { padding: 20px; border-radius: 0; box-shadow: none; min-height: auto; }
+            .header-left { flex-direction: column; align-items: flex-start; }
+            .invoice-title-box { text-align: left; margin-top: 15px; }
+            .info-blocks { flex-direction: column; gap: 10px; }
+            .info-block.right-align { text-align: left; }
+            
+            /* Adjust form inputs for touch screens */
+            .item-row { flex-wrap: wrap; }
+            .item-row input[type="text"] { width: 100%; }
+            .item-row input.qty { width: 30%; }
+            .item-row input.rate { width: 60%; }
+            .btn-delete { width: 10%; height: 38px; }
+        }
+                /* --- ONBOARDING MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(11, 17, 32, 0.85); z-index: 1000;
+            display: flex; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: var(--panel-bg); padding: 40px; border-radius: 12px;
+            max-width: 450px; text-align: center; border: 1px solid var(--border);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .modal-content h2 { color: var(--primary); margin-bottom: 15px; font-size: 1.8rem; }
+        .modal-content p { color: var(--text-main); margin-bottom: 25px; line-height: 1.6; font-size: 1rem; }
+        .modal-content .btn-skip { background: transparent; border: none; color: var(--text-muted); margin-top: 15px; font-size: 0.85rem; cursor: pointer; text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <div>Smart<span>Billings</span></div>
+        </div>
+        <div class="nav-item active" id="nav-dashboard" onclick="switchTab('dashboard')">🏠 <span>Dashboard</span></div>
+        <div class="nav-item" id="nav-history" onclick="switchTab('history')">📄 <span>History</span></div>
+        <div class="nav-item" id="nav-clients" onclick="switchTab('clients')">👥 <span>Clients</span></div>
+        <div class="nav-item" id="nav-settings" onclick="switchTab('settings')">⚙️ <span>Settings</span></div>
+                <a href="https://paystack.com/buy/smartbillings--3-in-1-offline-billing-app-pablbs" id="btn-get-desktop" class="nav-item" style="margin-top: auto; border-top: 1px solid var(--border);">⬇️ <span>Get Desktop App</span></a>
+    </div>
+
+    <div class="app-container">
+        <!-- VIEW 1: DASHBOARD -->
+        <div class="form-panel" id="view-dashboard">
+            <h2>Create Document</h2>
+            
+            <div class="form-group" style="margin-bottom: 5px;">
+                <label>Document Type</label>
+                <select id="input-doc-type">
+                    <option value="QUOTATION">Quotation (Estimate)</option>
+                    <option value="INVOICE">Invoice</option>
+                    <option value="RECEIPT">Receipt</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Select Saved Client</label>
+                <select id="select-saved-client" onchange="fillClientDetails()">
+                    <option value="">-- Enter Manually --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Client Name</label>
+                <input type="text" id="input-client" placeholder="e.g. ABC Enterprises Ltd">
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>Client Phone</label>
+                    <input type="text" id="input-client-phone" placeholder="+234...">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Client Email</label>
+                    <input type="text" id="input-client-email" placeholder="client@email.com">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Client Address</label>
+                <input type="text" id="input-client-address" placeholder="Client Address">
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>Document No.</label>
+                    <input type="text" id="input-inv-num" placeholder="INV-001">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Date</label>
+                    <input type="date" id="input-date">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>Due Date (Optional)</label>
+                    <input type="date" id="input-due-date">
+                </div>
+            </div>
+
+            <h2 style="margin-top: 10px;">Line Items</h2>
+            <div id="items-container"></div>
+            <button class="btn-add" id="btn-add-item">+ Add Item</button>
+
+            <button class="btn btn-secondary" id="btn-save-history">Save to History</button>
+            <button class="btn" id="btn-generate">Download PDF</button>
+            <button class="btn btn-reset" id="btn-reset">Reset Document</button>
+        </div>
+
+        <!-- VIEW 2: SETTINGS -->
+        <div class="form-panel" id="view-settings">
+            <h2>Business Profile Settings</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">These details are saved automatically and will appear on every document.</p>
+            
+            <div class="form-group"><label>Company Logo (PNG/JPG)</label><input type="file" id="input-logo" accept="image/*" class="file-upload"></div>
+            <div class="form-group"><label>Business Name</label><input type="text" id="input-business" placeholder="e.g. SmartBot Builds"></div>
+            <div class="form-group"><label>Slogan</label><input type="text" id="input-slogan" placeholder="e.g. Smart Business. Greater Growth."></div>
+            <div class="form-group"><label>Address</label><input type="text" id="input-address" placeholder="e.g. 12 Business Avenue, Lagos"></div>
+            <div class="form-group"><label>Phone Number</label><input type="text" id="input-phone" placeholder="e.g. +234 801 234 5678"></div>
+            <div class="form-group"><label>Email Address</label><input type="text" id="input-email" placeholder="e.g. hello@mybusiness.com"></div>
+            <div class="form-group"><label>Payment Details / Bank Info</label><textarea id="input-payment" placeholder="e.g. Bank: GTBank&#10;Account Name: SmartBot Builds&#10;Account No: 0123456789"></textarea></div>
+            <div class="form-group"><label>Global Document Note / Disclaimer</label><textarea id="input-disclaimer" placeholder="e.g. Goods sold are not refundable. Please make payment within 7 days."></textarea></div>
+            <div class="form-group" style="margin-bottom: 20px;"><label>Signature Image (Optional)</label><input type="file" id="input-signature" accept="image/*" class="file-upload"></div>
+            
+            <button class="btn" onclick="switchTab('dashboard')">Back to Dashboard</button>
+        </div>
+
+        <!-- VIEW 3: HISTORY -->
+        <div class="form-panel" id="view-history">
+            <h2>Document History</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Load or convert your saved documents below.</p>
+            <div id="history-list"></div>
+            <button class="btn" onclick="switchTab('dashboard')" style="margin-top: 20px;">Back to Dashboard</button>
+        </div>
+
+        <!-- VIEW 4: CLIENTS DATABASE -->
+        <div class="form-panel" id="view-clients">
+            <h2>Client Database</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Save clients here to auto-fill their details on invoices.</p>
+            
+            <div class="form-group"><label>Client Name</label><input type="text" id="new-client-name" placeholder="e.g. ABC Enterprises"></div>
+            <div style="display: flex; gap: 10px;">
+                <div class="form-group" style="flex: 1;"><label>Phone</label><input type="text" id="new-client-phone" placeholder="+234..."></div>
+                <div class="form-group" style="flex: 1;"><label>Email</label><input type="text" id="new-client-email" placeholder="email@..."></div>
+            </div>
+            <div class="form-group"><label>Address</label><input type="text" id="new-client-address" placeholder="Client Address"></div>
+            <button class="btn btn-secondary" id="btn-save-client" style="margin-bottom: 20px;">Save Client</button>
+
+            <h2 style="margin-top: 10px;">Saved Clients</h2>
+            <div id="client-list"></div>
+            <button class="btn" onclick="switchTab('dashboard')" style="margin-top: 20px;">Back to Dashboard</button>
+        </div>
+
+        <!-- Right Preview Panel -->
+        <div class="preview-panel">
+            <div class="invoice-paper theme-blue" id="invoice-paper">
+                <div class="paid-stamp" id="paid-stamp">PAID</div>
+                <div class="invoice-header">
+                    <div class="header-left">
+                        <img id="preview-logo" class="company-logo-img" src="" style="display: none;">
+                        <div class="header-left-text">
+                            <div class="invoice-brand" id="preview-business">Your Business Name</div>
+                            <div class="invoice-tagline" id="preview-slogan">Your Slogan Here</div>
+                        </div>
+                    </div>
+                    <div class="invoice-title-box">
+                        <div class="invoice-title" id="preview-doc-title">QUOTATION</div>
+                        <div class="invoice-meta">
+                            <div><strong>Doc No:</strong> <span id="preview-inv-num">Q-001</span></div>
+                            <div><strong>Date:</strong> <span id="preview-date">--/--/----</span></div>
+                            <div id="preview-due-container" style="display: none;"><strong>Due Date:</strong> <span id="preview-due-date">--/--/----</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-blocks">
+                    <div class="info-block">
+                        <div class="info-title">Billed To:</div>
+                        <div class="info-text" style="font-weight: bold; font-size: 1rem;" id="preview-client">Client Name</div>
+                        <div class="info-text" id="preview-client-address">Client Address</div>
+                        <div class="info-text" id="preview-client-phone">Client Phone</div>
+                        <div class="info-text" id="preview-client-email">Client Email</div>
+                    </div>
+                    <div class="info-block right-align">
+                        <div class="info-title">From:</div>
+                        <div class="info-text" id="preview-address">Your Address</div>
+                        <div class="info-text" id="preview-phone">Your Phone</div>
+                        <div class="info-text" id="preview-email">Your Email</div>
+                    </div>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="col-desc">Description</th>
+                            <th class="col-qty text-right">Qty</th>
+                            <th class="col-rate text-right">Rate (₦)</th>
+                            <th class="col-amount text-right">Amount (₦)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="preview-items"></tbody>
+                </table>
+
+                <div class="total-box">
+                    <div class="total-inner">
+                        <span id="preview-total-label">Estimated Total</span>: ₦<span id="preview-grand-total">0.00</span>
+                    </div>
+                </div>
+
+                 <div class="invoice-footer">
+                    <div class="footer-payment" id="preview-payment-container">
+                        <div class="payment-title">Payment Details</div>
+                        <div class="payment-text" id="preview-payment">Bank Name: GTBank<br>Account Name: Your Business<br>Account No: 0123456789</div>
+                    </div>
+                    <div class="signature-box">
+                        <img id="preview-signature" class="signature-img" src="" style="display: none;">
+                        <div class="signature-line">Authorized Signature</div>
+                    </div>
+                </div>
+                
+                <!-- GLOBAL DISCLAIMER (Fixed Layout) -->
+                <div id="preview-disclaimer" style="margin-top: 30px; font-size: 0.75rem; color: #888; text-align: center; font-style: italic; border-top: 1px dashed #eee; padding-top: 15px; display: none;"></div>
+            </div>
+        </div>
+    </div>
+    <!-- ONBOARDING MODAL -->
+    <div id="onboarding-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2>Welcome to SmartBillings 🚀</h2>
+            <p>Before you create your first document, let's set up your business profile. This will automatically add your logo, name, and bank details to all your Quotations, Invoices, and Receipts.</p>
+            <button class="btn btn-primary" id="btn-start-onboarding" style="width: 100%; padding: 15px; font-size: 1rem;">Setup Business Profile</button>
+            <button class="btn-skip" id="btn-skip-onboarding">I'll do this later</button>
+        </div>
+    </div>
+    <script>
+        // --- GLOBAL FUNCTIONS ---
+        function switchTab(tab) {
+            document.getElementById('view-dashboard').style.display = tab === 'dashboard' ? 'flex' : 'none';
+            document.getElementById('view-settings').style.display = tab === 'settings' ? 'flex' : 'none';
+            document.getElementById('view-history').style.display = tab === 'history' ? 'flex' : 'none';
+            document.getElementById('view-clients').style.display = tab === 'clients' ? 'flex' : 'none';
+            
+            document.getElementById('nav-dashboard').classList.toggle('active', tab === 'dashboard');
+            document.getElementById('nav-settings').classList.toggle('active', tab === 'settings');
+            document.getElementById('nav-history').classList.toggle('active', tab === 'history');
+            document.getElementById('nav-clients').classList.toggle('active', tab === 'clients');
+
+            if (tab === 'history') window.renderHistoryList();
+            if (tab === 'clients') window.renderClientList();
+        }
+
+        window.formatDate = function(val) {
+            if (!val) return '--/--/----';
+            const d = new Date(val);
+            return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputDocType = document.getElementById('input-doc-type');
+            const previewDocTitle = document.getElementById('preview-doc-title');
+            const previewTotalLabel = document.getElementById('preview-total-label');
+            const inputDueDate = document.getElementById('input-due-date');
+            const previewDueContainer = document.getElementById('preview-due-container');
+            const previewDueDate = document.getElementById('preview-due-date');
+            const paper = document.getElementById('invoice-paper');
+            const stamp = document.getElementById('paid-stamp');
+            const paymentContainer = document.getElementById('preview-payment-container');
+            const inputInvNum = document.getElementById('input-inv-num');
+            const previewInvNum = document.getElementById('preview-inv-num');
+
+            // --- SMART DOCUMENT NUMBERING ---
+            window.generateDocNumber = function(type) {
+                const history = JSON.parse(localStorage.getItem('smartBillingsHistory')) || [];
+                const prefix = type === 'QUOTATION' ? 'QT' : type === 'INVOICE' ? 'INV' : 'REC';
+                const count = history.filter(doc => doc.type === type).length;
+                const nextNum = (count + 1).toString().padStart(4, '0');
+                return `${prefix}-${nextNum}`;
+            };
+
+            // 1. Dynamic Document Type & Theme
+            window.updateDocType = function(autoNumber = false) {
+                const type = inputDocType.value;
+                previewDocTitle.innerText = type;
+                paper.classList.remove('theme-blue', 'theme-green', 'theme-gold');
+                stamp.style.display = 'none';
+                paymentContainer.style.display = 'block';
+
+                if (type === 'QUOTATION') {
+                    paper.classList.add('theme-blue');
+                    previewTotalLabel.innerText = 'Estimated Total';
+                    if (inputDueDate.value) previewDueContainer.style.display = 'block';
+                } else if (type === 'RECEIPT') {
+                    paper.classList.add('theme-gold');
+                    previewTotalLabel.innerText = 'Amount Paid';
+                    previewDueContainer.style.display = 'none';
+                    stamp.style.display = 'block';
+                    paymentContainer.style.display = 'none'; 
+                } else {
+                    paper.classList.add('theme-green');
+                    previewTotalLabel.innerText = 'Total Amount';
+                    if (inputDueDate.value) previewDueContainer.style.display = 'block';
+                }
+
+                if (autoNumber) {
+                    inputInvNum.value = window.generateDocNumber(type);
+                    previewInvNum.innerText = inputInvNum.value;
+                }
+            }
+            
+            inputDocType.addEventListener('change', () => window.updateDocType(true));
+
+            // 2. Load Saved Business Profile
+            const savedData = JSON.parse(localStorage.getItem('smartBillingsProfile')) || {};
+            const inputs = {
+                business: document.getElementById('input-business'),
+                slogan: document.getElementById('input-slogan'),
+                address: document.getElementById('input-address'),
+                phone: document.getElementById('input-phone'),
+                email: document.getElementById('input-email'),
+                payment: document.getElementById('input-payment'),
+                disclaimer: document.getElementById('input-disclaimer'),
+                logo: document.getElementById('preview-logo'),
+                signature: document.getElementById('preview-signature')
+            };
+            const previews = {
+                business: document.getElementById('preview-business'),
+                slogan: document.getElementById('preview-slogan'),
+                address: document.getElementById('preview-address'),
+                phone: document.getElementById('preview-phone'),
+                email: document.getElementById('preview-email'),
+                payment: document.getElementById('preview-payment'),
+                disclaimer: document.getElementById('preview-disclaimer')
+            };
+
+            for (const key in savedData) {
+                if (inputs[key] && savedData[key]) {
+                    if (key === 'logo' || key === 'signature') {
+                        inputs[key].src = savedData[key];
+                        inputs[key].style.display = 'block';
+                    } else {
+                        inputs[key].value = savedData[key];
+                        previews[key].innerText = savedData[key];
+                        // If there's a saved disclaimer, make sure it's visible on load
+                        if (key === 'disclaimer') previews[key].style.display = 'block';
+                    }
+                }
+            }
+
+            function saveProfile() {
+                const profile = {
+                    business: inputs.business.value, slogan: inputs.slogan.value, address: inputs.address.value,
+                    phone: inputs.phone.value, email: inputs.email.value, payment: inputs.payment.value,
+                    disclaimer: inputs.disclaimer.value,
+                    logo: inputs.logo.src.startsWith('data:') ? inputs.logo.src : null,
+                    signature: inputs.signature.src.startsWith('data:') ? inputs.signature.src : null
+                };
+                localStorage.setItem('smartBillingsProfile', JSON.stringify(profile));
+            }
+
+            ['business', 'slogan', 'address', 'phone', 'email', 'payment'].forEach(key => {
+                inputs[key].addEventListener('input', (e) => {
+                    previews[key].innerText = e.target.value || '...';
+                    saveProfile();
+                });
+            });
+
+            // Special logic for the disclaimer to show/hide it completely
+            inputs.disclaimer.addEventListener('input', (e) => {
+                const val = e.target.value.trim();
+                if (val) {
+                    previews.disclaimer.innerText = val;
+                    previews.disclaimer.style.display = 'block';
+                } else {
+                    previews.disclaimer.innerText = '';
+                    previews.disclaimer.style.display = 'none';
+                }
+                saveProfile();
+            });
+
+            // 3. Client Details
+            const inputClient = document.getElementById('input-client');
+            const inputClientPhone = document.getElementById('input-client-phone');
+            const inputClientEmail = document.getElementById('input-client-email');
+            const inputClientAddress = document.getElementById('input-client-address');
+            const selectSavedClient = document.getElementById('select-saved-client');
+
+            const previewClient = document.getElementById('preview-client');
+            const previewClientPhone = document.getElementById('preview-client-phone');
+            const previewClientEmail = document.getElementById('preview-client-email');
+            const previewClientAddress = document.getElementById('preview-client-address');
+
+            const updateClientPreview = () => {
+                previewClient.innerText = inputClient.value || 'Client Name';
+                previewClientPhone.innerText = inputClientPhone.value || '';
+                previewClientEmail.innerText = inputClientEmail.value || '';
+                previewClientAddress.innerText = inputClientAddress.value || '';
+            };
+
+            inputClient.addEventListener('input', updateClientPreview);
+            inputClientPhone.addEventListener('input', updateClientPreview);
+            inputClientEmail.addEventListener('input', updateClientPreview);
+            inputClientAddress.addEventListener('input', updateClientPreview);
+
+            window.loadClientDropdown = function() {
+                const clients = JSON.parse(localStorage.getItem('smartBillingsClients')) || [];
+                selectSavedClient.innerHTML = '<option value="">-- Enter Manually --</option>';
+                clients.forEach(c => {
+                    const option = document.createElement('option');
+                    option.value = c.id;
+                    option.textContent = c.name;
+                    selectSavedClient.appendChild(option);
+                });
+            };
+
+            window.fillClientDetails = function() {
+                const id = selectSavedClient.value;
+                if (!id) {
+                    inputClient.value = ''; inputClientPhone.value = ''; inputClientEmail.value = ''; inputClientAddress.value = '';
+                    updateClientPreview();
+                    return;
+                }
+                const clients = JSON.parse(localStorage.getItem('smartBillingsClients')) || [];
+                const client = clients.find(c => c.id == id);
+                if (client) {
+                    inputClient.value = client.name;
+                    inputClientPhone.value = client.phone || '';
+                    inputClientEmail.value = client.email || '';
+                    inputClientAddress.value = client.address || '';
+                    updateClientPreview();
+                }
+            };
+
+            window.loadClientDropdown();
+
+            // 4. Save Client Logic
+            document.getElementById('btn-save-client').addEventListener('click', () => {
+                const name = document.getElementById('new-client-name').value.trim();
+                if (!name) return alert("Client Name is required.");
+                
+                const newClient = {
+                    id: Date.now().toString(),
+                    name: name,
+                    phone: document.getElementById('new-client-phone').value,
+                    email: document.getElementById('new-client-email').value,
+                    address: document.getElementById('new-client-address').value
+                };
+
+                let clients = JSON.parse(localStorage.getItem('smartBillingsClients')) || [];
+                clients.push(newClient);
+                localStorage.setItem('smartBillingsClients', JSON.stringify(clients));
+                
+                document.getElementById('new-client-name').value = '';
+                document.getElementById('new-client-phone').value = '';
+                document.getElementById('new-client-email').value = '';
+                document.getElementById('new-client-address').value = '';
+                
+                window.loadClientDropdown();
+                window.renderClientList();
+                alert("Client saved successfully!");
+            });
+
+            // Render Client List
+            window.renderClientList = function() {
+                const list = document.getElementById('client-list');
+                list.innerHTML = '';
+                const clients = JSON.parse(localStorage.getItem('smartBillingsClients')) || [];
+                
+                if (clients.length === 0) {
+                    list.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">No clients saved yet.</p>';
+                    return;
+                }
+
+                clients.reverse().forEach(c => {
+                    const div = document.createElement('div');
+                    div.className = 'data-card';
+                    div.innerHTML = `
+                        <div class="data-info">
+                            <h3>${c.name}</h3>
+                            <p>${c.phone || 'No phone'} | ${c.email || 'No email'}</p>
+                        </div>
+                        <div class="data-actions">
+                            <button class="btn-small" style="background-color: #ef4444;" onclick="window.deleteClient('${c.id}')">Delete</button>
+                        </div>
+                    `;
+                    list.appendChild(div);
+                });
+            };
+
+            window.deleteClient = function(id) {
+                if(!confirm("Delete this client?")) return;
+                let clients = JSON.parse(localStorage.getItem('smartBillingsClients')) || [];
+                clients = clients.filter(c => c.id !== id);
+                localStorage.setItem('smartBillingsClients', JSON.stringify(clients));
+                window.loadClientDropdown();
+                window.renderClientList();
+            };
+
+            // 5. Invoice Meta Details
+            const inputDate = document.getElementById('input-date');
+            const previewDate = document.getElementById('preview-date');
+
+            inputInvNum.addEventListener('input', (e) => { previewInvNum.innerText = e.target.value || 'DOC-001'; });
+            inputDate.addEventListener('input', (e) => { previewDate.innerText = window.formatDate(e.target.value); });
+            
+            inputDueDate.addEventListener('input', (e) => {
+                previewDueDate.innerText = window.formatDate(e.target.value);
+                if (inputDocType.value !== 'RECEIPT' && e.target.value) previewDueContainer.style.display = 'block';
+                else previewDueContainer.style.display = 'none';
+            });
+
+            // 6. Line Items Logic
+            const itemsContainer = document.getElementById('items-container');
+            const previewItems = document.getElementById('preview-items');
+            const previewGrandTotal = document.getElementById('preview-grand-total');
+            window.itemIdCounter = 0;
+
+            window.addItemRow = function(desc = '', qty = 1, rate = 0) {
+                window.itemIdCounter++;
+                const id = window.itemIdCounter;
+
+                const row = document.createElement('div');
+                row.className = 'item-row';
+                row.id = `input-row-${id}`;
+                row.innerHTML = `
+                    <input type="text" placeholder="Item description" id="desc-${id}" value="${desc}">
+                    <input type="number" class="qty" placeholder="Qty" value="${qty}" min="1" id="qty-${id}">
+                    <input type="number" class="rate" placeholder="Rate" value="${rate}" id="rate-${id}">
+                    <button class="btn-delete" id="delete-${id}">✕</button>
+                `;
+                itemsContainer.appendChild(row);
+
+                const tr = document.createElement('tr');
+                tr.id = `preview-row-${id}`;
+                tr.innerHTML = `
+                    <td id="preview-desc-${id}">${desc || 'Item description'}</td>
+                    <td class="text-right" id="preview-qty-${id}">${qty}</td>
+                    <td class="text-right" id="preview-rate-${id}">${parseFloat(rate).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
+                    <td class="text-right" id="preview-total-${id}">${(qty * rate).toLocaleString('en-NG', {minimumFractionDigits: 2})}</td>
+                `;
+                previewItems.appendChild(tr);
+
+                document.getElementById(`desc-${id}`).addEventListener('input', (e) => {
+                    document.getElementById(`preview-desc-${id}`).innerText = e.target.value || 'Item description';
+                });
+                
+                const updateMath = () => {
+                    const q = parseFloat(document.getElementById(`qty-${id}`).value) || 0;
+                    const r = parseFloat(document.getElementById(`rate-${id}`).value) || 0;
+                    const total = q * r;
+                    
+                    document.getElementById(`preview-qty-${id}`).innerText = q;
+                    document.getElementById(`preview-rate-${id}`).innerText = r.toLocaleString('en-NG', {minimumFractionDigits: 2});
+                    document.getElementById(`preview-total-${id}`).innerText = total.toLocaleString('en-NG', {minimumFractionDigits: 2});
+                    window.calculateGrandTotal();
+                };
+
+                document.getElementById(`qty-${id}`).addEventListener('input', updateMath);
+                document.getElementById(`rate-${id}`).addEventListener('input', updateMath);
+
+                document.getElementById(`delete-${id}`).addEventListener('click', () => {
+                    document.getElementById(`input-row-${id}`).remove();
+                    document.getElementById(`preview-row-${id}`).remove();
+                    window.calculateGrandTotal();
+                });
+                
+                window.calculateGrandTotal(); 
+            }
+
+            window.calculateGrandTotal = function() {
+                let grandTotal = 0;
+                const allQtys = document.querySelectorAll('.item-row .qty');
+                const allRates = document.querySelectorAll('.item-row .rate');
+                
+                for (let i = 0; i < allQtys.length; i++) {
+                    const qty = parseFloat(allQtys[i].value) || 0;
+                    const rate = parseFloat(allRates[i].value) || 0;
+                    grandTotal += (qty * rate);
+                }
+                previewGrandTotal.innerText = grandTotal.toLocaleString('en-NG', {minimumFractionDigits: 2});
+            }
+
+            window.addItemRow();
+            document.getElementById('btn-add-item').addEventListener('click', () => window.addItemRow());
+
+            // 7. History Logic
+            document.getElementById('btn-save-history').addEventListener('click', () => {
+                const docType = inputDocType.value;
+                const client = inputClient.value;
+                const docNum = inputInvNum.value;
+                
+                if (!client || !docNum) return alert("Please fill in Client Name and Document No. before saving.");
+
+                const items = [];
+                document.querySelectorAll('.item-row').forEach(row => {
+                    const desc = row.querySelector('input[type="text"]').value;
+                    const qty = row.querySelector('.qty').value;
+                    const rate = row.querySelector('.rate').value;
+                    if (desc) items.push({ desc, qty, rate });
+                });
+
+                const docData = {
+                    id: Date.now(),
+                    type: docType,
+                    client: client,
+                    clientPhone: inputClientPhone.value,
+                    clientEmail: inputClientEmail.value,
+                    clientAddress: inputClientAddress.value,
+                    docNum: docNum,
+                    date: inputDate.value,
+                    dueDate: inputDueDate.value,
+                    items: items
+                };
+
+                let history = JSON.parse(localStorage.getItem('smartBillingsHistory')) || [];
+                history.push(docData);
+                localStorage.setItem('smartBillingsHistory', JSON.stringify(history));
+                alert("Document saved to History!\n\nNext time you create a new document, the number will increment automatically.");
+            });
+
+            window.renderHistoryList = function() {
+                const historyList = document.getElementById('history-list');
+                historyList.innerHTML = '';
+                let history = JSON.parse(localStorage.getItem('smartBillingsHistory')) || [];
+
+                if (history.length === 0) {
+                    historyList.innerHTML = '<p style="color: var(--text-muted); text-align: center; margin-top: 20px;">No saved documents yet.</p>';
+                    return;
+                }
+
+                [...history].reverse().forEach(doc => {
+                    const dateStr = doc.date ? new Date(doc.date).toLocaleDateString() : 'No Date';
+                    const div = document.createElement('div');
+                    div.className = 'data-card';
+                    div.innerHTML = `
+                        <div class="data-info">
+                            <h3>${doc.docNum} - ${doc.client}</h3>
+                            <p>${doc.type} | ${dateStr}</p>
+                        </div>
+                        <div class="data-actions">
+                            <button class="btn-small btn-secondary" onclick="window.loadHistoryDoc(${doc.id})">Load</button>
+                            <button class="btn-small" style="background-color: var(--primary);" onclick="window.convertHistoryDoc(${doc.id})">Convert</button>
+                        </div>
+                    `;
+                    historyList.appendChild(div);
+                });
+            };
+
+            window.loadHistoryDoc = function(id) {
+                const history = JSON.parse(localStorage.getItem('smartBillingsHistory')) || [];
+                const doc = history.find(d => d.id === id);
+                if (!doc) return;
+
+                inputDocType.value = doc.type;
+                inputClient.value = doc.client;
+                inputClientPhone.value = doc.clientPhone || '';
+                inputClientEmail.value = doc.clientEmail || '';
+                inputClientAddress.value = doc.clientAddress || '';
+                inputInvNum.value = doc.docNum;
+                inputDate.value = doc.date;
+                inputDueDate.value = doc.dueDate || '';
+                
+                document.querySelectorAll('.item-row').forEach(el => el.remove());
+                document.querySelectorAll('#preview-items tr').forEach(el => el.remove());
+                window.itemIdCounter = 0;
+
+                doc.items.forEach(item => window.addItemRow(item.desc, item.qty, item.rate));
+                
+                previewClient.innerText = doc.client;
+                previewClientPhone.innerText = doc.clientPhone || '';
+                previewClientEmail.innerText = doc.clientEmail || '';
+                previewClientAddress.innerText = doc.clientAddress || '';
+                previewInvNum.innerText = doc.docNum;
+                previewDate.innerText = window.formatDate(doc.date);
+                previewDueDate.innerText = window.formatDate(doc.dueDate);
+                
+                if (doc.dueDate && doc.type !== 'RECEIPT') previewDueContainer.style.display = 'block';
+                else previewDueContainer.style.display = 'none';
+
+                window.updateDocType(false); // Do not auto-generate number when loading
+                window.calculateGrandTotal();
+                switchTab('dashboard');
+            };
+
+            window.convertHistoryDoc = function(id) {
+                const history = JSON.parse(localStorage.getItem('smartBillingsHistory')) || [];
+                const doc = history.find(d => d.id === id);
+                if (!doc) return;
+
+                let newType = 'INVOICE';
+                if (doc.type === 'INVOICE') newType = 'RECEIPT';
+                else if (doc.type === 'RECEIPT') {
+                    alert("A receipt cannot be converted further.");
+                    return;
+                }
+
+                doc.type = newType;
+                // Auto-generate the new document number based on the converted type
+                doc.docNum = window.generateDocNumber(newType);
+
+                const index = history.findIndex(d => d.id === id);
+                history[index] = doc;
+                localStorage.setItem('smartBillingsHistory', JSON.stringify(history));
+
+                window.loadHistoryDoc(id);
+                alert(`Converted to ${newType} and loaded!`);
+            };
+
+            // 8. Reset Button
+            document.getElementById('btn-reset').addEventListener('click', () => {
+                if (confirm("Clear this document?")) {
+                    document.querySelectorAll('.item-row').forEach(el => el.remove());
+                    document.querySelectorAll('#preview-items tr').forEach(el => el.remove());
+                    window.itemIdCounter = 0;
+                    inputClient.value = ''; inputClientPhone.value = ''; inputClientEmail.value = ''; inputClientAddress.value = '';
+                    
+                    inputDate.value = ''; inputDueDate.value = '';
+                    previewClient.innerText = 'Client Name'; previewClientPhone.innerText = ''; previewClientEmail.innerText = ''; previewClientAddress.innerText = '';
+                    previewDate.innerText = '--/--/----'; previewDueDate.innerText = '--/--/----'; previewDueContainer.style.display = 'none';
+                    
+                    inputDocType.value = 'QUOTATION'; 
+                    window.updateDocType(true); // Generate a fresh number
+                    
+                    window.addItemRow();
+                    window.calculateGrandTotal();
+                }
+            });
+
+            // 9. Generate PDF
+            document.getElementById('btn-generate').addEventListener('click', () => {
+                const element = document.getElementById('invoice-paper');
+                const clientName = inputClient.value.trim();
+                const firstName = clientName ? clientName.split(' ')[0].replace(/[^a-zA-Z0-9]/g, '') : 'Client';
+                const docType = inputDocType.value;
+                const formattedType = docType.charAt(0).toUpperCase() + docType.slice(1).toLowerCase();
+                const businessName = inputs.business.value.trim();
+                const formattedCompany = businessName ? businessName.replace(/[^a-zA-Z0-9]/g, '_') : 'Company';
+                const finalFilename = `${firstName}-${formattedType}-${formattedCompany}.pdf`;
+
+                const opt = {
+                    margin: 0, filename: finalFilename, image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                };
+                html2pdf().set(opt).from(element).save();
+            });
+
+            // --- ONBOARDING LOGIC ---
+            const savedProfileCheck = JSON.parse(localStorage.getItem('smartBillingsProfile')) || {};
+            if (!savedProfileCheck.business) {
+                document.getElementById('onboarding-modal').style.display = 'flex';
+            }
+
+            const btnStart = document.getElementById('btn-start-onboarding');
+            if (btnStart) {
+                btnStart.addEventListener('click', () => {
+                    document.getElementById('onboarding-modal').style.display = 'none'; // Force hide
+                    document.getElementById('nav-settings').click();
+                });
+            }
+
+            const btnSkip = document.getElementById('btn-skip-onboarding');
+            if (btnSkip) {
+                btnSkip.addEventListener('click', () => {
+                    document.getElementById('onboarding-modal').style.display = 'none'; // Force hide
+                });
+            }
+
+            // Initial Setup: Generate the first number on load
+            window.updateDocType(true);
+        });
+    </script>
+    <script>
+        // Handle external link properly in Electron
+        document.getElementById('btn-get-desktop').addEventListener('click', (e) => {
+            e.preventDefault();
+            window.open('https://paystack.com/buy/smartbillings--3-in-1-offline-billing-app-pablbs', '_system');
+        });
+
+        // Register the Service Worker for PWA offline support
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => console.log('Service Worker registered successfully'))
+                    .catch(err => console.log('Service Worker registration failed:', err));
+            });
+        }
+    </script>
+</body>
+</html>
