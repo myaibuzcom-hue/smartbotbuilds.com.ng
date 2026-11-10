@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Smart Billings</title>
     <script src="./html2pdf.bundle.min.js"></script>
     <link rel="manifest" href="manifest.json">
@@ -116,6 +116,9 @@
         .data-actions { display: flex; gap: 10px; }
         .btn-small { padding: 6px 12px; font-size: 0.8rem; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; color: white; }
 
+        /* --- MOBILE NAV TOGGLE (Hidden by default) --- */
+        #mobile-view-toggle { display: none; }
+
         /* --- RESPONSIVE DESIGN --- */
         @media (max-width: 1100px) {
             .app-container { flex-direction: column; overflow-y: auto; }
@@ -125,7 +128,8 @@
             .sidebar-logo div, .nav-item span { display: none; }
             .nav-item { justify-content: center; padding: 15px 0; font-size: 1.5rem; }
         }
-                /* --- MOBILE APP LAYOUT (Phones) --- */
+        
+        /* --- MOBILE APP LAYOUT (Phones) --- */
         @media (max-width: 768px) {
             body { flex-direction: column; height: 100vh; overflow: hidden; }
             
@@ -134,6 +138,7 @@
                 width: 100%; height: auto; flex-direction: row; justify-content: space-around; 
                 padding: 0; border-right: none; border-top: 1px solid var(--border); 
                 order: 2; position: absolute; bottom: 0; z-index: 100; background: var(--sidebar-bg); 
+                padding-bottom: env(safe-area-inset-bottom);
             }
             .sidebar-logo { display: none; }
             .nav-item { 
@@ -145,79 +150,130 @@
             }
             .nav-item span { display: none; } /* Hide the text, only show the emoji icons */
             
+            /* Mobile View Toggle */
+            #mobile-view-toggle {
+                display: flex; padding: 10px; gap: 10px; background: var(--bg-dark); 
+                border-bottom: 1px solid var(--border); flex-shrink: 0;
+            }
+            #mobile-view-toggle button {
+                flex: 1; padding: 10px; border-radius: 6px; font-weight: bold; font-size: 0.9rem;
+                background: var(--panel-bg); color: var(--text-muted); border: 1px solid var(--border);
+                cursor: pointer; transition: 0.2s;
+            }
+            #mobile-view-toggle button.active {
+                background: var(--primary); color: white; border-color: var(--primary);
+            }
+            
             /* Stack the main container */
-            .app-container { flex-direction: column; height: 100%; padding-bottom: 65px; overflow-y: auto; }
-            .form-panel { width: 100%; padding: 15px; height: auto; }
-            .preview-panel { width: 100%; padding: 10px; background: var(--bg-dark); }
+            .app-container { flex-direction: column; height: calc(100vh - 65px); overflow: hidden; padding-bottom: 0; }
             
-            /* Make the paper fit mobile screens */
-            .invoice-paper { padding: 20px; border-radius: 0; box-shadow: none; min-height: auto; }
+            .form-panel, .preview-panel { 
+                width: 100%; height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch;
+                padding: 15px; padding-bottom: 80px; /* padding for bottom nav */
+            }
+            
+            /* Toggle visibility logic */
+            .preview-panel { display: none !important; }
+            .form-panel { display: none; }
+            .form-panel[style*="display: flex"] { display: flex !important; }
+            
+            body.mobile-show-preview .form-panel { display: none !important; }
+            body.mobile-show-preview .preview-panel { display: flex !important; justify-content: center; align-items: flex-start;}
+            
+            /* --- THE FIT TO PAGE MAGIC --- */
+            .invoice-paper { 
+                padding: 15px 10px; /* Reduced padding for more room */
+                border-radius: 0; 
+                box-shadow: none; 
+                min-height: auto; 
+                width: 100%; 
+                max-width: 100%; 
+            }
+            .invoice-header { gap: 10px; padding-bottom: 15px; margin-bottom: 15px; }
             .header-left { flex-direction: column; align-items: flex-start; }
-            .invoice-title-box { text-align: left; margin-top: 15px; }
-            .info-blocks { flex-direction: column; gap: 10px; }
-            .info-block.right-align { text-align: left; }
+            .invoice-title-box { text-align: left; margin-top: 5px; }
             
-            /* Adjust form inputs for touch screens */
-            .item-row { flex-wrap: wrap; }
-            .item-row input[type="text"] { width: 100%; }
-            .item-row input.qty { width: 30%; }
-            .item-row input.rate { width: 60%; }
-            .btn-delete { width: 10%; height: 38px; }
+            /* KEEP BILLED TO AND FROM SIDE BY SIDE */
+            .info-blocks { 
+                flex-direction: row; 
+                justify-content: space-between; 
+                gap: 10px; 
+                margin-bottom: 15px; 
+            }
+            .info-block { 
+                width: 48%; 
+            }
+            .info-block.right-align { 
+                text-align: right; 
+            }
+            .info-text { 
+                font-size: 0.75rem; 
+                line-height: 1.4; 
+                word-break: break-word; 
+            }
+            .info-title { 
+                font-size: 0.65rem; 
+                margin-bottom: 4px;
+            }
+            
+            .invoice-footer { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .signature-box { align-self: flex-end; }
+            
+            /* Make table fit mobile */
+            table { table-layout: fixed; width: 100%; }
+            td, th { padding: 8px 4px; font-size: 0.75rem; }
+            .invoice-brand { font-size: 1.3rem; }
+            .invoice-title { font-size: 1.8rem; }
+            
+            /* Fix Item Row Layout */
+            .item-row { 
+                display: grid; 
+                grid-template-columns: 1fr 1fr 40px; 
+                gap: 8px; 
+                padding-bottom: 15px;
+                border-bottom: 1px dashed var(--border);
+                margin-bottom: 15px;
+                align-items: center;
+            }
+            .item-row input { 
+                width: 100%; 
+                box-sizing: border-box; 
+            }
+            .item-row input[type="text"] { 
+                grid-column: 1 / -1; 
+                padding: 12px;
+            }
+            .item-row input.qty { 
+                grid-column: 1 / 2; 
+            }
+            .item-row input.rate { 
+                grid-column: 2 / 3; 
+            }
+            .btn-delete { 
+                grid-column: 3 / 4; 
+                width: 40px; 
+                height: 40px; 
+                margin: 0;
+            }
         }
-                /* --- PWA INSTALL BANNER --- */
+        
+        /* --- PWA INSTALL BANNER --- */
         #install-banner {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--panel-bg);
-            border: 1px solid var(--primary);
-            border-radius: 12px;
-            padding: 15px 20px;
-            display: none; /* Hidden by default */
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            z-index: 1000;
-            width: 90%;
-            max-width: 400px;
-            gap: 15px;
+            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+            background: var(--panel-bg); border: 1px solid var(--primary); border-radius: 12px;
+            padding: 15px 20px; display: none; justify-content: space-between; align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 1000; width: 90%; max-width: 400px; gap: 15px;
         }
-        #install-banner p {
-            color: var(--text-main);
-            font-size: 0.9rem;
-            font-weight: 500;
-            margin: 0;
-            line-height: 1.4;
-        }
-        #install-banner .btn-install {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            white-space: nowrap;
-            font-size: 0.9rem;
-        }
-        #install-banner .btn-install:hover {
-            background: var(--primary-hover);
-        }
-        #install-banner .close-install {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 0 5px;
-        }
-                /* --- ONBOARDING MODAL --- */
+        #install-banner p { color: var(--text-main); font-size: 0.9rem; font-weight: 500; margin: 0; line-height: 1.4; }
+        #install-banner .btn-install { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 0.9rem; }
+        #install-banner .btn-install:hover { background: var(--primary-hover); }
+        #install-banner .close-install { background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; padding: 0 5px; }
+        
+        /* --- ONBOARDING MODAL --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(11, 17, 32, 0.85); z-index: 1000;
-            display: flex; justify-content: center; align-items: center;
-            backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px);
         }
         .modal-content {
             background: var(--panel-bg); padding: 40px; border-radius: 12px;
@@ -238,10 +294,16 @@
         <div class="nav-item" id="nav-history" onclick="switchTab('history')">📄 <span>History</span></div>
         <div class="nav-item" id="nav-clients" onclick="switchTab('clients')">👥 <span>Clients</span></div>
         <div class="nav-item" id="nav-settings" onclick="switchTab('settings')">⚙️ <span>Settings</span></div>
-                <a href="https://paystack.com/buy/smartbillings--3-in-1-offline-billing-app-pablbs" id="btn-get-desktop" class="nav-item" style="margin-top: auto; border-top: 1px solid var(--border);">⬇️ <span>Get Desktop App</span></a>
+        <a href="https://paystack.com/buy/smartbillings--3-in-1-offline-billing-app-pablbs" id="btn-get-desktop" class="nav-item" style="margin-top: auto; border-top: 1px solid var(--border);">⬇️ <span>Get Desktop App</span></a>
     </div>
 
     <div class="app-container">
+        <!-- MOBILE VIEW TOGGLE -->
+        <div id="mobile-view-toggle">
+            <button id="btn-mobile-form" class="active">✏️ Edit Form</button>
+            <button id="btn-mobile-preview">👁️ Preview</button>
+        </div>
+
         <!-- VIEW 1: DASHBOARD -->
         <div class="form-panel" id="view-dashboard">
             <h2>Create Document</h2>
@@ -426,6 +488,7 @@
             </div>
         </div>
     </div>
+
     <!-- ONBOARDING MODAL -->
     <div id="onboarding-modal" class="modal-overlay hidden">
         <div class="modal-content">
@@ -435,7 +498,8 @@
             <button class="btn-skip" id="btn-skip-onboarding">I'll do this later</button>
         </div>
     </div>
-        <!-- PWA INSTALL BANNER -->
+    
+    <!-- PWA INSTALL BANNER -->
     <div id="install-banner">
         <p>Install SmartBillings for offline access</p>
         <div style="display: flex; align-items: center; gap: 10px;">
@@ -459,12 +523,23 @@
 
             if (tab === 'history') window.renderHistoryList();
             if (tab === 'clients') window.renderClientList();
+            
+            // Handle mobile view toggle
+            if (typeof window.updateMobileToggle === 'function') {
+                window.updateMobileToggle(tab);
+            }
         }
 
         window.formatDate = function(val) {
             if (!val) return '--/--/----';
-            const d = new Date(val);
-            return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+            if (typeof val !== 'string') return '--/--/----';
+            try {
+                const d = new Date(val);
+                if (isNaN(d.getTime())) return val; 
+                return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+            } catch(e) {
+                return val;
+            }
         };
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -479,6 +554,56 @@
             const paymentContainer = document.getElementById('preview-payment-container');
             const inputInvNum = document.getElementById('input-inv-num');
             const previewInvNum = document.getElementById('preview-inv-num');
+
+            // --- MOBILE VIEW TOGGLE LOGIC ---
+            window.updateMobileToggle = function(activeTab) {
+                if (window.innerWidth > 768) return;
+                const mobileToggle = document.getElementById('mobile-view-toggle');
+                if (activeTab === 'dashboard') {
+                    mobileToggle.style.display = 'flex';
+                } else {
+                    mobileToggle.style.display = 'none';
+                    document.body.classList.remove('mobile-show-preview');
+                }
+            };
+
+            window.setMobileView = function(view) {
+                if (window.innerWidth > 768) return;
+                const btnMobileForm = document.getElementById('btn-mobile-form');
+                const btnMobilePreview = document.getElementById('btn-mobile-preview');
+                
+                if (view === 'preview') {
+                    document.body.classList.add('mobile-show-preview');
+                    btnMobilePreview.style.background = 'var(--primary)';
+                    btnMobilePreview.style.color = 'white';
+                    btnMobilePreview.style.border = 'none';
+                    btnMobileForm.style.background = 'var(--panel-bg)';
+                    btnMobileForm.style.color = 'var(--text-muted)';
+                    btnMobileForm.style.border = '1px solid var(--border)';
+                } else {
+                    document.body.classList.remove('mobile-show-preview');
+                    btnMobileForm.style.background = 'var(--primary)';
+                    btnMobileForm.style.color = 'white';
+                    btnMobileForm.style.border = 'none';
+                    btnMobilePreview.style.background = 'var(--panel-bg)';
+                    btnMobilePreview.style.color = 'var(--text-muted)';
+                    btnMobilePreview.style.border = '1px solid var(--border)';
+                }
+            };
+
+            document.getElementById('btn-mobile-form').addEventListener('click', () => window.setMobileView('form'));
+            document.getElementById('btn-mobile-preview').addEventListener('click', () => window.setMobileView('preview'));
+
+            // Handle resize
+            window.addEventListener('resize', () => {
+                const activeTab = document.querySelector('.nav-item.active').id.replace('nav-', '');
+                window.updateMobileToggle(activeTab);
+            });
+
+            // Initialize toggle on load
+            const activeTabOnLoad = document.querySelector('.nav-item.active').id.replace('nav-', '');
+            window.updateMobileToggle(activeTabOnLoad);
+            window.setMobileView('form');
 
             // --- SMART DOCUMENT NUMBERING ---
             window.generateDocNumber = function(type) {
@@ -552,7 +677,6 @@
                     } else {
                         inputs[key].value = savedData[key];
                         previews[key].innerText = savedData[key];
-                        // If there's a saved disclaimer, make sure it's visible on load
                         if (key === 'disclaimer') previews[key].style.display = 'block';
                     }
                 }
@@ -587,6 +711,49 @@
                     previews.disclaimer.style.display = 'none';
                 }
                 saveProfile();
+            });
+
+            // --- IMAGE COMPRESSION & UPLOAD LOGIC ---
+            function resizeAndCompressImage(file, maxWidth, maxHeight, callback) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = new Image();
+                    img.onload = function () {
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+                        if (height > maxHeight) {
+                            width = Math.round((width * maxHeight) / height);
+                            height = maxHeight;
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.fillStyle = '#ffffff';
+                        ctx.fillRect(0, 0, width, height);
+                        ctx.drawImage(img, 0, 0, width, height);
+                        callback(canvas.toDataURL('image/jpeg', 0.8)); 
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+
+            ['logo', 'signature'].forEach(key => {
+                document.getElementById(`input-${key}`).addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        resizeAndCompressImage(file, 400, 400, function(compressedBase64) {
+                            inputs[key].src = compressedBase64;
+                            inputs[key].style.display = 'block';
+                            saveProfile();
+                        });
+                    }
+                });
             });
 
             // 3. Client Details
@@ -934,6 +1101,7 @@
                     
                     window.addItemRow();
                     window.calculateGrandTotal();
+                    window.setMobileView('form'); // Switch to form view on mobile
                 }
             });
 
@@ -950,9 +1118,38 @@
 
                 const opt = {
                     margin: 0, filename: finalFilename, image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                    html2canvas: { scale: 2, useCORS: true, allowTaint: true }, 
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
                 };
-                html2pdf().set(opt).from(element).save();
+
+                // Wait for images to load before generating PDF
+                const images = element.querySelectorAll('img');
+                let loadedCount = 0;
+                const totalImages = images.length;
+                const triggerPDF = () => { 
+                    html2pdf().set(opt).from(element).save(); 
+                    if (window.innerWidth <= 768) window.setMobileView('preview');
+                };
+
+                if (totalImages === 0) {
+                    triggerPDF();
+                } else {
+                    images.forEach(img => {
+                        if (img.complete) {
+                            loadedCount++;
+                            if (loadedCount === totalImages) triggerPDF();
+                        } else {
+                            img.onload = () => {
+                                loadedCount++;
+                                if (loadedCount === totalImages) triggerPDF();
+                            };
+                            img.onerror = () => {
+                                loadedCount++;
+                                if (loadedCount === totalImages) triggerPDF();
+                            };
+                        }
+                    });
+                }
             });
 
             // --- ONBOARDING LOGIC ---
@@ -995,6 +1192,38 @@
                     .catch(err => console.log('Service Worker registration failed:', err));
             });
         }
+
+        // PWA Install Prompt Logic
+        let deferredPrompt;
+        const installBanner = document.getElementById('install-banner');
+        const btnInstall = document.getElementById('btn-install-pwa');
+        const btnCloseInstall = document.getElementById('btn-close-install');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBanner.style.display = 'flex';
+        });
+
+        btnInstall.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to the install prompt: ${outcome}`);
+                deferredPrompt = null;
+                installBanner.style.display = 'none';
+            }
+        });
+
+        btnCloseInstall.addEventListener('click', () => {
+            installBanner.style.display = 'none';
+        });
+
+        window.addEventListener('appinstalled', () => {
+            installBanner.style.display = 'none';
+            deferredPrompt = null;
+            console.log('PWA was installed');
+        });
     </script>
 </body>
 </html>
