@@ -164,6 +164,54 @@
             .item-row input.rate { width: 60%; }
             .btn-delete { width: 10%; height: 38px; }
         }
+                /* --- PWA INSTALL BANNER --- */
+        #install-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--panel-bg);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 15px 20px;
+            display: none; /* Hidden by default */
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 1000;
+            width: 90%;
+            max-width: 400px;
+            gap: 15px;
+        }
+        #install-banner p {
+            color: var(--text-main);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin: 0;
+            line-height: 1.4;
+        }
+        #install-banner .btn-install {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 0.9rem;
+        }
+        #install-banner .btn-install:hover {
+            background: var(--primary-hover);
+        }
+        #install-banner .close-install {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0 5px;
+        }
                 /* --- ONBOARDING MODAL --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
@@ -387,6 +435,15 @@
             <button class="btn-skip" id="btn-skip-onboarding">I'll do this later</button>
         </div>
     </div>
+        <!-- PWA INSTALL BANNER -->
+    <div id="install-banner">
+        <p>Install SmartBillings for offline access</p>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <button class="btn-install" id="btn-install-pwa">Install</button>
+            <button class="close-install" id="btn-close-install">&times;</button>
+        </div>
+    </div>
+    
     <script>
         // --- GLOBAL FUNCTIONS ---
         function switchTab(tab) {
