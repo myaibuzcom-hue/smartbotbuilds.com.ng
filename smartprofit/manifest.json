@@ -1,0 +1,21 @@
+{
+  "name": "SmartProfit",
+  "short_name": "SmartProfit",
+  "description": "Know your true profit. Track stock, sales, debts, and expenses.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#00a65a",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
