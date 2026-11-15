@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#00a65a">
+<meta name="theme-color" content="#00a65a"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes">
 <title>SmartProfit ERP</title>
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -110,6 +110,8 @@ input:focus,select:focus{outline:none;border-color:var(--g);background:#fff;box-
     #print-receipt, #print-receipt * { visibility: visible; }
     #print-receipt { position: absolute; left: 0; top: 0; width: 100%; max-width: 80mm; padding: 10px; font-family: monospace; color: #000; background: #fff; }
     .no-print { display: none !important; }
+    .side, main, .bot, #toast, #install-banner, #ios-install-banner, #onboarding { display: none !important; }
+    #print-receipt { display: block !important; }
 }
 
 @media(max-width:800px){
@@ -160,7 +162,7 @@ input:focus,select:focus{outline:none;border-color:var(--g);background:#fff;box-
     <div id="step-3" style="display:none;">
       <span class="modal-icon">🛒</span>
       <h2>2. Make Sales in Seconds</h2>
-      <p>In the <b>Quick Sale</b> tab, tap a product or scan a barcode. If it's a cash sale, it auto-prints a receipt. If credit, it logs to the Debt Book.</p>
+      <p>In the <b>Quick Sale</b> tab, tap a product or scan a barcode. If it's a cash sale, you can print a receipt. If credit, it logs to the Debt Book.</p>
       <div class="modal-actions">
         <button class="b" onclick="nextStep(4)">Next</button>
         <button class="modal-skip" onclick="closeOnboarding()">Skip Tour</button>
@@ -352,11 +354,12 @@ input:focus,select:focus{outline:none;border-color:var(--g);background:#fff;box-
         <button class="close-x" id="btn-close-install">&times;</button>
     </div>
 </div>
+
 <!-- iOS INSTALL BANNER -->
 <div id="ios-install-banner" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 16px 20px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 9999; width: 90%; max-width: 400px; text-align: center; font-family: 'Inter', sans-serif;">
     <p style="margin-bottom: 10px; font-weight: 600; font-size: 0.95rem;">Install SmartProfit App</p>
     <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 12px;">Tap the <strong>Share icon</strong> (square with arrow) at the bottom of Safari, then select <strong>"Add to Home Screen"</strong>.</p>
-    <button onclick="document.getElementById('ios-install-banner').style.display='none'" style="background: #334155; color: #fff; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%;">Got it</button>
+    <button onclick="document.getElementById('ios-install-banner').style.display='none';sessionStorage.setItem('ios_banner_dismissed','1')" style="background: #334155; color: #fff; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%;">Got it</button>
 </div>
 
 <script>
@@ -440,6 +443,7 @@ input:focus,select:focus{outline:none;border-color:var(--g);background:#fff;box-
   $('addp').onclick = function () {
     var n = $('pn').value.trim(), c = num('pc'), p = num('pp'), q = num('pq'), b = $('pb').value.trim();
     if (!n || c <= 0 || p <= 0 || q <= 0) return toast('Fill every field with a valid amount.', 1);
+    if (b && db.inventory.some(function (x) { return x.barcode === b; })) return toast('That barcode already belongs to another product.', 1); 
     if (p < c && !confirm('Selling price is lower than cost. Add anyway?')) return;
     db.inventory.push({ id: uid(), name: n, cost: c, price: p, qty: q, barcode: b });
     ['pn', 'pc', 'pp', 'pq', 'pb'].forEach(function (i) { $(i).value = ''; }); save(); toast('Product added.');
@@ -517,7 +521,7 @@ input:focus,select:focus{outline:none;border-color:var(--g);background:#fff;box-
     toast('Sale recorded: ' + M(rev));
     
     // Auto-Print if NOT Credit (Cash, Transfer, POS)
-    if (m !== 'Credit') {
+    if (m !== 'Credit' && confirm('Print receipt?')) {
         window.printReceipt(s.id);
     }
   };
@@ -621,7 +625,7 @@ input:focus,select:focus{outline:none;border-color:var(--g);background:#fff;box-
     P.forEach(function (p) { db.inventory.push({ id: uid(), name: p[0], cost: p[1], price: p[2], qty: p[3], barcode: p[4] }); });
     for (var i = 6; i >= 0; i--) {
       var p = db.inventory[i % 5], q = (i % 3) + 1, dt = new Date(Date.now() - i * 864e5 - 36e5).toISOString();
-      p.qty -= q; db.sales.push({ id: uid(), items: [{ n: p.name, q: q, p: p.price, c: p.cost }], revenue: q * p.price, profit: q * (p.price - p.cost), method: i % 4 ? 'Cash' : 'Credit', customer: i % 4 ? '' : 'John Doe', date: dt });
+      p.qty -= q; db.sales.push({ id: uid(), items: [{ n: p.name, q: q, p: p.price, c: p.cost }], revenue: q * p.price, profit: q * (p.price - p.cost), method: i % 4 ? 'Cash' : 'Credit', customer: i % 4 ? '' : 'John Doe', date: dt }); if (i % 4 === 0) db.debts.push({ id: uid(), name: 'John Doe', phone: '', amount: q * p.price, paid: 0, status: 'unpaid', date: dt });
     }
     db.expenses.push({ id: uid(), desc: 'Transport to market', amount: 8000, date: new Date(Date.now() - 864e5).toISOString() }, { id: uid(), desc: 'Shop rent (part)', amount: 15000, date: new Date(Date.now() - 3 * 864e5).toISOString() });
     db.debts.push({ id: uid(), name: 'Mama Tunde', phone: '08012345678', amount: 25000, paid: 5000, status: 'unpaid', date: new Date().toISOString() });
@@ -725,22 +729,6 @@ input:focus,select:focus{outline:none;border-color:var(--g);background:#fff;box-
   // Init
   render();
 
-  // --- iOS INSTALL BANNER LOGIC ---
-  function isIos() {
-      return /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
-  }
-  function isInStandaloneMode() {
-      return ('standalone' in window.navigator) && (window.navigator.standalone);
-  }
-
-  if (isIos() && !isInStandaloneMode()) {
-      const iosBanner = document.getElementById('ios-install-banner');
-      if (!sessionStorage.getItem('ios_banner_dismissed')) {
-          // Show the banner after 3 seconds so it doesn't feel aggressive
-          setTimeout(() => { iosBanner.style.display = 'block'; }, 3000); 
-      }
-  }
-
   // PWA Logic
   if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -773,6 +761,21 @@ input:focus,select:focus{outline:none;border-color:var(--g);background:#fff;box-
   window.addEventListener('appinstalled', () => {
       installBanner.classList.remove('show');
   });
+
+  // --- iOS INSTALL BANNER LOGIC ---
+  function isIos() {
+      return /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+  }
+  function isInStandaloneMode() {
+      return ('standalone' in window.navigator) && (window.navigator.standalone);
+  }
+
+  if (isIos() && !isInStandaloneMode()) {
+      const iosBanner = document.getElementById('ios-install-banner');
+      if (!sessionStorage.getItem('ios_banner_dismissed')) {
+          setTimeout(() => { iosBanner.style.display = 'block'; }, 3000); 
+      }
+  }
 })();
 </script>
 </body>
