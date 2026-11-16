@@ -1226,6 +1226,20 @@
             deferredPrompt = null;
             console.log('PWA was installed');
         });
+          // --- iOS INSTALL BANNER LOGIC ---
+  function isIos() {
+      return /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+  }
+  function isInStandaloneMode() {
+      return ('standalone' in window.navigator) && (window.navigator.standalone);
+  }
+
+  if (isIos() && !isInStandaloneMode()) {
+      const iosBanner = document.getElementById('ios-install-banner');
+      if (!sessionStorage.getItem('ios_banner_dismissed')) {
+          setTimeout(() => { iosBanner.style.display = 'block'; }, 3000); 
+      }
+  }
     </script>
 </body>
 </html>
