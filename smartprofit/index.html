@@ -124,15 +124,7 @@ input:focus,select:focus{outline:none;border-color:var(--g);background:#fff;box-
 </style>
 </head>
 <body>
-<!-- LOCK SCREEN -->
-<div id="lock-screen" style="position: fixed; inset: 0; background: #0b1220; z-index: 99999; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 20px; text-align: center;">
-    <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; color: #fff; font-size: 2rem; margin-bottom: 10px;">SmartProfit Pro</h2>
-    <p style="color: #94a3b8; margin-bottom: 24px; max-width: 300px;">Enter your Paystack Transaction Reference to unlock.</p>
-    <input type="text" id="license-key-input" placeholder="e.g. T123456789" style="padding: 14px; border-radius: 8px; border: 1px solid #334155; background: #1e293b; color: #fff; width: 100%; max-width: 300px; font-size: 1rem; margin-bottom: 16px; text-align: center; text-transform: uppercase;">
-    <button onclick="unlockApp()" id="unlock-btn" style="background: #00a65a; color: #fff; padding: 14px 24px; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; width: 100%; max-width: 300px;">Verify & Unlock</button>
-    <p id="license-error" style="color: #ef4444; margin-top: 16px; display: none; font-weight: 600;">Invalid or unpaid reference.</p>
-    <a href="https://paystack.com/buy/smartprofit-erp-osswyc" target="_blank" style="color: #00c46a; margin-top: 30px; font-size: 0.9rem;">Don't have one? Buy here</a>
-</div>  
+
 <div id="toast" role="status" aria-live="polite"></div>
 
 <!-- ONBOARDING MODAL -->
@@ -379,41 +371,7 @@ input:focus,select:focus{outline:none;border-color:var(--g);background:#fff;box-
   var M = function (n) { return '\u20A6' + Math.round(Number(n) || 0).toLocaleString('en-NG'); };
   var uid = function () { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); };
   var KEY = 'smartProfitDB', db = {}, cart = {};
-  // --- SECURE LICENSE LOGIC (PAYSTACK REFERENCE) ---
-  async function unlockApp() {
-      var ref = document.getElementById('license-key-input').value.trim().toUpperCase();
-      var btn = document.getElementById('unlock-btn');
-      var err = document.getElementById('license-error');
 
-      if (!ref) return;
-
-      btn.innerText = 'Verifying...';
-      btn.disabled = true;
-      err.style.display = 'none';
-
-      try {
-          // Replace with your actual Deno Deploy URL where your bot lives
-          var res = await fetch('https://smartbot-genius-bot.myaibuzcom-hue.deno.net/api/verify-app-payment', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ reference: ref })
-          });
-          
-          var data = await res.json();
-
-          if (data.success) {
-              localStorage.setItem('sp_unlocked', 'true');
-              document.getElementById('lock-screen').style.display = 'none';
-          } else {
-              err.style.display = 'block';
-          }
-      } catch (e) {
-          alert("Network error. Please check your internet connection.");
-      } finally {
-          btn.innerText = 'Verify & Unlock';
-          btn.disabled = false;
-      }
-  }
 
   // Check if already unlocked on page load
   if (localStorage.getItem('sp_unlocked') === 'true') {
