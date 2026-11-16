@@ -176,27 +176,27 @@
     .trust-item strong { color: var(--text); }
 
     /* DIGITAL PRODUCTS */
-        .products-grid { 
-        display: grid; 
-        grid-template-columns: repeat(3, 1fr); 
-        gap: 20px; 
+    .products-grid { 
+        display: grid !important; 
+        grid-template-columns: repeat(3, 1fr) !important; 
+        gap: 20px !important; 
         max-width: 1100px; 
         margin: 0 auto; 
     }
     @media (max-width: 900px) {
-        .products-grid { grid-template-columns: 1fr; }
+        .products-grid { grid-template-columns: 1fr !important; }
     }
     .product-card {
       background: var(--grey); border: 1px solid rgba(255,255,255,0.05);
-      border-radius: var(--radius); padding: 30px 24px; display: flex; flex-direction: column;
-      transition: all 0.3s; text-align: center;
+      border-radius: var(--radius); padding: 30px 24px; 
+      display: flex !important; flex-direction: column !important; 
+      transition: all 0.3s; text-align: center; width: 100%; margin: 0;
     }
     .product-card p { font-size: 14px; color: var(--text-dim); line-height: 1.6; margin-bottom: 24px; flex: 1; }
     .product-card:hover { border-color: var(--green); transform: translateY(-4px); }
     .product-card .prod-icon { font-size: 48px; margin-bottom: 20px; }
     .product-card h3 { font-family: 'Clash Display', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; font-size: 24px; margin-bottom: 10px; color: var(--white); }
     .product-card .prod-price { font-size: 20px; font-weight: 700; color: var(--green); margin-bottom: 20px; }
-    @media (max-width: 768px) { .products-grid { grid-template-columns: 1fr; } }
 
     /* TIER SECTIONS */
     .tier-section { padding: 90px 0; }
