@@ -176,7 +176,7 @@
     .trust-item strong { color: var(--text); }
 
     /* DIGITAL PRODUCTS */
-    .products-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 1000px; margin: 0 auto; }
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 1000px; margin: 0 auto; }
     .product-card {
       background: var(--grey); border: 1px solid rgba(255,255,255,0.05);
       border-radius: var(--radius); padding: 40px 30px; display: flex; flex-direction: column;
@@ -426,6 +426,16 @@
         </div>
       </div>
 
+              <!-- PRODUCT 3: SMARTPROFIT APP -->
+        <div class="product-card">
+          <div class="prod-icon">📊</div>
+          <h3>SmartProfit ERP</h3>
+          <div class="prod-price">₦10,000</div>
+          <p>A powerful offline business manager for shop owners. Track real profit, manage stock, handle credit sales (debts), and print receipts. Works on desktop and mobile.</p>
+          <!-- REPLACE THE LINK BELOW WITH YOUR ACTUAL PAYSTACK SMARTPROFIT LINK -->
+          <a href="https://paystack.com/buy/smartprofit-erp-osswyc" target="_blank" class="btn btn-outline" style="width: 100%;">Buy SmartProfit</a>
+        </div>
+      
       <!-- WAITLIST EMBED -->
       <div style="text-align: center; margin-top: 50px; max-width: 600px; margin-left: auto; margin-right: auto;">
         <h3 style="color: var(--white); margin-bottom: 10px;">Want early access to the next app?</h3>
