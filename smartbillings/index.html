@@ -1177,13 +1177,7 @@
             // Initial Setup: Generate the first number on load
             window.updateDocType(true);
         });
-
-    // Check if already unlocked on page load
-    if (localStorage.getItem('sb_unlocked') === 'true') {
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('lock-screen').style.display = 'none';
-        });
-    }    
+        
     </script>
     <script>
         // Handle external link properly in Electron
